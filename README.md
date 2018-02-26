@@ -1,4 +1,4 @@
-# C09 Project Proposal
+# WOWBurst - C09 Project Proposal
 
 ## Members: Bekzod Tursunov, Weiqiang Zhang, Shuyi
 

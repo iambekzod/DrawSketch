@@ -8,16 +8,18 @@ A multi user drawing game where one person draws something, while the other play
 
 # Key Features by Beta
 
+- Handle communications between connected users themselves and the backend (register, login, drawing portion)
+- Be able to have multiple users connect and show correct information (who is currently connected, who is currently drawing, etc)
 - Have a predefined generation set of guessable words by the users, which are set during game creation
-- Handle communications between connected users themselves and the backend
-- Be able to have multiple users connect and be interactive amongst each other in real time
 
 # Additional features by Final
+- setup rules for the game
+- Handle the guessing portion by users
 - Be able to connect with facebook/twitter
-- Save your work and share it at the end
+- Save your drawn work locally at the end of the game
 
 # Technology used
-- Socket.io and express for backend communication
+- Socket.io for backend communication
 - Framework like Angular/React for the frontend
 - API for the drawable topics we can play with (Countries, Cities, Animals, etc)
 - API for interacting with social media platforms to login etc.

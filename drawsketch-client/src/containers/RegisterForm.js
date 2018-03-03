@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import "../style/form.css";
+import socket from "./Socket"
 
 export default class Login extends Component {
   constructor(props) {
@@ -31,7 +32,7 @@ export default class Login extends Component {
   handleSubmit = event => {
     event.preventDefault();
 
-    alert(JSON.stringify(this.state));
+    socket.emit('register', JSON.stringify(this.state));
   }
 
   render() {

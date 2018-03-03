@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 const cookie = require('cookie');
 const session = require('express-session');
 const https = require('https');
-const io = require('socket.io')(https);
+const socketIO = require('socket.io');
 
 // Database
 // ===================================================
@@ -33,14 +33,17 @@ MongoClient.connect(uri, function (err, client) {
 const app = express();
 app.use(express.static('public'));
 
-function onConnection(socket) {
-    console.log('a user connected');
-    socket.on('disconnect', function () {
-        console.log('user disconnected');
-    });
-    socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
-}
-io.on('connection', onConnection);
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    // res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept-Type');
+    // res.header('Access-Control-Allow-Credentials', 'true');
+    next();
+});
+
+app.use(function (req, res, next) {
+    res.status(501).end("Invalid API endpoint: " + req.url);
+    console.log("HTTP Response", res.statusCode);
+});
 
 var privateKey = fs.readFileSync('server.key');
 var certificate = fs.readFileSync('server.crt');
@@ -50,7 +53,23 @@ var config = {
 };
 const PORT = 3001;
 
-https.createServer(config, app).listen(PORT, function (err) {
+server = https.createServer(config, app).listen(PORT, function (err) {
     if (err) console.log(err);
     else console.log("HTTPS server on https://localhost:%s", PORT);
+});
+
+const io = socketIO(server);
+
+io.on('connection', function (socket) {
+    console.log('a user connected: ' + socket.id);
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
+    socket.on('login', function (data) {
+        console.log("Login: " + data);
+    });
+    socket.on('register', function (data) {
+        console.log("Register: " + data);
+    });
+    //socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
 });

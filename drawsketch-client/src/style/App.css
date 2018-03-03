@@ -1,0 +1,16 @@
+.Main {
+  margin: 0 auto;
+  width: 250px;
+}
+
+a:hover {
+  text-decoration:none;
+  color: #999;
+}
+
+.header {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  font-size: 40px;
+  color: #337ab7;
+}

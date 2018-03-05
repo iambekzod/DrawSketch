@@ -27,7 +27,9 @@ export default class Login extends Component {
     event.preventDefault();
 
     socket.emit('login', JSON.stringify(this.state));
-    //alert(JSON.stringify(this.state));
+    socket.on('check-login', function(data) {
+      console.log(data);
+  });
   }
 
   render() {

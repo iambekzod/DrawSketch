@@ -15,8 +15,10 @@ const https = require('https');
 const socketIO = require('socket.io');
 
 const keys = require('./keys.js');
-const accounts = require('./user.js');
+const Accounts = require('./accounts.js');
 
+// Helper functions
+// ===================================================
 
 function generateSalt() {
     return crypto.randomBytes(16).toString('base64');
@@ -32,6 +34,8 @@ function generateHash(password, salt) {
 // ===================================================
 // Connection URL
 mongoose.connect(keys.mongoURL);
+
+//https://scotch.io/tutorials/using-mongoosejs-in-node-js-and-mongodb-applications
 
 // Server
 // ===================================================
@@ -72,27 +76,42 @@ io.on('connection', function (socket) {
         console.log('user disconnected');
     });
     socket.on('login', function (data) {
-        console.log("Login: " + data);
+        var request = JSON.parse(data);
+
+        if (!validator.isAlphanumeric(request.username)) return socket.emit('check-login', "bad username input, must be alphanumeric");
+        if (!validator.isAlphanumeric(request.password)) return socket.emit('check-login', "bad password input, must be alphanumeric");
+
+        Accounts.findOne({
+            username: request.username,
+        }).exec(function (err, user) {
+            if (err) return console.log(err);
+
+            if (!user) return socket.emit('check-login', "Username or password is invalid");
+            if (user.password !== generateHash(request.password, user.salt)) return socket.emit('check-login', "Username or password is invalid");
+
+            socket.emit('check-login', JSON.stringify(user));
+        });
     });
     socket.on('register', function (data) {
-        console.log("Register: " + data);
+        var request = JSON.parse(data);
 
-        var userData = JSON.parse(data);
+        if (!validator.isAlphanumeric(request.username)) return socket.emit('check-register', "bad username input, must be alphanumeric");
+        if (!validator.isAlphanumeric(request.password)) return socket.emit('check-register', "bad password input, must be alphanumeric");
+        if (!validator.isAlphanumeric(request.firstname)) return socket.emit('check-register', "bad firstname input, must be alphanumeric");
+        if (!validator.isAlphanumeric(request.lastname)) return socket.emit('check-register', "bad lastname input, must be alphanumeric");
+        if (!validator.isEmail(request.email)) return socket.emit('check-register', "bad email input, must be alphanumeric");
 
-        var username = userData.username;
-        accounts.findOne({
-            username: username,
+        Accounts.findOne({
+            username: request.username,
         }).exec(function (err, user) {
             if (err) return console.log(err);
 
             if (!user) {
-                console.log("no user");
-
                 var salt = generateSalt();
-                var hash = generateHash(userData.password, salt);
-                var newUser = accounts({
-                    name: userData.firstname + " " + userData.lastname,
-                    username: userData.username,
+                var hash = generateHash(request.password, salt);
+                var newUser = Accounts({
+                    name: request.firstname + " " + request.lastname,
+                    username: request.username,
                     password: hash,
                     salt: salt,
                   });

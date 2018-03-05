@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const socketio = require("socket.io");
 const express = require('express');
 const fs = require('fs');
-const MongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose');
 const validator = require('validator');
 const bodyParser = require('body-parser');
 const cookie = require('cookie');
@@ -14,18 +14,24 @@ const session = require('express-session');
 const https = require('https');
 const socketIO = require('socket.io');
 
+const keys = require('./keys.js');
+const accounts = require('./user.js');
+
+
+function generateSalt() {
+    return crypto.randomBytes(16).toString('base64');
+}
+
+function generateHash(password, salt) {
+    var hash = crypto.createHmac('sha512', salt);
+    hash.update(password);
+    return hash.digest('base64');
+}
+
 // Database
 // ===================================================
 // Connection URL
-
-//const collection = client.db("drawsketch").collection("accounts");
-var uri = "mongodb+srv://drawsketch-user:vnhelXsx3NfdVyh3@cluster0-bmqza.mongodb.net/test";
-var db;
-MongoClient.connect(uri, function (err, client) {
-    if (err) throw err;
-
-    db = client;
-});
+mongoose.connect(keys.mongoURL);
 
 // Server
 // ===================================================
@@ -70,6 +76,35 @@ io.on('connection', function (socket) {
     });
     socket.on('register', function (data) {
         console.log("Register: " + data);
+
+        var userData = JSON.parse(data);
+
+        var username = userData.username;
+        accounts.findOne({
+            username: username,
+        }).exec(function (err, user) {
+            if (err) return console.log(err);
+
+            if (!user) {
+                console.log("no user");
+
+                var salt = generateSalt();
+                var hash = generateHash(userData.password, salt);
+                var newUser = accounts({
+                    name: userData.firstname + " " + userData.lastname,
+                    username: userData.username,
+                    password: hash,
+                    salt: salt,
+                  });
+
+                newUser.save(function (err) {
+                    if (err) console.log(err);
+                    else socket.emit('check-register', user);
+                });
+            } else {
+                socket.emit('check-register', "Username already exists");
+            }
+        });
     });
     //socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
 });

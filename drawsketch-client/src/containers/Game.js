@@ -2,8 +2,8 @@ import React from 'react'
 import {observer} from "mobx-react"
 import {autorun, action, extendObservable} from 'mobx'
 import "../style/form.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
+import ReactDOM from 'react-dom';
 const colors = {
     blue: "2C86DF",
     red: "#ff1a1a",
@@ -95,8 +95,7 @@ export const TodoList = observer(class TodoList extends React.Component {
     render() {
         return (
             <div>
-                <canvas className="canvas" ref="canvas" width={656} height={400}/>
-                <SideBar/>
+                <canvas className="whiteboard" ref="canvas" width={656} height={400}/>
             </div>
 
         );
@@ -121,10 +120,9 @@ export const TodoList = observer(class TodoList extends React.Component {
             }
         }
     }
+})
 
-});
-
-export const SideBar = observer(class TodoList extends React.Component {
+const SideBar = observer(class TodoList extends React.Component {
     render() {
         return (
             <div className="listGroup">

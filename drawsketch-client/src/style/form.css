@@ -8,6 +8,10 @@
     }
 }
 
+.canvas {
+    border: solid black 1px;
+}
+
 .App {
     margin-top: 15px;
 }

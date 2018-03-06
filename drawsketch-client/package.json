@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "bootstrap": "^4.0.0-alpha.6",
+    "bootstrap": "^4.0.0",
     "font-awesome": "^4.7.0",
     "mobx": "^3.6.1",
     "mobx-react": "^4.4.2",
@@ -13,6 +13,7 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
+    "reactstrap": "^5.0.0-beta.2",
     "socket.io-client": "^2.0.4"
   },
   "scripts": {

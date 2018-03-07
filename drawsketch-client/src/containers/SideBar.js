@@ -2,7 +2,7 @@ import React from 'react'
 import {observer} from "mobx-react"
 import "../style/form.css";
 import {CustomDropDown} from "./CustomDropDown"
-import {ListGroup} from 'reactstrap';
+import {ListGroup, ListGroupItem} from 'reactstrap';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
@@ -26,17 +26,24 @@ export const SideBar = observer(class TodoList extends React.Component {
     render() {
         return (
             <ListGroup className="list-group-flush" style={sideBarStyle}>
-                <CustomDropDown>
+                <CustomDropDown iconType="pen">
                     <i className="fa fa-pencil"></i>
                 </CustomDropDown>
-                <CustomDropDown>
+                <CustomDropDown iconType="color">
                     <img
                         src="https://image.flaticon.com/icons/svg/61/61092.svg"
                         style={paletteStyle}></img>
                 </CustomDropDown>
-                <CustomDropDown>
+                <ListGroupItem
+                    action
+                    style={{
+                    border: "0 none",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignContent: "center"
+                }}>
                     <i className="fa fa-eraser"></i>
-                </CustomDropDown>
+                </ListGroupItem>
             </ListGroup>
         );
     }

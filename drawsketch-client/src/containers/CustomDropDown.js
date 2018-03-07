@@ -1,10 +1,17 @@
 import React, {Component} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
-import {ListGroupItem, Dropdown, DropdownMenu, DropdownItem, DropdownToggle} from 'reactstrap';
+import {
+    ListGroupItem,
+    Row,
+    Dropdown,
+    DropdownMenu,
+    DropdownItem,
+    DropdownToggle
+} from 'reactstrap';
 import "../style/dropdown.css";
 const itemStyle = {
-    borderTop: "0 none"
+    border: "0 none"
 
 }
 
@@ -24,6 +31,43 @@ export const CustomDropDown = class CustomDropDown extends Component {
         });
     }
     render() {
+        let menu = null
+        if (this.props.iconType == "color") {
+            menu = <div>
+                <div>
+                    <Row>
+                        <button
+                            style={{
+                            backgroundColor: "red"
+                        }}
+                            className="colorSelect"></button>
+                        <button
+                            style={{
+                            backgroundColor: "blue"
+                        }}
+                            className="colorSelect"></button>
+                        <button
+                            style={{
+                            backgroundColor: "yellow"
+                        }}
+                            className="colorSelect"></button>
+                        <button
+                            style={{
+                            backgroundColor: "green"
+                        }}
+                            className="colorSelect"></button>
+                    </Row>
+                </div>
+                <div>
+                    <input
+                        style={{
+                        marginLeft: "20px"
+                    }}type="color"/>
+                </div>
+            </div>
+        } else if (this.props.iconType == "pen") {
+            menu = <div><input type="range" min="1" max="100" value="50" className="slider"/></div>
+        }
         return (
             <div className="container">
                 <Dropdown
@@ -47,8 +91,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
                         style={{
                         marginLeft: "1rem"
                     }}>
-                        <DropdownItem>Another Action</DropdownItem>
-                        <DropdownItem>Another Action</DropdownItem>
+                        {menu}
                     </DropdownMenu>
                 </Dropdown>
             </div>

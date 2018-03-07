@@ -12,8 +12,8 @@ const sideBarStyle = {
 }
 
 const paletteStyle = {
-    maxWidth: "100%",
-    maxHeight: "100%"
+    width: "25px",
+    height: "25px"
 }
 
 export const SideBar = observer(class TodoList extends React.Component {

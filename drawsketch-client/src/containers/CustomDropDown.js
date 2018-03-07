@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
 import {ListGroupItem, Dropdown, DropdownMenu, DropdownItem, DropdownToggle} from 'reactstrap';
+import "../style/dropdown.css";
 const itemStyle = {
     borderTop: "0 none"
 
@@ -24,7 +25,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
     }
     render() {
         return (
-            <div>
+            <div className="container">
                 <Dropdown
                     direction="right"
                     isOpen={this.state.btnDropright}

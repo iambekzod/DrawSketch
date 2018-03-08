@@ -54,7 +54,7 @@ class ObservableTodoStore {
             }),
             setCurColor: action((set) => this.curColor = set),
             setPaint: action((set) => this.isPainting = set),
-            setWidth: action((width) => this.width = width),
+            setWidth: action((width) => this.brushWidth = width),
             setColor: action((color) => this.paintColor.push(color))
         })
     }

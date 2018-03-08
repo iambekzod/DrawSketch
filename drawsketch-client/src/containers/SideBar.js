@@ -41,7 +41,8 @@ export const SideBar = observer(class TodoList extends React.Component {
                     display: "flex",
                     justifyContent: "center",
                     alignContent: "center"
-                }}>
+                }}
+                    onClick={this.erase}>
                     <i className="fa fa-eraser"></i>
                 </ListGroupItem>
             </ListGroup>

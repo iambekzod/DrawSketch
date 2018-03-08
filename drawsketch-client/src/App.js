@@ -10,7 +10,6 @@ class App extends Component {
   render() {
     return (
       <div className="App container">
-        <a href="/" className="header">DrawSketch</a>
         <Routes/>
       </div>
     );

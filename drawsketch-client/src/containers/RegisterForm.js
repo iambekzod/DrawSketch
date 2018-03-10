@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import "../style/form.css";
 import socket from "./Socket"
 
@@ -39,60 +39,61 @@ export default class Login extends Component {
   render() {
     return (
       <div className="Login">
-        <form onSubmit={this.handleSubmit}>
-        <FormGroup controlId="username" bsSize="large">
-            <ControlLabel>Username</ControlLabel>
-            <FormControl
-              autoFocus
-              value={this.state.username}
-              onChange={this.handleChange}
-            />
+        <Form onSubmit={this.handleSubmit}>
+          <FormGroup>
+              <Label>Username</Label>
+              <Input 
+                id="username"
+                autoFocus
+                value={this.state.username} 
+                onChange={this.handleChange} />
+            </FormGroup>
+            <FormGroup>
+              <Label>First Name</Label>
+              <Input 
+                id="firstname"
+                value={this.state.firstname} 
+                onChange={this.handleChange} />
+            </FormGroup>
+            <FormGroup>
+              <Label>Last Name</Label>
+              <Input 
+                id="lastname"
+                value={this.state.lastname} 
+                onChange={this.handleChange} />
+            </FormGroup>
+            <FormGroup>
+              <Label>Email</Label>
+              <Input 
+                id="email"
+                type="email"
+                value={this.state.email} 
+                onChange={this.handleChange} />
+            </FormGroup>
+            <FormGroup>
+            <Label>Password</Label>
+            <Input 
+              id="password"
+              type="password" 
+              value={this.state.password} 
+              onChange={this.handleChange} />
           </FormGroup>
-          <FormGroup controlId="firstname" bsSize="large">
-            <ControlLabel>First Name</ControlLabel>
-            <FormControl
-              value={this.state.firstname}
-              onChange={this.handleChange}
-            />
+          <FormGroup>
+            <Label>Confirm Password</Label>
+            <Input 
+              id="confirmpassword"
+              type="password" 
+              value={this.state.confirmpassword} 
+              onChange={this.handleChange} />
           </FormGroup>
-          <FormGroup controlId="lastname" bsSize="large">
-            <ControlLabel>Last Name</ControlLabel>
-            <FormControl
-              value={this.state.lastname}
-              onChange={this.handleChange}
-            />
-          </FormGroup>
-          <FormGroup controlId="email" bsSize="large">
-            <ControlLabel>Email</ControlLabel>
-            <FormControl
-              value={this.state.email}
-              onChange={this.handleChange}
-              type="email"
-            />
-          </FormGroup>
-          <FormGroup controlId="password" bsSize="large">
-            <ControlLabel>Password</ControlLabel>
-            <FormControl
-              value={this.state.password}
-              onChange={this.handleChange}
-              type="password"
-            />
-          </FormGroup>          
-          <FormGroup controlId="confirmpassword" bsSize="large">
-            <ControlLabel>Confirm Password</ControlLabel>
-            <FormControl
-              value={this.state.confirmpassword}
-              onChange={this.handleChange}
-              type="password"
-            />
-          </FormGroup>
-          <Button
-            block
-            bsSize="large"
-            disabled={!this.validateForm()}
-            type="submit"
-          >Register</Button>
-        </form>
+          <Button 
+              color="primary" 
+              disabled={!this.validateForm()} 
+              type="submit" 
+              size="lg">
+              Register
+            </Button>
+        </Form>
       </div>
     );
   }

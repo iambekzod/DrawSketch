@@ -13,11 +13,11 @@
 }
 
 .App {
-    margin-top: 15px;
+    /* margin-top: 15px; */
 }
 
 .App .navbar-brand {
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
 .Home .lander {
@@ -41,6 +41,6 @@
     justify-content: center;
 }
 
-.control-panel .btn-primary {
+.control-panel .btn {
     margin-right: 25px;
 }

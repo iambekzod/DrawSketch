@@ -32,7 +32,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
     }
     render() {
         let menu = null
-        if (this.props.iconType == "color") {
+        if (this.props.iconType === "color") {
             menu = <div>
                 <div>
                     <Row>
@@ -65,7 +65,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
                     }}type="color"/>
                 </div>
             </div>
-        } else if (this.props.iconType == "pen") {
+        } else if (this.props.iconType === "pen") {
             menu = <div><input type="range" min="1" max="100" value="50" className="slider"/></div>
         }
         return (

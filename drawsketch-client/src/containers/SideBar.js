@@ -32,6 +32,7 @@ export const SideBar = observer(class TodoList extends React.Component {
                 <CustomDropDown iconType="color">
                     <img
                         src="https://image.flaticon.com/icons/svg/61/61092.svg"
+                        alt="palette"
                         style={paletteStyle}></img>
                 </CustomDropDown>
                 <ListGroupItem

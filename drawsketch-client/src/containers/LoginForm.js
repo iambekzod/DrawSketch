@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import "../style/form.css";
 import socket from "./Socket";
 
@@ -35,32 +35,31 @@ export default class Login extends Component {
   render() {
     return (
       <div className="Login">
-        <form onSubmit={this.handleSubmit}>
-          <FormGroup controlId="username" bsSize="large">
-            <ControlLabel>Username</ControlLabel>
-            <FormControl
-              autoFocus
-              value={this.state.username}
-              onChange={this.handleChange}
-            />
-          </FormGroup>
-          <FormGroup controlId="password" bsSize="large">
-            <ControlLabel>Password</ControlLabel>
-            <FormControl
-              value={this.state.password}
-              onChange={this.handleChange}
-              type="password"
-            />
-          </FormGroup>
-          <Button
-            block
-            bsSize="large"
-            disabled={!this.validateForm()}
-            type="submit"
-          >
-            Login
-          </Button>
-        </form>
+        <Form onSubmit={this.handleSubmit}>
+          <FormGroup>
+              <Label>Username</Label>
+              <Input 
+                id="username"
+                autoFocus
+                value={this.state.username} 
+                onChange={this.handleChange} />
+            </FormGroup>
+            <FormGroup>
+              <Label>Password</Label>
+              <Input 
+                id="password"
+                value={this.state.password} 
+                onChange={this.handleChange} 
+                type="password" />
+            </FormGroup>
+            <Button 
+              color="primary" 
+              disabled={!this.validateForm()} 
+              type="submit" 
+              size="lg">
+              Login
+            </Button>
+        </Form>
       </div>
     );
   }

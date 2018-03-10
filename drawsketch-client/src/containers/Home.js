@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom'
-import { Button } from "react-bootstrap";
+import { Button } from "reactstrap";
 import "../style/form.css";
 
 export default class Home extends Component {
@@ -11,8 +11,8 @@ export default class Home extends Component {
           <h1>DrawSketch</h1>
           <p>A drawing game fun for everyone</p>
           <div className="control-panel">
-            <Link to="/login"><Button className="" bsStyle="primary" bsSize="large">Login</Button></Link>
-            <Link to="/register"><Button className="btn" bsSize="large">Register</Button></Link>
+            <Link to="/login"><Button outline color="primary" size="lg">Login</Button></Link>
+            <Link to="/register"><Button outline color="primary" size="lg">Register</Button></Link>
           </div>    
         </div>
       </div>

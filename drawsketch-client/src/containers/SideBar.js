@@ -22,13 +22,25 @@ export const SideBar = observer(class TodoList extends React.Component {
         this.erase = this
             .erase
             .bind(this);
+        this.paint = this
+            .paint
+            .bind(this);
     }
     render() {
         return (
             <ListGroup className="list-group-flush" style={sideBarStyle}>
-                <CustomDropDown iconType="pen">
-                    <i className="fa fa-pencil"></i>
-                </CustomDropDown>
+                <ListGroupItem
+                    action
+                    style={{
+                        border: "0 none",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignContent: "center"
+                    }} onClick={this.paint}>
+                    <CustomDropDown iconType="pen">
+                        <i className="fa fa-pencil"></i>
+                    </CustomDropDown>
+                </ListGroupItem>    
                 <CustomDropDown iconType="color">
                     <img
                         src="https://image.flaticon.com/icons/svg/61/61092.svg"
@@ -38,12 +50,11 @@ export const SideBar = observer(class TodoList extends React.Component {
                 <ListGroupItem
                     action
                     style={{
-                    border: "0 none",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignContent: "center"
-                }}
-                    onClick={this.erase}>
+                        border: "0 none",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignContent: "center"
+                    }} onClick={this.erase}>
                     <i className="fa fa-eraser"></i>
                 </ListGroupItem>
             </ListGroup>
@@ -54,11 +65,19 @@ export const SideBar = observer(class TodoList extends React.Component {
             .props
             .store
             .setCurColor("white");
+            this
+            .props
+            .store
+            .setWidth(50)
+    }
+    paint() {
         this
             .props
             .store
-            .setWidth(60);
+            .setCurColor("black");
+        this
+            .props
+            .store
+            .setWidth(2);
     }
-    paint() {}
-
 })

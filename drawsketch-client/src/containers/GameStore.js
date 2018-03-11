@@ -5,6 +5,7 @@ class ObservableTodoStore {
             isPainting: false,
             xPos: [],
             yPos: [],
+            penWidth: [],
             dragging: [],
             paintColor: [],
             brushWidth: 2,
@@ -32,6 +33,11 @@ class ObservableTodoStore {
                     .yPos
                     .map(e => e);
             },
+            get getPenWidth() {
+                return this
+                    .penWidth
+                    .map(e => e);
+            },
             get getDrag() {
                 return this
                     .dragging
@@ -44,6 +50,9 @@ class ObservableTodoStore {
                 this
                     .yPos
                     .push(y);
+                this
+                    .penWidth
+                    .push(this.getWidth);
                 this
                     .dragging
                     .push(dragging);

@@ -58,12 +58,11 @@ export const TodoList = observer(class TodoList extends React.Component {
         const canvas = this.refs.canvas
         const store = this.props.store;
         const context = canvas.getContext("2d")
-        console.log(store);
         context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
         context.lineJoin = "round";
-        context.lineWidth = store.getWidth;
 
         for (var i = 0; i < store.getX.length; i++) {
+            context.lineWidth = store.getPenWidth[i];
             if (store.dragging[i]) {
                 context.beginPath();
                 context.moveTo(store.getX[i - 1], store.getY[i - 1])

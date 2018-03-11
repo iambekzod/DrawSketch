@@ -65,6 +65,10 @@ export const SideBar = observer(class TodoList extends React.Component {
             .props
             .store
             .setCurColor("white");
+            this
+            .props
+            .store
+            .setWidth(50)
     }
     paint() {
         this
@@ -76,5 +80,4 @@ export const SideBar = observer(class TodoList extends React.Component {
             .store
             .setWidth(2);
     }
-
 })

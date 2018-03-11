@@ -57,7 +57,7 @@ export const SideBar = observer(class TodoList extends React.Component {
         this
             .props
             .store
-            .setWidth(60);
+            .setWidth(50)
     }
     paint() {}
 

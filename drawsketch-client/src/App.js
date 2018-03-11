@@ -2,17 +2,34 @@ import React, {Component} from "react";
 import "./style/App.css";
 import Routes from "./Routes";
 import { Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
+import PropTypes from 'prop-types';
+import { inject, observer } from 'mobx-react';
 
+const io = require('socket.io-client');
 // https://github.com/benawad/react-native-login
 // https://serverless-stack.com/chapters/create-a-login-page.html
+//https://stackoverflow.com/questions/45610448/socket-io-opening-multiple-connections-with-react-native
+//https://stackoverflow.com/questions/36120119/reactjs-how-to-share-a-websocket-between-components
 
 class App extends Component {
+  componentWillMount() {
+    if (!this.props.commonStore.token) {
+      this.props.commonStore.setAppLoaded();
+    }
+  }
 
+  componentDidMount() {
+    if (this.props.commonStore.token) {
+      this.props.userStore.pullUser()
+        .finally(() => this.props.commonStore.setAppLoaded());
+    }
+  }
+  
   render() {
     return (
       <div >
         <Navbar color="faded" light expand="md">
-          <NavbarBrand href="/">DrawSketch</NavbarBrand>
+          <NavbarBrand className="header" href="/">DrawSketch</NavbarBrand>
           <NavbarToggler/>
             <Nav className="ml-auto" navbar>
               <NavItem>
@@ -26,4 +43,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default App = inject('userStore', 'commonStore')(observer(App))

@@ -5,8 +5,8 @@ import Login from "./containers/LoginForm";
 import Register from "./containers/RegisterForm";
 import Credits from "./containers/Credits";
 import NotFound from "./containers/NotFound";
-import {TodoList} from "./containers/Game"
-import {observableTodoStore} from './containers/GameStore'
+import {TodoList} from "./containers/Canvas"
+import {observableTodoStore} from './stores/gameStore'
 
 export default() => <Switch>
   <Route path="/" exact component={Home}/>

@@ -72,12 +72,12 @@ class AuthStore {
   }
 }
 
-action(AuthStore.prototype, "setUsername");
-action(AuthStore.prototype, "setEmail");
-action(AuthStore.prototype, "setPassword");
-action(AuthStore.prototype, "reset");
-action(AuthStore.prototype, "login");
-action(AuthStore.prototype, "register");
-action(AuthStore.prototype, "logout");
+action(AuthStore.prototype, "setUsername", Object.getOwnPropertyDescriptor(AuthStore.prototype, "setUsername"));
+action(AuthStore.prototype, "setEmail", Object.getOwnPropertyDescriptor(AuthStore.prototype, "setEmail"));
+action(AuthStore.prototype, "setPassword", Object.getOwnPropertyDescriptor(AuthStore.prototype, "setPassword"));
+action(AuthStore.prototype, "reset", Object.getOwnPropertyDescriptor(AuthStore.prototype, "reset"));
+action(AuthStore.prototype, "login", Object.getOwnPropertyDescriptor(AuthStore.prototype, "login"));
+action(AuthStore.prototype, "register", Object.getOwnPropertyDescriptor(AuthStore.prototype, "register"));
+action(AuthStore.prototype, "logout", Object.getOwnPropertyDescriptor(AuthStore.prototype, "logout"));
 
 export default new AuthStore();

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from "react-router-dom";
+import { Route, BrowserRouter } from "react-router-dom";
 import './style/index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
@@ -28,7 +28,7 @@ useStrict(true);
 ReactDOM.render((
   <Provider {...stores}>
     <BrowserRouter>
-      <App />
+      <Route component={App} />
     </BrowserRouter>
   </Provider>), document.getElementById('root'));
 registerServiceWorker();

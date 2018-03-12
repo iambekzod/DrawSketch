@@ -10,6 +10,10 @@ import {
     DropdownToggle
 } from 'reactstrap';
 import "../style/dropdown.css";
+import Slider from 'react-rangeslider'
+import 'react-rangeslider/lib/index.css'
+
+
 const itemStyle = {
     border: "0 none"
 
@@ -22,7 +26,8 @@ export const CustomDropDown = class CustomDropDown extends Component {
             .toggle
             .bind(this);
         this.state = {
-            dropdownOpen: false
+            dropdownOpen: false,
+            value: 2
         };
     }
     toggle() {
@@ -40,7 +45,24 @@ export const CustomDropDown = class CustomDropDown extends Component {
             .store
             .setWidth(2);
     }
+    handleChange = value => {
+        this.setState({
+          value: value
+        });
+        this
+            .props
+            .store
+            .setWidth(value);
+    };
+    changeColor = hex => {
+        this.props.store.setCurColor(hex.target.value);
+        this
+            .props
+            .store
+            .setWidth(2);
+    }
     render() {
+        let { value } = this.state;
         let menu = null
         if (this.props.iconType === "color") {
             menu = <div>
@@ -76,11 +98,19 @@ export const CustomDropDown = class CustomDropDown extends Component {
                     <input
                         style={{
                         marginLeft: "20px"
-                    }}type="color"/>
+                    }}type="color"
+                    onChange={this.changeColor}/>
                 </div>
             </div>
         } else if (this.props.iconType === "pen") {
-            menu = <div><input type="range" min="1" max="100" value="50" className="slider"/></div>
+            menu = <div className='slider'>
+                        <Slider
+                          min={0}
+                          max={15}
+                          step = {0.2}
+                          value={value}
+                          onChange={this.handleChange}/>
+                    </div>
         }
 
         console.log(menu)

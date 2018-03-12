@@ -26,10 +26,13 @@ export const SideBar = observer(class TodoList extends React.Component {
             .paint
             .bind(this);
     }
+    paint(){
+        this.props.store.setCurColor("black");
+        this.props.store.setWidth(2);
+    }
     render() {
         return (
             <ListGroup className="list-group-flush" style={sideBarStyle}>
-                <CustomDropDown store={this.props.store}/>
                 <ListGroupItem
                     action
                     style={{
@@ -39,8 +42,19 @@ export const SideBar = observer(class TodoList extends React.Component {
                     alignContent: "center"
                 }}
                     onClick={this.paint}>
+                    <i className="fa fa-pencil"></i>
+                </ListGroupItem>
+                <ListGroupItem
+                    action
+                    style={{
+                    border: "0 none",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignContent: "center"
+                }}
+                    >
                     <CustomDropDown store={this.props.store} iconType="pen">
-                        <i className="fa fa-pencil"></i>
+                        <i className="fa fa-bullseye"></i>
                     </CustomDropDown>
                 </ListGroupItem>
                 <CustomDropDown store={this.props.store} iconType="color">
@@ -79,15 +93,5 @@ export const SideBar = observer(class TodoList extends React.Component {
             .props
             .store
             .setWidth(50)
-    }
-    paint() {
-        this
-            .props
-            .store
-            .setCurColor("black");
-        this
-            .props
-            .store
-            .setWidth(2);
     }
 })

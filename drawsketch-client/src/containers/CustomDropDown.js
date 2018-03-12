@@ -30,6 +30,16 @@ export const CustomDropDown = class CustomDropDown extends Component {
             dropdownOpen: !this.state.dropdownOpen
         });
     }
+    paint(color) {
+        this
+            .props
+            .store
+            .setCurColor(color);
+        this
+            .props
+            .store
+            .setWidth(2);
+    }
     render() {
         let menu = null
         if (this.props.iconType === "color") {
@@ -40,22 +50,26 @@ export const CustomDropDown = class CustomDropDown extends Component {
                             style={{
                             backgroundColor: "red"
                         }}
-                            className="colorSelect"></button>
+                            className="colorSelect"
+                            onClick={this.paint.bind(this, "red")}></button>
                         <button
                             style={{
                             backgroundColor: "blue"
                         }}
-                            className="colorSelect"></button>
+                            className="colorSelect"
+                            onClick={this.paint.bind(this, "blue")}></button>
                         <button
                             style={{
                             backgroundColor: "yellow"
                         }}
-                            className="colorSelect"></button>
+                            className="colorSelect"
+                            onClick={this.paint.bind(this, "yellow")}></button>
                         <button
                             style={{
                             backgroundColor: "green"
                         }}
-                            className="colorSelect"></button>
+                            className="colorSelect"
+                            onClick={this.paint.bind(this, "green")}></button>
                     </Row>
                 </div>
                 <div>

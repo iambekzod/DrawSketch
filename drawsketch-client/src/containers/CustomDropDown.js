@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
-import {observer} from "mobx-react"
 import {
     ListGroupItem,
     Row,
@@ -15,7 +14,8 @@ const itemStyle = {
     border: "0 none"
 
 }
-export const CustomDropDown = observer(class CustomDropDown extends Component {
+
+export const CustomDropDown = class CustomDropDown extends Component {
     constructor(props) {
         super(props)
         this.toggle = this
@@ -24,21 +24,13 @@ export const CustomDropDown = observer(class CustomDropDown extends Component {
         this.state = {
             dropdownOpen: false
         };
-        this.paint = this
-            .paint
-            .bind(this);
     }
     toggle() {
         this.setState({
             dropdownOpen: !this.state.dropdownOpen
         });
     }
-    paint() {
-        // check for this.props.store object
-        console.log(this.props.store)
-    }
     render() {
-        console.log(this.props.store)
         let menu = null
         if (this.props.iconType === "color") {
             menu = <div>
@@ -46,24 +38,22 @@ export const CustomDropDown = observer(class CustomDropDown extends Component {
                     <Row>
                         <button
                             style={{
-                                backgroundColor: "red"
-                            }}
-                            className="colorSelect"
-                            onClick={this.paint}
-                            ></button>
-                        <button
-                            style={{
-                                backgroundColor: "blue"
-                            }}
+                            backgroundColor: "red"
+                        }}
                             className="colorSelect"></button>
                         <button
                             style={{
-                                backgroundColor: "yellow"
-                            }}
+                            backgroundColor: "blue"
+                        }}
                             className="colorSelect"></button>
                         <button
                             style={{
-                                backgroundColor: "green"
+                            backgroundColor: "yellow"
+                        }}
+                            className="colorSelect"></button>
+                        <button
+                            style={{
+                            backgroundColor: "green"
                         }}
                             className="colorSelect"></button>
                     </Row>
@@ -76,8 +66,10 @@ export const CustomDropDown = observer(class CustomDropDown extends Component {
                 </div>
             </div>
         } else if (this.props.iconType === "pen") {
-            menu = <div><input type="range" id="slider" min="1" max="100" className="slider"/></div>
+            menu = <div><input type="range" min="1" max="100" value="50" className="slider"/></div>
         }
+
+        console.log(menu)
         return (
             <div className="container">
                 <Dropdown
@@ -93,18 +85,18 @@ export const CustomDropDown = observer(class CustomDropDown extends Component {
                         onClick={this.toggle}
                         data-toggle="dropdown"
                         aria-expanded={this.state.dropdownOpen}>
-                        <ListGroupItem onClick={this.erase} style={itemStyle} action>
-                            {this.props.children}
-                        </ListGroupItem >
+                        {this.props.children}
                     </DropdownToggle>
                     <DropdownMenu
                         style={{
                         marginLeft: "1rem"
                     }}>
-                        {menu}
+                        <div>
+                            {menu}
+                        </div>
                     </DropdownMenu>
                 </Dropdown>
             </div>
         )
     }
-})
+}

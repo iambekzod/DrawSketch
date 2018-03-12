@@ -33,29 +33,38 @@ export const SideBar = observer(class TodoList extends React.Component {
                 <ListGroupItem
                     action
                     style={{
-                        border: "0 none",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignContent: "center"
-                    }} onClick={this.paint}>
-                    <CustomDropDown iconType="pen">
+                    border: "0 none",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignContent: "center"
+                }}
+                    onClick={this.paint}>
+                    <CustomDropDown store={this.props.store} iconType="pen">
                         <i className="fa fa-pencil"></i>
                     </CustomDropDown>
-                </ListGroupItem>    
-                <CustomDropDown iconType="color">
-                    <img
-                        src="https://image.flaticon.com/icons/svg/61/61092.svg"
-                        alt="palette"
-                        style={paletteStyle}></img>
+                </ListGroupItem>
+                <CustomDropDown store={this.props.store} iconType="color">
+                    <ListGroupItem
+                        action
+                        style={{
+                        border: "0 none",
+                        display: "flex"
+                    }}>
+                        <img
+                            src="https://image.flaticon.com/icons/svg/61/61092.svg"
+                            alt="palette"
+                            style={paletteStyle}></img>
+                    </ListGroupItem>
                 </CustomDropDown>
                 <ListGroupItem
                     action
                     style={{
-                        border: "0 none",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignContent: "center"
-                    }} onClick={this.erase}>
+                    border: "0 none",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignContent: "center"
+                }}
+                    onClick={this.erase}>
                     <i className="fa fa-eraser"></i>
                 </ListGroupItem>
             </ListGroup>
@@ -66,7 +75,7 @@ export const SideBar = observer(class TodoList extends React.Component {
             .props
             .store
             .setCurColor("white");
-            this
+        this
             .props
             .store
             .setWidth(50)

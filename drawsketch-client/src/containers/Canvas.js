@@ -6,6 +6,8 @@ import {autorun} from "mobx";
 import {SideBar} from './SideBar';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
+import io from 'socket.io-client';
+
 const colors = {
     blue: "2C86DF",
     red: "#ff1a1a",
@@ -13,6 +15,7 @@ const colors = {
 }
 
 export const TodoList = observer(class TodoList extends React.Component {
+
     constructor(props) {
         super(props);
         this.redraw = this
@@ -20,6 +23,13 @@ export const TodoList = observer(class TodoList extends React.Component {
             .bind(this);
     }
     componentDidMount() {
+        const socket = io('https://localhost:3001/');
+        setInterval(() => {
+            socket.emit('gameState', "testing");
+        }, 5000)
+        socket.on('return', function (msg) {
+            console.log("SENDING BACK DATA", msg);
+        });
         const canvas = this.refs.canvas
         autorun(() => console.log(this.props.store.Paint));
         const store = this.props.store;

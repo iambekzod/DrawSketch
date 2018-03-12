@@ -8,8 +8,8 @@ import { inject, observer } from 'mobx-react';
 const io = require('socket.io-client');
 // https://github.com/benawad/react-native-login
 // https://serverless-stack.com/chapters/create-a-login-page.html
-//https://stackoverflow.com/questions/45610448/socket-io-opening-multiple-connections-with-react-native
-//https://stackoverflow.com/questions/36120119/reactjs-how-to-share-a-websocket-between-components
+
+//https://github.com/gothinkster/react-mobx-realworld-example-app/tree/master/src
 
 class App extends Component {
   componentWillMount() {

@@ -1,64 +1,53 @@
 import React, { Component } from "react";
-import { PropTypes } from "prop-types";
+
+import ResultErrors from "./ResultErrors";
 
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import "../style/form.css";
+import { inject, observer } from 'mobx-react';
 
-export default class Login extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      username: "",
-      password: ""
-    };
+class Login extends Component {
+  componentWillUnmount() {
+    this.props.authStore.reset();
   }
 
-  validateForm() {
-    return this.state.username.length > 0 && this.state.password.length > 0;
-  }
-
-  handleChange = event => {
-    this.setState({
-      [event.target.id]: event.target.value
-    });
-  }
-
-  handleSubmit = event => {
-    event.preventDefault();
-
-    // const socket = this.props.socket;
-
-    // socket.emit('login', JSON.stringify(this.state));
-    // socket.on('check-login', function(data) {
-    //   var parsed = JSON.parse(data);
-    //   console.log(parsed);
-    // });
-  }
+  handleEmailChange = e => this.props.authStore.setEmail(e.target.value);
+  handlePasswordChange = e => this.props.authStore.setPassword(e.target.value);
+  handleSubmitForm = (e) => {
+    e.preventDefault();
+    this.props.authStore.login()
+      .then(() => this.props.history.replace('/'));
+  };
 
   render() {
+    const { values, errors, inProgress } = this.props.authStore;
+
     return (
       <div className="Login">
-        <Form onSubmit={this.handleSubmit}>
+        <ResultErrors errors={errors} />
+
+        <Form onSubmit={this.handleSubmitForm}>
           <FormGroup>
               <Label>Username</Label>
               <Input 
                 id="username"
                 autoFocus
-                value={this.state.username} 
-                onChange={this.handleChange} />
+                placeholder="Username"
+                value={values.email}
+                onChange={this.handleEmailChange} />
             </FormGroup>
             <FormGroup>
               <Label>Password</Label>
               <Input 
                 id="password"
-                value={this.state.password} 
-                onChange={this.handleChange} 
+                placeholder="Password"
+                value={values.password}
+                onChange={this.handlePasswordChange}
                 type="password" />
             </FormGroup>
             <Button 
               color="primary" 
-              disabled={!this.validateForm()} 
+              disabled={inProgress}
               type="submit" 
               size="lg">
               Login
@@ -69,6 +58,4 @@ export default class Login extends Component {
   }
 }
 
-Login.contextTypes = {
-  websocket: PropTypes.object
-}
+export default Login = inject('authStore')(observer(Login))

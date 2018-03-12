@@ -9,13 +9,13 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bodyParser = require('body-parser');
-const cookie = require('cookie');
+// const cookie = require('cookie');
 const session = require('express-session');
 const https = require('https');
 const socketIO = require('socket.io');
 const cors = require('cors');
 
-const keys = require('./keys.js');
+const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
 
 // Helper functions
@@ -45,7 +45,11 @@ const app = express();
 app.use(express.static('public'));
 app.use(cors());
 
+app.use(session({ secret: 'Drawsketch C09', cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
+
+
 app.use(require('./routes'));
+require('./config/passport.js');
 
 app.use(function (req, res, next) {
     res.status(501).end("Invalid API endpoint: " + req.url);

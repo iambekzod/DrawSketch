@@ -1,5 +1,5 @@
 var jwt = require('jsonwebtoken');
-var secret = require('../keys.js').jwtSecret;
+var secret = require('../config/keys.js').jwtSecret;
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;

@@ -29,6 +29,7 @@ export const SideBar = observer(class TodoList extends React.Component {
     render() {
         return (
             <ListGroup className="list-group-flush" style={sideBarStyle}>
+                <CustomDropDown store={this.props.store}/>
                 <ListGroupItem
                     action
                     style={{

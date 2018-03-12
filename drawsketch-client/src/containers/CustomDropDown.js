@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
+import {observer} from "mobx-react"
 import {
     ListGroupItem,
     Row,
@@ -14,8 +15,7 @@ const itemStyle = {
     border: "0 none"
 
 }
-
-export const CustomDropDown = class CustomDropDown extends Component {
+export const CustomDropDown = observer(class CustomDropDown extends Component {
     constructor(props) {
         super(props)
         this.toggle = this
@@ -24,13 +24,21 @@ export const CustomDropDown = class CustomDropDown extends Component {
         this.state = {
             dropdownOpen: false
         };
+        this.paint = this
+            .paint
+            .bind(this);
     }
     toggle() {
         this.setState({
             dropdownOpen: !this.state.dropdownOpen
         });
     }
+    paint() {
+        // check for this.props.store object
+        console.log(this.props.store)
+    }
     render() {
+        console.log(this.props.store)
         let menu = null
         if (this.props.iconType === "color") {
             menu = <div>
@@ -38,22 +46,24 @@ export const CustomDropDown = class CustomDropDown extends Component {
                     <Row>
                         <button
                             style={{
-                            backgroundColor: "red"
-                        }}
+                                backgroundColor: "red"
+                            }}
+                            className="colorSelect"
+                            onClick={this.paint}
+                            ></button>
+                        <button
+                            style={{
+                                backgroundColor: "blue"
+                            }}
                             className="colorSelect"></button>
                         <button
                             style={{
-                            backgroundColor: "blue"
-                        }}
+                                backgroundColor: "yellow"
+                            }}
                             className="colorSelect"></button>
                         <button
                             style={{
-                            backgroundColor: "yellow"
-                        }}
-                            className="colorSelect"></button>
-                        <button
-                            style={{
-                            backgroundColor: "green"
+                                backgroundColor: "green"
                         }}
                             className="colorSelect"></button>
                     </Row>
@@ -66,7 +76,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
                 </div>
             </div>
         } else if (this.props.iconType === "pen") {
-            menu = <div><input type="range" min="1" max="100" className="slider"/></div>
+            menu = <div><input type="range" id="slider" min="1" max="100" className="slider"/></div>
         }
         return (
             <div className="container">
@@ -97,4 +107,4 @@ export const CustomDropDown = class CustomDropDown extends Component {
             </div>
         )
     }
-}
+})

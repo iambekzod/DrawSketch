@@ -43,9 +43,11 @@ mongoose.connect(keys.mongoURL);
 
 const app = express();
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cors());
 
-app.use(session({ secret: 'Drawsketch C09', cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
+app.use(session({ secret: keys.sessionSecret, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
 
 
 app.use(require('./routes'));

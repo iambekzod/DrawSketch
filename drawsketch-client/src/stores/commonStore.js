@@ -1,16 +1,8 @@
-import { observable, action, reaction } from 'mobx';
+import { action, reaction, extendObservable } from 'mobx';
 import agent from './agent';
 
 class CommonStore {
-
-    appName = observable("DrawSketch");
-    token = observable(window.localStorage.getItem('jwt'));
-    appLoaded = observable(false);
-    tags = observable([]);
-    isLoadingTags = observable([]);
-
     constructor() {
-
         reaction(() => this.token,
             token => {
                 if (token) {
@@ -20,26 +12,39 @@ class CommonStore {
                 }
             }
         );
-  }
 
-  loadTags() {
-    this.isLoadingTags = true;
-    return agent.Tags.getAll()
-      .then(action(({ tags }) => { this.tags = tags.map(t => t.toLowerCase()); }))
-      .finally(action(() => { this.isLoadingTags = false; }))
-  }
+        extendObservable(this, {
+            appName: "DrawSketch",
+            token: window.localStorage.getItem('jwt'),
+            appLoaded: false,
+            tags: [],
+            isLoadingTags: false,
 
- setToken(token) {
-    this.token = token;
-  }
-
-  setAppLoaded() {
-    this.appLoaded = true;
-  }
+            get AppName() {
+                return this.appName;
+            },
+            get getToken() {
+                return this.token;
+            },
+            get getAppLoaded() {
+                return this.appLoaded;
+            },
+            get getTags() {
+                return this.tags;
+            },
+            get getIsLoadingTags() {
+                return this.isLoadingTags;
+            },
+            setAppLoaded: action((set) => this.appLoaded = set),
+            setToken: action((set) => this.token = set),
+            loadTags: action(function() {
+                this.isLoadingTags = true;
+                return agent.Tags.getAll()
+                .then(action(({ tags }) => { this.tags = tags.map(t => t.toLowerCase()); }))
+                .finally(action(() => { this.isLoadingTags = false; }))
+            })
+        })
+    }
 }
-
-action(CommonStore.prototype, "loadTags", Object.getOwnPropertyDescriptor(CommonStore.prototype, "loadTags"));
-action(CommonStore.prototype, "setToken", Object.getOwnPropertyDescriptor(CommonStore.prototype, "setToken"));
-action(CommonStore.prototype, "setAppLoaded", Object.getOwnPropertyDescriptor(CommonStore.prototype, "setAppLoaded"));
 
 export default new CommonStore();

@@ -44,3 +44,23 @@
 .control-panel .btn {
     margin-right: 25px;
 }
+
+.error-messages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-spinner {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: 90px auto;
+    position: relative;
+    border-top: 3px solid rgba(0, 0, 0, 0.1);
+    border-right: 3px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 3px solid rgba(0, 0, 0, 0.1);
+    border-left: 3px solid #818a91;
+    transform: translateZ(0);
+    animation: loading-spinner 0.5s infinite linear;
+}

@@ -1,6 +1,6 @@
 var jwt = require('jsonwebtoken');
 var secret = require('../config/keys.js').jwtSecret;
-
+var crypto = require('crypto');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -12,6 +12,21 @@ var accountsSchema = new Schema({
   salt: { type: String },
   points: Number,
 });
+
+function generateHash(password, salt) {
+  var hash = crypto.createHmac('sha512', salt);
+  hash.update(password);
+  return hash.digest('base64');
+}
+
+accountsSchema.methods.validPassword = function(password) {
+  return this.password === generateHash(password, this.salt);
+};
+
+accountsSchema.methods.setPassword = function(password){
+  this.salt = crypto.randomBytes(16).toString('base64');
+  this.password = generateHash(password, this.salt);
+};
 
 accountsSchema.methods.generateJWT = function() {
   var today = new Date();
@@ -28,10 +43,9 @@ accountsSchema.methods.generateJWT = function() {
 accountsSchema.methods.toAuthJSON = function(){
   return {
     username: this.username,
-    email: this.email,
+    name: this.name,
+    points: this.points,
     token: this.generateJWT(),
-    bio: this.bio,
-    image: this.image
   };
 };
 

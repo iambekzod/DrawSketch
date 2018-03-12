@@ -1,4 +1,5 @@
 import React from 'react';
+import { UncontrolledAlert } from 'reactstrap';
 
 class ResultErrors extends React.Component {
   render() {
@@ -6,17 +7,17 @@ class ResultErrors extends React.Component {
 
     if (errors) {
       return (
-        <ul className="error-messages">
+        <div className="error-messages">
           {
             Object.keys(errors).map(key => {
               return (
-                <li key={key}>
+                <UncontrolledAlert key={key} color="danger">
                   {key} {errors[key].toString()}
-                </li>
+                </UncontrolledAlert>
               );
             })
           }
-        </ul>
+        </div>
       );
     } else {
       return null;

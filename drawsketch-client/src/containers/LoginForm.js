@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import ResultErrors from "./ResultErrors";
+import LoadingSpinner from "./LoadingSpinner";
 
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import "../style/form.css";
@@ -11,7 +12,7 @@ class Login extends Component {
     this.props.authStore.reset();
   }
 
-  handleEmailChange = e => this.props.authStore.setEmail(e.target.value);
+  handleUsernameChange = e => this.props.authStore.setUsername(e.target.value);
   handlePasswordChange = e => this.props.authStore.setPassword(e.target.value);
   handleSubmitForm = (e) => {
     e.preventDefault();
@@ -22,9 +23,13 @@ class Login extends Component {
   render() {
     const { values, errors, inProgress } = this.props.authStore;
 
+
+
     return (
       <div className="Login">
         <ResultErrors errors={errors} />
+
+        <LoadingSpinner inProgress={inProgress}/>
 
         <Form onSubmit={this.handleSubmitForm}>
           <FormGroup>
@@ -33,8 +38,8 @@ class Login extends Component {
                 id="username"
                 autoFocus
                 placeholder="Username"
-                value={values.email}
-                onChange={this.handleEmailChange} />
+                value={values.username}
+                onChange={this.handleUsernameChange} />
             </FormGroup>
             <FormGroup>
               <Label>Password</Label>

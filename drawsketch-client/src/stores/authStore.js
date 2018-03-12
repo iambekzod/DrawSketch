@@ -1,4 +1,4 @@
-import { observable, action, extendObservable } from 'mobx';
+import { action, extendObservable } from 'mobx';
 import agent from './agent';
 import userStore from './userStore';
 import commonStore from './commonStore';
@@ -26,23 +26,18 @@ class AuthStore {
       get getPassword() {
         return this.values.password;
       },
-      get getEmail() {
-        return this.values.email;
-      },
 
       setInProgres: action((set) => this.inProgress = set),
       setUsername: action((set) => this.values.username = set),
       setPassword: action((set) => this.values.password = set),
-      setEmail: action((set) => this.values.email = set),
       reset: action((set) => {
         this.values.username = '';
-        this.values.email = '',
         this.values.password = '';
       }),
       login: action(function() {
         this.inProgress = true;
         this.errors = undefined;
-        return agent.Auth.login(this.values.email, this.values.password)
+        return agent.Auth.login(this.values.username, this.values.password)
           .then(({ user }) => commonStore.setToken(user.token))
           .then(() => userStore.pullUser())
           .catch(action((err) => {

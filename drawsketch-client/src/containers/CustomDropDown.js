@@ -107,7 +107,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
                         <Slider
                           min={0}
                           max={15}
-                          step = {0.2}
+                          step = {1}
                           value={value}
                           onChange={this.handleChange}/>
                     </div>

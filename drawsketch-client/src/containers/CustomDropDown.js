@@ -102,7 +102,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
                     onChange={this.changeColor}/>
                 </div>
             </div>
-        } else if (this.props.iconType === "pen") {
+        } else if (this.props.iconType === "slider") {
             menu = <div className='slider'>
                         <Slider
                           min={0}

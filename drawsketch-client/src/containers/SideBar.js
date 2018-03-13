@@ -53,7 +53,7 @@ export const SideBar = observer(class TodoList extends React.Component {
                     alignContent: "center"
                 }}
                     >
-                    <CustomDropDown store={this.props.store} iconType="pen">
+                    <CustomDropDown store={this.props.store} iconType="slider">
                         <i className="fa fa-bullseye"></i>
                     </CustomDropDown>
                 </ListGroupItem>

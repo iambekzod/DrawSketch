@@ -1,40 +1,42 @@
 import React, {Component} from "react";
 import "./style/App.css";
 import Routes from "./Routes";
-import { Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
-import PropTypes from 'prop-types';
+import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 import { inject, observer } from 'mobx-react';
 
-const io = require('socket.io-client');
-// https://github.com/benawad/react-native-login
-// https://serverless-stack.com/chapters/create-a-login-page.html
-//https://stackoverflow.com/questions/45610448/socket-io-opening-multiple-connections-with-react-native
-//https://stackoverflow.com/questions/36120119/reactjs-how-to-share-a-websocket-between-components
+//https://github.com/gothinkster/react-mobx-realworld-example-app/tree/master/src
 
 class App extends Component {
-  componentWillMount() {
-    if (!this.props.commonStore.token) {
-      this.props.commonStore.setAppLoaded();
+
+  handleLogout = (e) => {
+    e.preventDefault();
+    this.props.authStore.logout()
+      .then(() => this.props.history.replace('/'));
+  };
+
+  componentDidMount() {
+    if (this.props.userStore.token) {
+      this.props.userStore.pullUser();
     }
   }
 
-  componentDidMount() {
-    if (this.props.commonStore.token) {
-      this.props.userStore.pullUser()
-        .finally(() => this.props.commonStore.setAppLoaded());
-    }
-  }
-  
   render() {
+    const user = this.props.userStore.token;
+    
+    let toggleSignInOut = (user) ? <NavItem><NavLink href="#" onClick={this.handleLogout} >Sign Out</NavLink></NavItem> : <NavItem><NavLink href="/signin">Sign In</NavLink></NavItem>
+
+    let toggleRegister = (!user) ? <NavItem><NavLink href="/signup">Register</NavLink></NavItem> : null;
+
     return (
-      <div >
+      <div>
         <Navbar color="faded" light expand="md">
           <NavbarBrand className="header" href="/">DrawSketch</NavbarBrand>
-          <NavbarToggler/>
-            <Nav className="ml-auto" navbar>
+            <Nav className="ml-auto">
               <NavItem>
                 <NavLink href="/credits">Credits</NavLink>
               </NavItem>
+              {toggleSignInOut}
+              {toggleRegister}
             </Nav>
         </Navbar>
         <Routes/>
@@ -43,4 +45,4 @@ class App extends Component {
   }
 }
 
-export default App = inject('userStore', 'commonStore')(observer(App))
+export default App = inject('userStore', 'authStore')(observer(App))

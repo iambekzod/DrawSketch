@@ -1,83 +1,70 @@
-import { observable, action } from 'mobx';
-import agent from './agent';
+import { action, extendObservable } from 'mobx';
+import api from './api';
 import userStore from './userStore';
-import commonStore from './commonStore';
 
 class AuthStore {
+  constructor() {
+    extendObservable(this, {
+      inProgress: false,
+      errors: undefined,
+      values: {
+          username: '',
+          firstname: '',
+          lastname: '',
+          email: '', 
+          password: '',
+          confirmPassword: ''
+      },
 
-  inProgress = observable(false);
-  errors = observable(undefined);
-  values = observable({
-    username: '',
-    email: '',
-    password: '',
-  });
-  // @observable inProgress = false;
-  // @observable errors = undefined;
-
-  // @observable values = {
-  //   username: '',
-  //   email: '',
-  //   password: '',
-  // };
-
-  setUsername(username) {
-    this.values.username = username;
-  }
-
-  setEmail(email) {
-    this.values.email = email;
-  }
-
-  setPassword(password) {
-    this.values.password = password;
-  }
-
-  reset() {
-    this.values.username = '';
-    this.values.email = '';
-    this.values.password = '';
-  }
-
-  login() {
-    this.inProgress = true;
-    this.errors = undefined;
-    return agent.Auth.login(this.values.email, this.values.password)
-      .then(({ user }) => commonStore.setToken(user.token))
-      .then(() => userStore.pullUser())
-      .catch(action((err) => {
-        this.errors = err.response && err.response.body && err.response.body.errors;
-        throw err;
-      }))
-      .finally(action(() => { this.inProgress = false; }));
-  }
-
-  register() {
-    this.inProgress = true;
-    this.errors = undefined;
-    return agent.Auth.register(this.values.username, this.values.email, this.values.password)
-      .then(({ user }) => commonStore.setToken(user.token))
-      .then(() => userStore.pullUser())
-      .catch(action((err) => {
-        this.errors = err.response && err.response.body && err.response.body.errors;
-        throw err;
-      }))
-      .finally(action(() => { this.inProgress = false; }));
-  }
-
-  logout() {
-    commonStore.setToken(undefined);
-    userStore.forgetUser();
-    return Promise.resolve();
+      setUsername: action((set) => this.values.username = set),
+      setFirstname: action((set) => this.values.firstname = set),
+      setLastname: action((set) => this.values.lastname = set),
+      setEmail: action((set) => this.values.email = set),
+      setPassword: action((set) => this.values.password = set),
+      setConfirmPassword: action((set) => this.values.confirmPassword = set),
+      reset: action((set) => {
+        this.values.username = '';
+        this.values.firstname = '';
+        this.values.lastname = '';
+        this.values.email = '';
+        this.values.password = '';
+        this.values.confirmPassword = '';
+      }),
+      login: action(function() {
+        this.inProgress = true;
+        this.errors = undefined;
+        return api.Auth.login(this.values.username, this.values.password)
+          .then((user) => {
+            userStore.setToken(user.token)
+          })
+          .then(() => userStore.pullUser())
+          .catch(action((err) => {
+            this.errors = err.response && err.response.body && err.response.body.errors;
+            throw err;
+          }))
+          .finally(action(() => { this.inProgress = false; }));
+      }),
+      logout: action(function() {
+        userStore.setToken(undefined);
+        userStore.forgetUser();
+        return Promise.resolve();
+      }),
+      register: action(function() {
+        this.inProgress = true;
+        this.errors = undefined;
+        
+        return api.Auth.register(this.values)
+          .then((user) => userStore.setToken(user.token))
+          .then(() => userStore.pullUser())
+          .catch(action((err) => {
+            this.errors = err.response && err.response.body && err.response.body.errors;
+            throw err;
+          }))
+          .finally(action(() => { this.inProgress = false; }));
+      }),
+      
+    })
   }
 }
-
-action(AuthStore.prototype, "setUsername", Object.getOwnPropertyDescriptor(AuthStore.prototype, "setUsername"));
-action(AuthStore.prototype, "setEmail", Object.getOwnPropertyDescriptor(AuthStore.prototype, "setEmail"));
-action(AuthStore.prototype, "setPassword", Object.getOwnPropertyDescriptor(AuthStore.prototype, "setPassword"));
-action(AuthStore.prototype, "reset", Object.getOwnPropertyDescriptor(AuthStore.prototype, "reset"));
-action(AuthStore.prototype, "login", Object.getOwnPropertyDescriptor(AuthStore.prototype, "login"));
-action(AuthStore.prototype, "register", Object.getOwnPropertyDescriptor(AuthStore.prototype, "register"));
-action(AuthStore.prototype, "logout", Object.getOwnPropertyDescriptor(AuthStore.prototype, "logout"));
 
 export default new AuthStore();

@@ -1,21 +1,29 @@
 import React, { Component } from "react";
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import { inject, observer } from "mobx-react";
 import { Button } from "reactstrap";
 import "../style/form.css";
 
-export default class Home extends Component {
+class Home extends Component {
+
   render() {
+    const user = this.props.userStore.token;
+
+    let cPanel = (user) ? <div className="control-panel">
+                            <Link to="/game"><Button color="primary" size="lg">Proceed to Game</Button>
+                            </Link>
+                           </div> : null;
+
     return (
       <div className="Home">
         <div className="lander">
           <h1>DrawSketch</h1>
           <p>A drawing game fun for everyone</p>
-          <div className="control-panel">
-            <Link to="/login"><Button outline color="primary" size="lg">Login</Button></Link>
-            <Link to="/register"><Button outline color="primary" size="lg">Register</Button></Link>
-          </div>    
+          {cPanel}
         </div>
       </div>
     );
   }
 }
+
+export default Home = inject('userStore')(observer(Home))

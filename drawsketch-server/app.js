@@ -2,20 +2,17 @@
 
 // Imports
 // ===================================================
-const crypto = require('crypto');
 const socketio = require("socket.io");
 const express = require('express');
-const fs = require('fs');
 const mongoose = require('mongoose');
-const validator = require('validator');
+const fs = require('fs');
 const bodyParser = require('body-parser');
-const cookie = require('cookie');
 const session = require('express-session');
 const https = require('https');
 const socketIO = require('socket.io');
 const cors = require('cors');
 
-const keys = require('./keys.js');
+const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
 
 // Helper functions
@@ -43,9 +40,24 @@ mongoose.connect(keys.mongoURL);
 
 const app = express();
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cors());
 
+app.use(session({ 
+    secret: keys.sessionSecret,
+    resave: false, 
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 60 * 60 * 24 * 7, // 1 week in number of seconds
+        httpOnly: true,
+        sameSite: true
+    },
+}));
+
+
 app.use(require('./routes'));
+require('./config/passport.js');
 
 app.use(function (req, res, next) {
     res.status(501).end("Invalid API endpoint: " + req.url);

@@ -1,49 +1,33 @@
-import { observable, action } from 'mobx';
-import agent from './agent';
+import { action, extendObservable } from 'mobx';
+import api from './api';
 
 class UserStore {
+  constructor() {
+    extendObservable(this, {
+      currentUser: null,
+      token: window.localStorage.getItem('jwt'),
+      loadingUser: false,
 
-  currentUser = observable();
-  loadingUser = observable();
-  updatingUser = observable();
-  updatingUserErrors = observable();
-
-  // currentUser = null
-  // loadingUser = null
-  // updateUser = null
-  // updatingUserErrors = null
-
-  // constructor() {
-  //   extendObservable(this, {
-  //     currentUser,
-  //     loadingUser,
-  //     updatingUser,
-  //     updatingUserErrors
-  //   });
-  // }
-
-  pullUser() {
-    this.loadingUser = true;
-    return agent.Auth.current()
-      .then(action(({ user }) => { this.currentUser = user; }))
-      .finally(action(() => { this.loadingUser = false; }))
+      pullUser: action(function() {
+        this.loadingUser = true;
+        return api.Auth.current()
+          .then(action((user) => { this.currentUser = user; }))
+          .finally(action(() => { this.loadingUser = false; }))
+      }),
+      forgetUser: action(function() {
+        this.currentUser = undefined;
+      }),
+      setToken: action(function(setToken) {
+        if (setToken) {
+            this.token = setToken;
+            window.localStorage.setItem("jwt", setToken);
+        } else {
+            this.token = undefined;
+            window.localStorage.removeItem("jwt");
+        }
+      }),
+    })
   }
-
-  updateUser(newUser) {
-    this.updatingUser = true;
-    return agent.Auth.save(newUser)
-      .then(action(({ user }) => { this.currentUser = user; }))
-      .finally(action(() => { this.updatingUser = false; }))
-  }
-
-  forgetUser() {
-    this.currentUser = undefined;
-  }
-
 }
-
-action(UserStore.prototype, "pullUser", Object.getOwnPropertyDescriptor(UserStore.prototype, "pullUser"));
-action(UserStore.prototype, "updateUser", Object.getOwnPropertyDescriptor(UserStore.prototype, "updateUser"));
-action(UserStore.prototype, "forgetUser", Object.getOwnPropertyDescriptor(UserStore.prototype, "forgetUser"));
 
 export default new UserStore();

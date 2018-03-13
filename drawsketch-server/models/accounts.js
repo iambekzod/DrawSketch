@@ -1,17 +1,37 @@
 var jwt = require('jsonwebtoken');
-var secret = require('../keys.js').jwtSecret;
-
+var secret = require('../config/keys.js').jwtSecret;
+var crypto = require('crypto');
 var mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
+
 var Schema = mongoose.Schema;
 
 // create a schema
 var accountsSchema = new Schema({
   name: String,
-  username: { type: String, required: true, unique: true },
+  username: { type: String, required: true, unique: true, uniqueCaseInsensitive: true },
   password: { type: String, required: true },
-  salt: { type: String },
+  email: { type: String, required: true, unique: true, uniqueCaseInsensitive: true },
+  salt: { type: String, required: true },
   points: Number,
-});
+}, {timestamps: true});
+
+accountsSchema.plugin(uniqueValidator, {message: 'expected {PATH} to be unique'});
+
+function generateHash(password, salt) {
+  var hash = crypto.createHmac('sha512', salt);
+  hash.update(password);
+  return hash.digest('base64');
+}
+
+accountsSchema.methods.validPassword = function(password) {
+  return this.password === generateHash(password, this.salt);
+};
+
+accountsSchema.methods.setPassword = function(password){
+  this.salt = crypto.randomBytes(16).toString('base64');
+  this.password = generateHash(password, this.salt);
+};
 
 accountsSchema.methods.generateJWT = function() {
   var today = new Date();
@@ -28,10 +48,11 @@ accountsSchema.methods.generateJWT = function() {
 accountsSchema.methods.toAuthJSON = function(){
   return {
     username: this.username,
+    name: this.name,
+    password: this.password,
+    points: this.points,
     email: this.email,
     token: this.generateJWT(),
-    bio: this.bio,
-    image: this.image
   };
 };
 

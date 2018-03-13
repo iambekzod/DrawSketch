@@ -1,23 +1,14 @@
-@media all and (min-width: 480px) {
-    .Login {
-        padding: 60px 0;
-    }
-    .Login form {
-        margin: 0 auto;
-        max-width: 320px;
-    }
+.Login {
+    padding: 60px 0;
+}
+
+form {
+    margin: 4% auto 10% auto;
+    max-width: 350px;
 }
 
 .whiteboard {
     border: solid black 1px;
-}
-
-.App {
-    /* margin-top: 15px; */
-}
-
-.App .navbar-brand {
-    /* font-weight: bold; */
 }
 
 .Home .lander {
@@ -34,13 +25,52 @@
     color: #999;
 }
 
+.Credits {
+    margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.Credits h1 {
+    font-weight: 600;
+}
+
+.Credits h2 {
+    font-weight: 450;
+}
+
 .control-panel {
     padding-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-panel h1 {
+    font-family: "Open Sans", sans-serif;
+    font-weight: 600;
+}
+
+.error-messages {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.control-panel .btn {
-    margin-right: 25px;
+.loading-spinner {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: 90px auto;
+    position: relative;
+    border-top: 3px solid rgba(0, 0, 0, 0.1);
+    border-right: 3px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 3px solid rgba(0, 0, 0, 0.1);
+    border-left: 3px solid #818a91;
+    transform: translateZ(0);
+    animation: loading-spinner 0.5s infinite linear;
 }

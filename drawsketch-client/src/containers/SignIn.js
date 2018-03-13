@@ -39,7 +39,7 @@ class SignIn extends Component {
               <Input 
                 id="username"
                 autoFocus
-                placeholder="Username"
+                bsSize="lg"
                 value={values.username}
                 onChange={this.handleUsernameChange} />
             </FormGroup>
@@ -47,7 +47,7 @@ class SignIn extends Component {
               <Label>Password</Label>
               <Input 
                 id="password"
-                placeholder="Password"
+                bsSize="lg"
                 value={values.password}
                 onChange={this.handlePasswordChange}
                 type="password" />
@@ -58,7 +58,7 @@ class SignIn extends Component {
               type="submit" 
               size="lg"
               block>
-              Login
+              Sign In
             </Button>
         </Form>
 

@@ -7,7 +7,7 @@ import "../style/form.css";
 class Home extends Component {
 
   render() {
-    const user = this.props.commonStore.token;
+    const user = this.props.userStore.token;
 
     let cPanel = (user) ? <div className="control-panel">
                             <Link to="/game"><Button color="primary" size="lg">Proceed to Game</Button>
@@ -26,4 +26,4 @@ class Home extends Component {
   }
 }
 
-export default Home = inject('commonStore')(observer(Home))
+export default Home = inject('userStore')(observer(Home))

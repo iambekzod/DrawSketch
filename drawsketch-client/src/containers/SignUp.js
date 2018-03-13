@@ -42,6 +42,7 @@ class SignUp extends Component {
               <Input 
                 id="username"
                 autoFocus
+                bsSize="lg"
                 value={values.username} 
                 onChange={this.handleUsernameChange} />
             </FormGroup>
@@ -49,6 +50,7 @@ class SignUp extends Component {
               <Label>First Name</Label>
               <Input 
                 id="firstname"
+                bsSize="lg"
                 value={values.firstname} 
                 onChange={this.handleFirstnameChange} />
             </FormGroup>
@@ -56,6 +58,7 @@ class SignUp extends Component {
               <Label>Last Name</Label>
               <Input 
                 id="lastname"
+                bsSize="lg"
                 value={values.lastname} 
                 onChange={this.handleLastnameChange} />
             </FormGroup>
@@ -64,6 +67,7 @@ class SignUp extends Component {
               <Input 
                 id="email"
                 type="email"
+                bsSize="lg"
                 value={values.email} 
                 onChange={this.handleEmailChange} />
             </FormGroup>
@@ -71,7 +75,8 @@ class SignUp extends Component {
             <Label>Password</Label>
             <Input 
               id="password"
-              type="password" 
+              type="password"
+              bsSize="lg"
               value={values.password} 
               onChange={this.handlePasswordChange} />
           </FormGroup>
@@ -79,7 +84,8 @@ class SignUp extends Component {
             <Label>Confirm Password</Label>
             <Input 
               id="confirmpassword"
-              type="password" 
+              type="password"
+              bsSize="lg"
               value={values.confirmPassword} 
               onChange={this.handleConfirmPasswordChange} />
           </FormGroup>
@@ -89,7 +95,7 @@ class SignUp extends Component {
               type="submit" 
               size="lg"
               block>
-              Register
+              Sign Up
             </Button>
         </Form>
 

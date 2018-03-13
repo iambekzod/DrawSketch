@@ -10,7 +10,7 @@ router.get('/user', auth.required, function(req, res, next){
   Accounts.findById(req.payload.id).then(function(user){
     if(!user){ return res.sendStatus(401); }
 
-    return res.json({user: user.toAuthJSON()});
+    return res.json(user.toAuthJSON());
   }).catch(next);
 });
 
@@ -30,7 +30,7 @@ router.put('/user', auth.required, function(req, res, next){
     }
 
     return user.save().then(function(){
-      return res.json({user: user.toAuthJSON()});
+      return res.json(user.toAuthJSON());
     });
   }).catch(next);
 });
@@ -51,7 +51,7 @@ router.post('/users/login', function(req, res, next) {
     if(err){ return next(err); }
 
     if(user){
-      return res.json({user: user.toAuthJSON()});
+      return res.json(user.toAuthJSON());
     } else {
       return res.status(422).json(info);
     }
@@ -84,8 +84,12 @@ router.post('/users', sanitizeInput, function(req, res, next) {
   });
   newUser.setPassword(req.body.user.password);
   newUser.save(function (err) {
-      if (err) return res.status(422).json({errors: { error: err.message }});
-      else return res.json({user: newUser.toAuthJSON()});
+      if (err) {
+        if (err.errors["username"]) return res.status(422).json({errors: { Username: "is taken" }});
+        if (err.errors["email"]) return res.status(422).json({errors: { Email: "is being used by another user" }});
+
+        return res.status(422).json({errors: { error: error.message }}); // Fall back, to always return soemthing
+      } else return res.json(newUser.toAuthJSON());
   });
 });
 

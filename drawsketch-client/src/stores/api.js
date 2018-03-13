@@ -1,7 +1,7 @@
 import superagentPromise from 'superagent-promise';
 import _superagent from 'superagent';
 
-import commonStore from './commonStore';
+import userStore from './userStore';
 import authStore from './authStore';
 
 const superagent = superagentPromise(_superagent, global.Promise);
@@ -17,8 +17,8 @@ const handleErrors = err => {
 const responseBody = res => res.body;
 
 const tokenPlugin = req => {
-  if (commonStore.token) {
-    req.set('authorization', `Token ${commonStore.token}`);
+  if (userStore.token) {
+    req.set('authorization', `Token ${userStore.token}`);
   }
 };
 

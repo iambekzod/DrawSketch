@@ -1,7 +1,6 @@
 import { action, extendObservable } from 'mobx';
-import agent from './agent';
+import api from './api';
 import userStore from './userStore';
-import commonStore from './commonStore';
 
 class AuthStore {
   constructor() {
@@ -34,8 +33,10 @@ class AuthStore {
       login: action(function() {
         this.inProgress = true;
         this.errors = undefined;
-        return agent.Auth.login(this.values.username, this.values.password)
-          .then(({ user }) => commonStore.setToken(user.token))
+        return api.Auth.login(this.values.username, this.values.password)
+          .then((user) => {
+            userStore.setToken(user.token)
+          })
           .then(() => userStore.pullUser())
           .catch(action((err) => {
             this.errors = err.response && err.response.body && err.response.body.errors;
@@ -44,7 +45,7 @@ class AuthStore {
           .finally(action(() => { this.inProgress = false; }));
       }),
       logout: action(function() {
-        commonStore.setToken(undefined);
+        userStore.setToken(undefined);
         userStore.forgetUser();
         return Promise.resolve();
       }),
@@ -52,8 +53,8 @@ class AuthStore {
         this.inProgress = true;
         this.errors = undefined;
         
-        return agent.Auth.register(this.values)
-          .then(({ user }) => commonStore.setToken(user.token))
+        return api.Auth.register(this.values)
+          .then((user) => userStore.setToken(user.token))
           .then(() => userStore.pullUser())
           .catch(action((err) => {
             this.errors = err.response && err.response.body && err.response.body.errors;

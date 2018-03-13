@@ -11,11 +11,9 @@ import promiseFinally from 'promise.prototype.finally';
 
 import authStore from './stores/authStore';
 import userStore from './stores/userStore';
-import commonStore from './stores/commonStore';
 
 const stores = {
   authStore,
-  commonStore,
   userStore
 };
 

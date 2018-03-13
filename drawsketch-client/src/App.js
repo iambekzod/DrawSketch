@@ -7,11 +7,6 @@ import { inject, observer } from 'mobx-react';
 //https://github.com/gothinkster/react-mobx-realworld-example-app/tree/master/src
 
 class App extends Component {
-  componentWillMount() {
-    if (!this.props.commonStore.token) {
-      this.props.commonStore.setAppLoaded();
-    }
-  }
 
   handleLogout = (e) => {
     e.preventDefault();
@@ -20,14 +15,14 @@ class App extends Component {
   };
 
   componentDidMount() {
-    if (this.props.commonStore.token) {
-      this.props.userStore.pullUser()
-        .finally(() => this.props.commonStore.setAppLoaded());
+    if (this.props.userStore.token) {
+      this.props.userStore.pullUser();
     }
   }
 
   render() {
-    const user = this.props.commonStore.token;
+    const user = this.props.userStore.token;
+    
     let toggleSignInOut = (user) ? <NavItem><NavLink href="#" onClick={this.handleLogout} >Sign Out</NavLink></NavItem> : <NavItem><NavLink href="/signin">Sign In</NavLink></NavItem>
 
     let toggleRegister = (!user) ? <NavItem><NavLink href="/signup">Register</NavLink></NavItem> : null;
@@ -36,7 +31,7 @@ class App extends Component {
       <div>
         <Navbar color="faded" light expand="md">
           <NavbarBrand className="header" href="/">DrawSketch</NavbarBrand>
-            <Nav className="ml-auto" pills>
+            <Nav className="ml-auto">
               <NavItem>
                 <NavLink href="/credits">Credits</NavLink>
               </NavItem>
@@ -50,4 +45,4 @@ class App extends Component {
   }
 }
 
-export default App = inject('userStore', 'authStore', 'commonStore')(observer(App))
+export default App = inject('userStore', 'authStore')(observer(App))

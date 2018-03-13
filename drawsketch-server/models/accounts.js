@@ -8,7 +8,8 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var accountsSchema = new Schema({
-  name: String,
+  firstname: String,
+  lastname: String,
   username: { type: String, required: true, unique: true, uniqueCaseInsensitive: true },
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true, uniqueCaseInsensitive: true },
@@ -48,7 +49,8 @@ accountsSchema.methods.generateJWT = function() {
 accountsSchema.methods.toAuthJSON = function(){
   return {
     username: this.username,
-    name: this.name,
+    firstname: this.firstname,
+    lastname: this.lastname,
     password: this.password,
     points: this.points,
     email: this.email,

@@ -53,11 +53,11 @@ const Auth = {
   current: () =>
     requests.get('/user'),
   login: (username, password) =>
-    requests.post('/users/login', { user: { username, password } }),
+    requests.post('/user/login', { user: { username, password } }),
   register: (user) =>
-    requests.post('/users', { user }),
+    requests.post('/user/create', { user }),
   save: user =>
-    requests.put('/user', { user })
+    requests.put('/user/update', { user })
 };
 
 const Game = {

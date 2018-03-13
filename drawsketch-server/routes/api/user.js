@@ -6,7 +6,23 @@ const validator = require('validator');
 const Accounts = require('../../models/accounts.js');
 const auth = require('../auth');
 
-router.get('/user', auth.required, function(req, res, next){
+var sanitizeInput = function (req, res, next) {
+  if (!validator.isAlpha(req.body.user.firstname)) return res.status(422).json({errors: {Firstname: "must contain only letters"}});
+  if (!validator.isAlpha(req.body.user.lastname)) return res.status(422).json({errors: {Lastname: "must contain only letters"}});
+  if (!validator.isEmail(req.body.user.email)) return res.status(422).json({errors: {Email: "must be of proper email format"}});
+  if (req.body.user.password !== req.body.user.confirmPassword) return res.status(401).json({errors: {Passwords: " do not match"}});
+
+  req.body.user.username = validator.escape(req.body.user.username);
+  req.body.user.firstname = validator.escape(req.body.user.firstname);
+  req.body.user.lastname = validator.escape(req.body.user.lastname);
+  req.body.user.email = validator.escape(req.body.user.email);
+  req.body.user.password = validator.escape(req.body.user.password);
+  req.body.user.confirmPassword = validator.escape(req.body.user.confirmPassword);
+
+  next();
+}
+
+router.get('/', auth.required, function(req, res, next) {
   Accounts.findById(req.payload.id).then(function(user){
     if(!user){ return res.sendStatus(401); }
 
@@ -14,7 +30,7 @@ router.get('/user', auth.required, function(req, res, next){
   }).catch(next);
 });
 
-router.put('/user', auth.required, function(req, res, next){
+router.put('/update', auth.required, function(req, res, next){
   Accounts.findById(req.payload.id).then(function(user){
     if(!user){ return res.sendStatus(401); }
 
@@ -35,7 +51,7 @@ router.put('/user', auth.required, function(req, res, next){
   }).catch(next);
 });
 
-router.post('/users/login', function(req, res, next) {
+router.post('/login', function(req, res, next) {
   req.body.user.username = validator.escape(req.body.user.username);
   req.body.user.password = validator.escape(req.body.user.password);  
 
@@ -58,27 +74,11 @@ router.post('/users/login', function(req, res, next) {
   })(req, res, next);
 });
 
-var sanitizeInput = function (req, res, next) {
-  if (!validator.isAlpha(req.body.user.firstname)) return res.status(422).json({errors: {Firstname: "must contain only letters"}});
-  if (!validator.isAlpha(req.body.user.lastname)) return res.status(422).json({errors: {Lastname: "must contain only letters"}});
-  if (!validator.isEmail(req.body.user.email)) return res.status(422).json({errors: {Email: "must be of proper email format"}});
-  if (req.body.user.password !== req.body.user.confirmPassword) return res.status(401).json({errors: {Passwords: " do not match"}});
-
-  req.body.user.username = validator.escape(req.body.user.username);
-  req.body.user.firstname = validator.escape(req.body.user.firstname);
-  req.body.user.lastname = validator.escape(req.body.user.lastname);
-  req.body.user.email = validator.escape(req.body.user.email);
-  req.body.user.password = validator.escape(req.body.user.password);
-  req.body.user.confirmPassword = validator.escape(req.body.user.confirmPassword);
-
-  next();
-}
-
-router.post('/users', sanitizeInput, function(req, res, next) {
-
+router.post('/create', sanitizeInput, function(req, res, next) {
   var newUser = Accounts({
     username: req.body.user.username,
-    name: req.body.user.firstname + " " + req.body.user.lastname,
+    firstname: req.body.user.firstname,
+    lastname: req.body.user.lastname,
     email: req.body.user.email,
     points: 0,
   });
@@ -88,7 +88,7 @@ router.post('/users', sanitizeInput, function(req, res, next) {
         if (err.errors["username"]) return res.status(422).json({errors: { Username: "is taken" }});
         if (err.errors["email"]) return res.status(422).json({errors: { Email: "is being used by another user" }});
 
-        return res.status(422).json({errors: { error: error.message }}); // Fall back, to always return soemthing
+        return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return soemthing
       } else return res.json(newUser.toAuthJSON());
   });
 });

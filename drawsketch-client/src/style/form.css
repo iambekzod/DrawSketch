@@ -12,14 +12,6 @@
     border: solid black 1px;
 }
 
-.App {
-    /* margin-top: 15px; */
-}
-
-.App .navbar-brand {
-    /* font-weight: bold; */
-}
-
 .Home .lander {
     padding: 80px 0;
     text-align: center;
@@ -37,12 +29,13 @@
 .control-panel {
     padding-top: 20px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
 .control-panel .btn {
-    margin-right: 25px;
+    margin-bottom: 10px;
 }
 
 .error-messages {

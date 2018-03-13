@@ -17,7 +17,7 @@ class App extends Component {
     }
   }
 
-  handleSubmitForm = (e) => {
+  handleLogout = (e) => {
     e.preventDefault();
     this.props.authStore.logout()
       .then(() => this.props.history.replace('/'));
@@ -32,17 +32,20 @@ class App extends Component {
 
   render() {
     const user = this.props.commonStore.token;
-    let handleSignOut = (user) ? <NavItem><NavLink href="#" onClick={this.handleSubmitForm} >Sign Out</NavLink></NavItem> : null;
+    let toggleSignInOut = (user) ? <NavItem><NavLink href="#" onClick={this.handleLogout} >Sign Out</NavLink></NavItem> : <NavItem><NavLink href="/login">Sign in</NavLink></NavItem>
+
+    let toggleRegister = (!user) ? <NavItem><NavLink href="/register">Register</NavLink></NavItem> : null;
 
     return (
-      <div >
+      <div>
         <Navbar color="faded" light expand="md">
           <NavbarBrand className="header" href="/">DrawSketch</NavbarBrand>
             <Nav className="ml-auto" pills>
               <NavItem>
                 <NavLink href="/credits">Credits</NavLink>
               </NavItem>
-              {handleSignOut}
+              {toggleSignInOut}
+              {toggleRegister}
             </Nav>
         </Navbar>
         <Routes/>

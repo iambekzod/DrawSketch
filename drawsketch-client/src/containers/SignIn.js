@@ -6,8 +6,9 @@ import LoadingSpinner from "./LoadingSpinner";
 
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import { inject, observer } from 'mobx-react';
+import { Link } from 'react-router-dom';
 
-class Login extends Component {
+class SignIn extends Component {
   componentWillUnmount() {
     this.props.authStore.reset();
   }
@@ -24,7 +25,12 @@ class Login extends Component {
     const { values, errors, inProgress } = this.props.authStore;
 
     return (
-      <div className="Login">
+      <div className="sign-in">
+        <div className="control-panel">
+          <h1>Sign In</h1>
+          <Link to="/signup">Need an account?</Link>
+        </div>
+
         <ResultErrors errors={errors} />
 
         <Form onSubmit={this.handleSubmitForm}>
@@ -62,4 +68,4 @@ class Login extends Component {
   }
 }
 
-export default Login = inject('authStore')(observer(Login))
+export default SignIn = inject('authStore')(observer(SignIn))

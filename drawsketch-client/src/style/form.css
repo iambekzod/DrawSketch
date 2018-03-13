@@ -1,11 +1,10 @@
-@media all and (min-width: 480px) {
-    .Login {
-        padding: 60px 0;
-    }
-    .Login form {
-        margin: 0 auto;
-        max-width: 320px;
-    }
+.Login {
+    padding: 60px 0;
+}
+
+form {
+    margin: 0 auto;
+    max-width: 320px;
 }
 
 .whiteboard {
@@ -26,16 +25,34 @@
     color: #999;
 }
 
-.control-panel {
-    padding-top: 20px;
+.Credits {
+    margin-top: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-.control-panel .btn {
-    margin-bottom: 10px;
+.Credits h1 {
+    font-weight: 600;
+}
+
+.Credits h2 {
+    font-weight: 450;
+}
+
+.control-panel {
+    padding-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-panel h1 {
+    font-family: "Open Sans", sans-serif;
+    font-weight: 600;
 }
 
 .error-messages {

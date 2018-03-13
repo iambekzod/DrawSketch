@@ -5,8 +5,9 @@ import "../style/form.css";
 import LoadingSpinner from "./LoadingSpinner";
 import ResultErrors from "./ResultErrors";
 import { inject, observer } from 'mobx-react';
+import { Link } from "react-router-dom";
 
-class Register extends Component {
+class SignUp extends Component {
   componentWillUnmount() {
     this.props.authStore.reset();
   }
@@ -27,7 +28,12 @@ class Register extends Component {
     const { values, errors, inProgress } = this.props.authStore;
 
     return (
-      <div className="Login">
+      <div className="sign-up">
+        <div className="control-panel">
+          <h1>Register</h1>
+          <Link to="/signin">Already have an account?</Link>
+        </div>
+
         <ResultErrors errors={errors} />
 
         <Form onSubmit={this.handleSubmitForm}>
@@ -93,4 +99,4 @@ class Register extends Component {
   }
 }
 
-export default Register = inject('authStore')(observer(Register))
+export default SignUp = inject('authStore')(observer(SignUp))

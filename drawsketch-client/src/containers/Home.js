@@ -6,19 +6,11 @@ import "../style/form.css";
 
 class Home extends Component {
 
-  componentDidMount() {
-    const user = this.props.commonStore.token;
-    
-    if (user) {
-      this.props.history.push("/");
-    }
-  }
-
   render() {
     const user = this.props.commonStore.token;
 
     let cPanel = (user) ? <div className="control-panel">
-                            <Link to="/game"><Button outline color="primary" size="lg">Proceed to Game</Button>
+                            <Link to="/game"><Button color="primary" size="lg">Proceed to Game</Button>
                             </Link>
                            </div> : null;
 
@@ -34,4 +26,4 @@ class Home extends Component {
   }
 }
 
-export default Home = inject('userStore', 'commonStore')(observer(Home))
+export default Home = inject('commonStore')(observer(Home))

@@ -10,29 +10,26 @@ class AuthStore {
       errors: undefined,
       values: {
           username: '',
+          firstname: '',
+          lastname: '',
           email: '', 
-          password: ''
+          password: '',
+          confirmPassword: ''
       },
 
-      get getInProgress() {
-        return this.inProgress;
-      },
-      get getErrors() {
-        return this.errors;
-      },
-      get getUsername() {
-        return this.values.username;
-      },
-      get getPassword() {
-        return this.values.password;
-      },
-
-      setInProgres: action((set) => this.inProgress = set),
       setUsername: action((set) => this.values.username = set),
+      setFirstname: action((set) => this.values.firstname = set),
+      setLastname: action((set) => this.values.lastname = set),
+      setEmail: action((set) => this.values.email = set),
       setPassword: action((set) => this.values.password = set),
+      setConfirmPassword: action((set) => this.values.confirmPassword = set),
       reset: action((set) => {
         this.values.username = '';
+        this.values.firstname = '';
+        this.values.lastname = '';
+        this.values.email = '';
         this.values.password = '';
+        this.values.confirmPassword = '';
       }),
       login: action(function() {
         this.inProgress = true;
@@ -54,7 +51,8 @@ class AuthStore {
       register: action(function() {
         this.inProgress = true;
         this.errors = undefined;
-        return agent.Auth.register(this.values.username, this.values.email, this.values.password)
+        
+        return agent.Auth.register(this.values)
           .then(({ user }) => commonStore.setToken(user.token))
           .then(() => userStore.pullUser())
           .catch(action((err) => {

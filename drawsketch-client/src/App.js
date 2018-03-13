@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import "./style/App.css";
 import Routes from "./Routes";
 import { Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
-import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 
 const io = require('socket.io-client');
@@ -18,23 +17,32 @@ class App extends Component {
     }
   }
 
+  handleSubmitForm = (e) => {
+    e.preventDefault();
+    this.props.authStore.logout()
+      .then(() => this.props.history.replace('/'));
+  };
+
   componentDidMount() {
     if (this.props.commonStore.token) {
       this.props.userStore.pullUser()
         .finally(() => this.props.commonStore.setAppLoaded());
     }
   }
-  
+
   render() {
+    const user = this.props.commonStore.token;
+    let handleSignOut = (user) ? <NavItem><NavLink href="#" onClick={this.handleSubmitForm} >Sign Out</NavLink></NavItem> : null;
+
     return (
       <div >
         <Navbar color="faded" light expand="md">
           <NavbarBrand className="header" href="/">DrawSketch</NavbarBrand>
-          <NavbarToggler/>
-            <Nav className="ml-auto" navbar>
+            <Nav className="ml-auto" pills>
               <NavItem>
                 <NavLink href="/credits">Credits</NavLink>
               </NavItem>
+              {handleSignOut}
             </Nav>
         </Navbar>
         <Routes/>
@@ -43,4 +51,4 @@ class App extends Component {
   }
 }
 
-export default App = inject('userStore', 'commonStore')(observer(App))
+export default App = inject('userStore', 'authStore', 'commonStore')(observer(App))

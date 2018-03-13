@@ -1,48 +1,28 @@
-import { action, reaction, extendObservable } from 'mobx';
-import agent from './agent';
+import { action, extendObservable } from 'mobx';
 
 class CommonStore {
     constructor() {
-        reaction(() => this.token,
-            token => {
-                if (token) {
-                    window.localStorage.setItem('jwt', token);
-                } else {
-                    window.localStorage.removeItem('jwt');
-                }
-            }
-        );
 
         extendObservable(this, {
-            appName: "DrawSketch",
             token: window.localStorage.getItem('jwt'),
             appLoaded: false,
-            tags: [],
-            isLoadingTags: false,
 
-            get AppName() {
-                return this.appName;
-            },
             get getToken() {
                 return this.token;
             },
             get getAppLoaded() {
                 return this.appLoaded;
             },
-            get getTags() {
-                return this.tags;
-            },
-            get getIsLoadingTags() {
-                return this.isLoadingTags;
-            },
             setAppLoaded: action((set) => this.appLoaded = set),
-            setToken: action((set) => this.token = set),
-            loadTags: action(function() {
-                this.isLoadingTags = true;
-                return agent.Tags.getAll()
-                .then(action(({ tags }) => { this.tags = tags.map(t => t.toLowerCase()); }))
-                .finally(action(() => { this.isLoadingTags = false; }))
-            })
+            setToken: action(function(setToken) {
+                if (setToken) {
+                    this.token = setToken;
+                    window.localStorage.setItem("jwt", setToken);
+                } else {
+                    this.token = undefined;
+                    window.localStorage.removeItem("jwt");
+                }
+            }),
         })
     }
 }

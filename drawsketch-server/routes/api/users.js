@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const passport = require('passport');
+const validator = require('validator');
+
 const Accounts = require('../../models/accounts.js');
 const auth = require('../auth');
 
@@ -33,8 +35,10 @@ router.put('/user', auth.required, function(req, res, next){
   }).catch(next);
 });
 
-router.post('/users/login', function(req, res, next){
-  console.log(req.body);
+router.post('/users/login', function(req, res, next) {
+  req.body.user.username = validator.escape(req.body.user.username);
+  req.body.user.password = validator.escape(req.body.user.password);  
+
   if(!req.body.user.username){
     return res.status(422).json({errors: {username: "can't be blank"}});
   }
@@ -44,11 +48,9 @@ router.post('/users/login', function(req, res, next){
   }
 
   passport.authenticate('local', {session: false}, function(err, user, info){
-    console.log(req.body);
     if(err){ return next(err); }
 
     if(user){
-      // user.token = user.generateJWT();
       return res.json({user: user.toAuthJSON()});
     } else {
       return res.status(422).json(info);
@@ -56,16 +58,35 @@ router.post('/users/login', function(req, res, next){
   })(req, res, next);
 });
 
-router.post('/users', function(req, res, next){
-  var user = new User();
+var sanitizeInput = function (req, res, next) {
+  if (!validator.isAlpha(req.body.user.firstname)) return res.status(422).json({errors: {Firstname: "must contain only letters"}});
+  if (!validator.isAlpha(req.body.user.lastname)) return res.status(422).json({errors: {Lastname: "must contain only letters"}});
+  if (!validator.isEmail(req.body.user.email)) return res.status(422).json({errors: {Email: "must be of proper email format"}});
+  if (req.body.user.password !== req.body.user.confirmPassword) return res.status(401).json({errors: {Passwords: " do not match"}});
 
-  user.username = req.body.user.username;
-  user.email = req.body.user.email;
-  user.setPassword(req.body.user.password);
+  req.body.user.username = validator.escape(req.body.user.username);
+  req.body.user.firstname = validator.escape(req.body.user.firstname);
+  req.body.user.lastname = validator.escape(req.body.user.lastname);
+  req.body.user.email = validator.escape(req.body.user.email);
+  req.body.user.password = validator.escape(req.body.user.password);
+  req.body.user.confirmPassword = validator.escape(req.body.user.confirmPassword);
 
-  user.save().then(function(){
-    return res.json({user: user.toAuthJSON()});
-  }).catch(next);
+  next();
+}
+
+router.post('/users', sanitizeInput, function(req, res, next) {
+
+  var newUser = Accounts({
+    username: req.body.user.username,
+    name: req.body.user.firstname + " " + req.body.user.lastname,
+    email: req.body.user.email,
+    points: 0,
+  });
+  newUser.setPassword(req.body.user.password);
+  newUser.save(function (err) {
+      if (err) return res.status(422).json({errors: { error: err.message }});
+      else return res.json({user: newUser.toAuthJSON()});
+  });
 });
 
 module.exports = router;

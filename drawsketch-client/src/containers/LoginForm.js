@@ -1,10 +1,10 @@
 import React, { Component } from "react";
+import "../style/form.css";
 
 import ResultErrors from "./ResultErrors";
 import LoadingSpinner from "./LoadingSpinner";
 
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
-import "../style/form.css";
 import { inject, observer } from 'mobx-react';
 
 class Login extends Component {
@@ -23,13 +23,9 @@ class Login extends Component {
   render() {
     const { values, errors, inProgress } = this.props.authStore;
 
-
-
     return (
       <div className="Login">
         <ResultErrors errors={errors} />
-
-        <LoadingSpinner inProgress={inProgress}/>
 
         <Form onSubmit={this.handleSubmitForm}>
           <FormGroup>
@@ -54,10 +50,13 @@ class Login extends Component {
               color="primary" 
               disabled={inProgress}
               type="submit" 
-              size="lg">
+              size="lg"
+              block>
               Login
             </Button>
         </Form>
+
+        <LoadingSpinner inProgress={inProgress}/>
       </div>
     );
   }

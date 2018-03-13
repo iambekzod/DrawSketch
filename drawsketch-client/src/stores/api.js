@@ -53,16 +53,14 @@ const Auth = {
   current: () =>
     requests.get('/user'),
   login: (username, password) =>
-    requests.post('/user/login', { user: { username, password } }),
+    requests.post('/user/signin', { user: { username, password } }),
   register: (user) =>
-    requests.post('/user/create', { user }),
-  save: user =>
-    requests.put('/user/update', { user })
+    requests.post('/user/signup', { user }),
 };
 
 const Game = {
   connectedUsers: () =>
-    requests.get('/game/users')
+    requests.get('/game/connected'),
 }
 
 export default {

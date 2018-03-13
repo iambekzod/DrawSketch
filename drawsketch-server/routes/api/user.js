@@ -35,14 +35,14 @@ router.put('/update', auth.required, function(req, res, next){
     if(!user){ return res.sendStatus(401); }
 
     // only update fields that were actually passed...
-    if(typeof req.body.user.username !== 'undefined'){
-      user.username = req.body.user.username;
+    if(req.body.email){
+      user.email = req.body.email;
     }
-    if(typeof req.body.user.email !== 'undefined'){
-      user.email = req.body.user.email;
-    }
-    if(typeof req.body.user.password !== 'undefined'){
+    if(req.body.password){
       user.setPassword(req.body.user.password);
+    }
+    if(req.body.winner){
+      user.wins += 1;
     }
 
     return user.save().then(function(){
@@ -51,7 +51,7 @@ router.put('/update', auth.required, function(req, res, next){
   }).catch(next);
 });
 
-router.post('/login', function(req, res, next) {
+router.post('/signin', function(req, res, next) {
   req.body.user.username = validator.escape(req.body.user.username);
   req.body.user.password = validator.escape(req.body.user.password);  
 
@@ -74,13 +74,13 @@ router.post('/login', function(req, res, next) {
   })(req, res, next);
 });
 
-router.post('/create', sanitizeInput, function(req, res, next) {
+router.post('/signup', sanitizeInput, function(req, res, next) {
   var newUser = Accounts({
     username: req.body.user.username,
     firstname: req.body.user.firstname,
     lastname: req.body.user.lastname,
     email: req.body.user.email,
-    points: 0,
+    wins: 0,
   });
   newUser.setPassword(req.body.user.password);
   newUser.save(function (err) {

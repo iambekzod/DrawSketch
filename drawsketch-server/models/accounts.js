@@ -14,7 +14,7 @@ var accountsSchema = new Schema({
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true, uniqueCaseInsensitive: true },
   salt: { type: String, required: true },
-  points: Number,
+  wins: Number,
 }, {timestamps: true});
 
 accountsSchema.plugin(uniqueValidator, {message: 'expected {PATH} to be unique'});

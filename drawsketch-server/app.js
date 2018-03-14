@@ -33,8 +33,6 @@ function generateHash(password, salt) {
 // Connection URL
 mongoose.connect(keys.mongoURL);
 
-//https://scotch.io/tutorials/using-mongoosejs-in-node-js-and-mongodb-applications
-
 // Server
 // ===================================================
 

@@ -18,7 +18,7 @@ class SignIn extends Component {
   handleSubmitForm = (e) => {
     e.preventDefault();
     this.props.authStore.login()
-      .then(() => this.props.history.replace('/'));
+      .then(() => this.props.history.replace('/lobby'));
   };
 
   render() {

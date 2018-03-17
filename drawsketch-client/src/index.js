@@ -11,10 +11,12 @@ import promiseFinally from 'promise.prototype.finally';
 
 import authStore from './stores/authStore';
 import userStore from './stores/userStore';
+import lobbyStore from './stores/lobbyStore';
 
 const stores = {
   authStore,
-  userStore
+  userStore,
+  lobbyStore
 };
 
 // For easier debugging

@@ -3,6 +3,7 @@ import _superagent from 'superagent';
 
 import userStore from './userStore';
 import authStore from './authStore';
+import lobbyStore from './lobbyStore';
 
 const superagent = superagentPromise(_superagent, global.Promise);
 const API_ROOT = 'https://localhost:3001/api';

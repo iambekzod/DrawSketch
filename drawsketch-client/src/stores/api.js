@@ -64,14 +64,14 @@ const Game = {
 }
 
 const Lobby = {
-  getLobbies: () =>
+  getRooms: () =>
     requests.get('/lobby/'),
-  getLobby: (id) =>
+  getRoom: (id) =>
     requests.get(`/lobby/${id}`),
-  createLobby: (room) =>
+  createRoom: (room) =>
     requests.post('/lobby/', room),
-  joinRoom: (id) =>
-    requests.post(`/lobby/join/${id}`),
+  joinRoom: (id, password) =>
+    requests.post(`/lobby/join/${id}`, { password }),
   leaveRoom: (id) =>
     requests.post(`/lobby/leave/${id}`)
 }

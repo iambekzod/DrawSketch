@@ -61,9 +61,10 @@ var sanitizeInput = function (req, res, next) {
             req.body.timeLimit = 180000;
             break;
         default:
-            return res.status(422).json({errors: {TimeLimit: "must be of format: X:XX"}});
+            return res.status(422).json({errors: {TimeLimit: "must be of format: X:XX from 0:30 and 3:00"}});
             break;
     }
+    req.body.password = validator.escape(req.body.password);
     req.body.maxPlayers = validator.escape(req.body.maxPlayers);
     req.body.rounds = validator.escape(req.body.rounds);
 
@@ -141,21 +142,29 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
         }
 
         var room = lobbies[index];
-        var index = room.players.findIndex(function (e) {
+        if (room.players.length === room.maxPlayers) {
+            return res.status(409).json({errors: {This: " room is full"}});
+        }
+        index = room.players.findIndex(function (e) {
             return (e.id == req.payload.id);
         });
         if (index !== -1) {
             return res.status(409).json({errors: {User: "already joined this lobby"}});
         }
 
+        if (room.locked) {
+            req.body.password = validator.escape(req.body.password);
+            if (room.password !== req.body.password) {
+                return res.status(409).json({errors: {Invalid: "password for joining this lobby"}});
+            }
+        }
+
         room.players.push(user);
         res.json(room);
-
     }).catch(next);
 });
 
 router.post('/leave/:id/', auth.required, checkId, function (req, res, next) {
-    console.log(req.params.id);
     Accounts.findById(req.payload.id, userProjection).then(function (user) {
         if (!user) {
             return res.sendStatus(401);

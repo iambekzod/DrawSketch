@@ -5,7 +5,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Label, Input, Form } from "reactstrap";
 import { observer, inject } from "mobx-react";
 
-class LobbyModal extends Component {
+class LobbyCreateModal extends Component {
 
   handleRoomNameChange = (e) => this.props.lobbyStore.setRoomName(e.target.value);
   handleMaxPlayerChange = (e) => this.props.lobbyStore.setMaxPlayers(e.target.value);  
@@ -13,30 +13,26 @@ class LobbyModal extends Component {
   handleTimeLimitChange = (e) => this.props.lobbyStore.setTimeLimit(e.target.value);
   handlePasswordChange = (e) => this.props.lobbyStore.setPassword(e.target.value);
 
+  componentDidMount() {
+    this.toggle = this.props.toggle.bind(this);
+  }
+
   createLobby = (e) => {
     e.preventDefault();
 
     this.toggle();
     this.props.lobbyStore.create().then(() => {
-      this.props.lobbyStore.reset();
       this.props.history.push("/game");
     });
   };
 
   render() {
-    // const { token } = this.props.userStore;
-
-    // if (!token) {
-    //     return null;
-    // }
-
-    const viewModal = this.props.viewModal;
+    const viewCreateModal = this.props.viewCreateModal;
     const { values } = this.props.lobbyStore;
-    this.toggle = this.props.toggle.bind(this);
 
     return (
       <div>
-        <Modal isOpen={viewModal} toggle={this.toggle} className={this.props.className}>
+        <Modal isOpen={viewCreateModal} toggle={this.toggle} className={this.props.className}>
           <ModalHeader toggle={this.toggle}>Create a Lobby</ModalHeader>
           <ModalBody>
             <Form>
@@ -85,4 +81,4 @@ class LobbyModal extends Component {
   }
 }
 
-export default LobbyModal = inject('userStore', 'lobbyStore')(observer(LobbyModal))
+export default LobbyCreateModal = inject('userStore', 'lobbyStore')(observer(LobbyCreateModal))

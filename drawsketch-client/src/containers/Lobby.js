@@ -4,16 +4,13 @@ import "../style/lobby.css";
 
 import ResultErrors from "./ResultErrors";
 import LoadingSpinner from "./LoadingSpinner";
-import LobbyModal from "./LobbyModal";
+import LobbyCreateModal from "./LobbyCreateModal";
+import LobbyJoinModal from "./LobbyJoinModal";
 
 import { Table, Button } from "reactstrap";
 import { inject, observer } from 'mobx-react';
 
 class Lobby extends Component {
-      
-  refreshLobby = () => {
-    this.props.lobbyStore.getLobbies();
-  };
 
   componentDidMount() {
     const { token, room } = this.props.userStore;
@@ -27,26 +24,33 @@ class Lobby extends Component {
     // If there is a room for this user, we need to wait until the promise is resolved
     if (room) {
       this.props.lobbyStore.leave(room).then(() => {
-        this.refreshLobby();
+        this.props.lobbyStore.getRooms();
       })
     } else {
-      this.refreshLobby();
+      this.props.lobbyStore.getRooms();
     }
   };
 
-  joinLobby = () => {
-    this.props.lobbyStore.getLobbies();
+  joinLobby = (lock, id) => {
+    this.props.lobbyStore.setJoinId(id);
+    if (lock)
+      this.props.lobbyStore.setJoinModal();
+    else {
+      this.props.lobbyStore.join().then(() => {
+        this.props.history.push("/game");
+      });
+    }
   };
 
   createLobby = () => {
-    this.props.lobbyStore.setModal();
+    this.props.lobbyStore.setCreateModal();
   };
 
   render() {
-    const { values, errors, inProgress, rooms, viewModal } = this.props.lobbyStore;
+    const { values, errors, inProgress, rooms, viewCreateModal, viewJoinModal } = this.props.lobbyStore;
 
     let renderRooms = rooms.map((room, i) =>
-        <tr key={i} onClick={() => { alert("asd"); }}>
+        <tr key={i} onDoubleClick={() => { this.joinLobby(room.locked, room.id) }}>
             <th scope="row">{room.name}</th>
             <td>{room.author}</td>
             <td>{room.players}</td>
@@ -65,11 +69,12 @@ class Lobby extends Component {
                 onClick={this.createLobby}>Create</Button>
             <Button 
                 color="primary"
-                onClick={this.refreshLobby}>Refresh</Button>
+                onClick={() => { this.props.lobbyStore.getRooms(); }}>Refresh</Button>
           </div>
         </div>
 
-        <LobbyModal toggle={this.createLobby} values={values} history={this.props.history} viewModal={viewModal}/>
+        <LobbyCreateModal toggle={this.createLobby} values={values} history={this.props.history} viewCreateModal={viewCreateModal}/>
+        <LobbyJoinModal toggle={() => { this.props.lobbyStore.setJoinModal(); }} history={this.props.history} values={values} viewJoinModal={viewJoinModal}/>
         <ResultErrors errors={errors}/>
         <LoadingSpinner inProgress={inProgress}/>
 

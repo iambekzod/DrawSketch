@@ -4,27 +4,35 @@ import api from './api';
 class UserStore {
   constructor() {
     extendObservable(this, {
-      currentUser: null,
+      currentUser: { },
       token: window.localStorage.getItem('jwt'),
-      loadingUser: false,
+      inProgress: false,
+      room: { },
 
       pullUser: action(function() {
-        this.loadingUser = true;
+        this.inProgress = true;
         return api.Auth.current()
-          .then(action((user) => { this.currentUser = user; }))
-          .finally(action(() => { this.loadingUser = false; }))
+          .then(action((user) => { 
+            this.currentUser = user; }))
+          .finally(action(() => { this.inProgress = false; }))
       }),
       forgetUser: action(function() {
-        this.currentUser = undefined;
+        this.currentUser = null;
       }),
       setToken: action(function(setToken) {
         if (setToken) {
             this.token = setToken;
             window.localStorage.setItem("jwt", setToken);
         } else {
-            this.token = undefined;
+            this.token = null;
             window.localStorage.removeItem("jwt");
         }
+      }),
+      setRoom: action(function(room) {
+        this.room = room;
+      }),
+      leaveRoom: action(function() {
+        this.room = null;
       }),
     })
   }

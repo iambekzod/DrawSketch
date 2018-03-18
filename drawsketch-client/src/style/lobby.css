@@ -7,6 +7,10 @@
     text-align: center;
 }
 
+.actions button {
+    margin-right: 10px;
+}
+
 .unlocked {
     background: url("../images/padlock-unlock.svg") no-repeat center;
     background-size: 14px;
@@ -15,4 +19,9 @@
 .locked {
     background: url("../images/padlock.svg") no-repeat center;
     background-size: 14px;
+}
+
+.remove-lobby {
+    background: url("../images/remove-symbol.svg") no-repeat center;
+    background-size: 14px 25px;
 }

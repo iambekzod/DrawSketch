@@ -4,67 +4,89 @@ import "../style/lobby.css";
 
 import ResultErrors from "./ResultErrors";
 import LoadingSpinner from "./LoadingSpinner";
+import LobbyModal from "./LobbyModal";
 
-import { Table } from "reactstrap";
+import { Table, Button } from "reactstrap";
 import { inject, observer } from 'mobx-react';
-import { Link } from 'react-router-dom';
 
 class Lobby extends Component {
+      
+  refreshLobby = () => {
+    this.props.lobbyStore.getLobbies();
+  };
+
+  componentDidMount() {
+    this.refreshLobby();
+  };
+
+  joinLobby = () => {
+    this.props.lobbyStore.getLobbies();
+  };
+
+  createLobby = () => {
+    this.props.lobbyStore.setModal();
+  };
+
+  removeLobby = (id) => {
+    this.props.lobbyStore.delete(id);
+  };
 
   render() {
-    const user = this.props.userStore.token;
-    const { values, errors, inProgress } = this.props.lobbyStore;
+    const { currentUser, token } = this.props.userStore;
+    const { values, errors, inProgress, rooms, viewModal } = this.props.lobbyStore;
 
-    if (!user) {
-        this.props.history.push("/login");
+    if (!token) {
+        this.props.history.push("/signin");
         return null;
     }
 
+    let renderRooms = rooms.map((room, i) =>
+        <tr key={i}>
+            <th scope="row">{room.name}</th>
+            <td>{room.author}</td>
+            <td>{room.players}</td>
+            <td className={room.locked ? "locked" : "unlocked"}></td>
+            <td>{room.rounds}</td>
+            <td onClick={() => { this.removeLobby(room.id)}} className={room.author === currentUser.username ? "remove-lobby" : null}></td>
+        </tr>)
+
     return (
-      <div className="sign-in">
+      <div className="lobby">
         <div className="control-panel">
           <h1>Lobby</h1>
           <p>Create a lobby and start up a match with your friends!</p>
+          <div className="actions">
+            <Button 
+                color="primary"
+                onClick={this.createLobby}>Create</Button>
+            <Button 
+                color="primary"
+                onClick={this.joinLobby}>Join</Button>
+            <Button 
+                color="primary"
+                onClick={this.refreshLobby}>Refresh</Button>
+          </div>
         </div>
 
-        <ResultErrors errors={errors} />
+        <LobbyModal toggle={this.createLobby} values={values} viewModal={viewModal}/>
+        <ResultErrors errors={errors}/>
+        <LoadingSpinner inProgress={inProgress}/>
 
         <Table id="lobby-table" striped bordered hover>
                 <thead>
                 <tr>
                     <th>Room Name</th>
-                    <th>Owner</th>
+                    <th>Host</th>
                     <th>Players</th>
-                    <th>Locked</th>
+                    <th>Private</th>
                     <th>Rounds</th>
+                    <th>Settings</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">abcd</th>
-                    <td>Mark</td>
-                    <td>2/8</td>
-                    <td className="locked"></td>
-                    <td>8</td>
-                </tr>
-                <tr>
-                    <th scope="row">defgh</th>
-                    <td>Alice</td>
-                    <td>5/16</td>
-                    <td className="unlocked"></td>
-                    <td>32</td>
-                </tr>
-                <tr>
-                    <th scope="row">hehexd</th>
-                    <td>Bekzod</td>
-                    <td>2/8</td>
-                    <td className="locked"></td>
-                    <td>16</td>
-                </tr>
+                    {renderRooms}
                 </tbody>
             </Table>
-
-        <LoadingSpinner inProgress={inProgress}/>
       </div>
     );
   }

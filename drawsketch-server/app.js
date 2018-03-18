@@ -12,8 +12,8 @@ const https = require('https');
 const socketIO = require('socket.io');
 const cors = require('cors');
 
-require('./config/passport.js');
 const keys = require('./config/keys.js');
+require('./config/passport.js');
 
 // Database
 // ===================================================
@@ -59,5 +59,3 @@ server = https.createServer(config, app).listen(PORT, function (err) {
     if (err) console.log(err);
     else console.log("HTTPS server on https://localhost:%s", PORT);
 });
-
-//const io = socketIO(server);

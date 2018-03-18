@@ -3,7 +3,6 @@ import _superagent from 'superagent';
 
 import userStore from './userStore';
 import authStore from './authStore';
-import lobbyStore from './lobbyStore';
 
 const superagent = superagentPromise(_superagent, global.Promise);
 const API_ROOT = 'https://localhost:3001/api';
@@ -64,7 +63,23 @@ const Game = {
     requests.get('/game/connected'),
 }
 
+const Lobby = {
+  getLobbies: () =>
+    requests.get('/lobby/'),
+  getLobby: (id) =>
+    requests.get(`/lobby/${id}`),
+  createLobby: (room) =>
+    requests.post('/lobby/', room),
+  removeLobby: (id) =>
+    requests.del(`/lobby/remove/${id}`),
+  joinLobby: (id) =>
+    requests.post(`/lobby/join/${id}`),
+  leaveLobby: (id) =>
+    requests.post(`lobby/leave/${id}`)
+}
+
 export default {
   Auth,
-  Game
+  Game,
+  Lobby
 };

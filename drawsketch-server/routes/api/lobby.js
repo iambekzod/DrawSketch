@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 const router = require('express').Router();
-const passport = require('passport');
 const validator = require('validator');
+const uuid = require('uuid/v4');
 
 const Accounts = require('../../models/accounts.js');
 const auth = require('../auth');
 
 // Constants ==========================================================
+//Prevent sensitive information from being dumped out
 var userProjection = {
     salt: 0,
     password: 0,
@@ -30,19 +31,58 @@ var Room = (function () {
     };
 }());
 
-var lobbies = [];
+var lobbies = [{
+    id: "asdasdasda",
+    name: "hehexd",
+    author: "asd",
+    password: "",
+    locked: false,
+    timeLimit: 2000,
+    maxPlayers: 8,
+    rounds: 20,
+    players: []
+}, {
+    id: "asdasda",
+    name: "another room",
+    author: "person 123",
+    password: "asdasd",
+    locked: true,
+    timeLimit: 2000,
+    maxPlayers: 16,
+    rounds: 8,
+    players: []
+}];
 
 // Helper Functions ==========================================================
 
 var sanitizeInput = function (req, res, next) {
-    if (!validator.isAlphanumeric(req.body.id)) return res.status(422).send("room id must be alphanumeric");
-    if (!validator.isNumeric(req.body.timeLimit)) return res.status(422).send('room time limit must be a number');
-    if (!validator.isNumeric(req.body.maxPlayers)) return res.status(422).send('room max players must be a number');
-    if (!validator.isNumeric(req.body.rounds)) return res.status(422).send('room rounds must be a number');
+    if (!validator.isNumeric(req.body.maxPlayers)) return res.status(422).json({errors: {MaxPlayers: "must be numeric"}});
+    if (!validator.isNumeric(req.body.rounds)) return res.status(422).json({errors: {Rounds: "must be numeric"}});
 
-    req.body.id = validator.escape(req.body.id);
     req.body.name = validator.escape(req.body.name);
-    req.body.timeLimit = validator.escape(req.body.timeLimit);
+    switch (req.body.timeLimit) {
+        case "0:30":
+            req.body.timeLimit = 30000;
+            break;        
+        case "1:00":
+            req.body.timeLimit = 60000;
+            break;        
+        case "1:30":
+            req.body.timeLimit = 90000;
+            break;   
+        case "2:00":
+            req.body.timeLimit = 120000;
+            break;     
+        case "2:30":
+            req.body.timeLimit = 150000;
+            break;
+        case "3:00":
+            req.body.timeLimit = 180000;
+            break;
+        default:
+            return res.status(422).json({errors: {TimeLimit: "must be of format: X:XX"}});
+            break;
+    }
     req.body.maxPlayers = validator.escape(req.body.maxPlayers);
     req.body.rounds = validator.escape(req.body.rounds);
 
@@ -50,7 +90,7 @@ var sanitizeInput = function (req, res, next) {
 }
 
 var checkId = function (req, res, next) {
-    if (!validator.isAlphanumeric(req.params.id)) return res.status(422).send('room id is invalid format');
+    if (!validator.isUUID(req.params.id)) return res.status(422).json({errors: {RoomId: "must be alphanumeric"}});
     next();
 };
 
@@ -60,7 +100,7 @@ router.get('/', auth.required, function (req, res, next) {
     var filterIds = lobbies.map(function (room) {
         return {
             id: room.id,
-            name: room.id,
+            name: room.name,
             author: room.author,
             password: room.password,
             locked: room.locked,
@@ -68,7 +108,7 @@ router.get('/', auth.required, function (req, res, next) {
             rounds: room.rounds
         };
     });
-    return res.json(filterIds);
+    return res.json(filterIds.slice(0, 10));
 });
 
 //curl -X GET -H "Authorization: Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhYTgwZDU1NDA2ODJlMzc2YTFmYjQ2YiIsInVzZXJuYW1lIjoiYXNkIiwiZXhwIjoxNTI2NDA1Njc3LCJpYXQiOjE1MjEyMjE2Nzd9.vF69iHlQVkh4vG0iYKoeHfd5RQcC6OvFTuLASuP-ycE" -H "Content-Type: application/json" -k https://localhost:3001/api/lobby/abcde/
@@ -77,7 +117,7 @@ router.get('/:id/', auth.required, checkId, function (req, res, next) {
         return (e.id == req.params.id);
     });
     if (index === -1) {
-        return res.status(409).send('room id does not exist.');
+        return res.status(409).json({errors: {RoomId: "does not exist"}});
     }
 
     return res.json(lobbies[index]);
@@ -91,17 +131,41 @@ router.post('/', auth.required, sanitizeInput, function (req, res, next) {
         }
 
         var index = lobbies.findIndex(function (e) {
-            return (e.id == req.body.id);
+            return (e.name == req.body.name);
         });
         if (index !== -1) {
-            return res.status(409).send('room id already exists, please choose a unique id');
+            return res.status(409).json({errors: {RoomName: "already exists"}});
         }
 
         var room = new Room(req.body);
+        room.id = uuid();
         room.author = user.username;
 
         lobbies.push(room);
         return res.json(room);
+    }).catch(next);
+});
+
+router.delete('/remove/:id/', auth.required, checkId, function (req, res, next) {
+    Accounts.findById(req.payload.id, userProjection).then(function (user) {
+        if (!user) {
+            return res.sendStatus(401);
+        }
+
+        var index = lobbies.findIndex(function (e) {
+            return (e.id == req.params.id);
+        });
+        if (index === -1) {
+            return res.status(409).json({errors: {RoomId: "does not exist"}});
+        }
+
+        var room = lobbies[index];
+        if (room.author !== user.username) return res.status(403).json({errors: {Owner: "invalid authorization"}});
+        if (room.players.length !== 0) return res.status(403).json({errors: {Forbidden: "cannot remove lobby"}});
+
+        lobbies.splice(index, 1);
+        res.json(lobbies);
+
     }).catch(next);
 });
 
@@ -115,7 +179,7 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
             return (e.id == req.params.id);
         });
         if (index === -1) {
-            return res.status(409).send('room id does not exist.');
+            return res.status(409).json({errors: {RoomId: "does not exist"}});
         }
 
         var room = lobbies[index];
@@ -123,7 +187,7 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
             return (e.id == req.payload.id);
         });
         if (index !== -1) {
-            return res.status(409).send('already joined this lobby.');
+            return res.status(409).json({errors: {User: "already joined this lobby"}});
         }
 
         room.players.push(user);
@@ -142,7 +206,7 @@ router.post('/leave/:id/', auth.required, checkId, function (req, res, next) {
             return (e.id == req.params.id);
         });
         if (index === -1) {
-            return res.status(409).send('room id does not exist.');
+            return res.status(409).json({errors: {RoomId: "does not exist"}});
         }
 
         var room = lobbies[index];
@@ -150,7 +214,7 @@ router.post('/leave/:id/', auth.required, checkId, function (req, res, next) {
             return (e.id == req.payload.id);
         });
         if (index === -1) {
-            return res.status(409).send('user had never joined this lobby.');
+            return res.status(409).json({errors: {User: "is not in this lobby"}});
         }
 
         room.players.splice(index, 1);

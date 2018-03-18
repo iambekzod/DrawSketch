@@ -1,5 +1,6 @@
 import {action, extendObservable} from 'mobx'
-class ObservableTodoStore {
+
+export class ObservableTodoStore {
     constructor() {
         extendObservable(this, {
             isPainting: false,
@@ -64,7 +65,32 @@ class ObservableTodoStore {
             setCurColor: action((set) => this.curColor = set),
             setPaint: action((set) => this.isPainting = set),
             setWidth: action((width) => this.brushWidth = width),
-            setColor: action((color) => this.paintColor.push(color))
+            setColor: action((color) => this.paintColor.push(color)),
+            updateState: action((returned) => {
+                /*
+                                xPos: store.getX,
+                yPos: store.getY,
+                color: store.getColor,
+                width: store.getPenWidth,
+                curWidth: store.getWidth,
+                curColor: store.getCurColor,
+                isPainting: store.Paint,
+                dragging: store.getDrag
+                */
+                let state = JSON.parse(returned);
+                if (state.xPos.length != 0) {
+                    console.log("UPDATING");
+                    this.xPos = state.xPos;
+                    this.yPos = state.yPos;
+                    this.dragging = state.dragging;
+                    this.penWidth = state.width;
+                    this.paintColor = state.color;
+                    this.brushWidth = state.curWidth;
+                    this.curColor = state.curColor;
+                    this.isPainting = state.isPainting;
+                }
+
+            })
         })
     }
 }

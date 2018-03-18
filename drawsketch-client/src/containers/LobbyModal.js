@@ -1,11 +1,11 @@
 /* eslint react/no-multi-comp: 0, react/prop-types: 0 */
 
-import React from 'react';
+import React, { Component } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Label, Input, Form } from "reactstrap";
 import { observer, inject } from "mobx-react";
 
-class LobbyModal extends React.Component {
+class LobbyModal extends Component {
 
   handleRoomNameChange = (e) => this.props.lobbyStore.setRoomName(e.target.value);
   handleMaxPlayerChange = (e) => this.props.lobbyStore.setMaxPlayers(e.target.value);  
@@ -17,19 +17,18 @@ class LobbyModal extends React.Component {
     e.preventDefault();
 
     this.toggle();
-    this.props.lobbyStore.create()
-      .then(() => { 
-        this.props.lobbyStore.getLobbies()
-        this.props.lobbyStore.join(this.props.userStore.room.id);
-      });
+    this.props.lobbyStore.create().then(() => {
+      this.props.lobbyStore.reset();
+      this.props.history.push("/game");
+    });
   };
 
   render() {
-    const { token } = this.props.userStore;
+    // const { token } = this.props.userStore;
 
-    if (!token) {
-        return null;
-    }
+    // if (!token) {
+    //     return null;
+    // }
 
     const viewModal = this.props.viewModal;
     const { values } = this.props.lobbyStore;
@@ -59,7 +58,7 @@ class LobbyModal extends React.Component {
                 onChange={this.handleRoundsChange}/>
               <Label>Time Limit</Label>
               <Input type="select" 
-                id="timeLimit" 
+                id="timeLimit"
                 value={values.timeLimit}
                 onChange={this.handleTimeLimitChange}>
                   <option>0:30</option>

@@ -11,12 +11,20 @@ class LobbyStore {
       rooms: [],
       values: {
         name: '',
-        maxPlayers: "0",
-        rounds: "0",
+        maxPlayers: "10",
+        rounds: "8",
         timeLimit: "0:30",
         password: '',
         locked: false,
-      },   
+      },
+      reset: action(() => {
+        this.values.name = '';
+        this.values.maxPlayers = "10";
+        this.values.rounds = "8";
+        this.values.timeLimit = "0:30";
+        this.values.password = '';
+        this.values.locked = false;
+      }),
       setRoomName: action((set) => this.values.name = set),
       setMaxPlayers: action((set) => this.values.maxPlayers = set),
       setRounds: action((set) => this.values.rounds = set),
@@ -36,21 +44,25 @@ class LobbyStore {
           })).finally(action(() => {
             this.inProgress = false; }));
       }),
-      delete: action(function(id) {
-        this.inProgress = true;
-        this.errors = undefined;
-        return api.Lobby.removeLobby(id)
-          .then(action((res) => { this.rooms = res; }))
-          .catch(action((err) => {
-            this.errors = err.response && err.response.body && err.response.body.errors;
-            throw err;
-          })).finally(action(() => {
-            this.inProgress = false; }));
-      }),
       create: action(function() {
         this.inProgress = true;
         this.errors = undefined;
         return api.Lobby.createLobby(this.values)
+          .then((room) => {
+            this.join(room.id);
+          })
+          .catch(action((err) => {
+            this.errors = err.response && err.response.body && err.response.body.errors;
+            throw err;
+          }))
+          .finally(action(() => { 
+            this.inProgress = false;
+          }));
+      }),
+      join: action(function(id) {
+        this.inProgress = true;
+        this.errors = undefined;
+        return api.Lobby.joinRoom(id)
           .then((room) => {
             userStore.setRoom(room);
           })
@@ -60,11 +72,21 @@ class LobbyStore {
           }))
           .finally(action(() => { this.inProgress = false; }));
       }),
-      join: action(function() {
-        return Promise.resolve();
-      }),
-      leave: action(function() {
-          
+      leave: action(function(id) {
+        this.inProgress = true;
+        this.errors = undefined;
+        return api.Lobby.leaveRoom(id)
+          .then((room) => {
+            userStore.setRoom(null);
+          })
+          .catch(action((err) => {
+            this.errors = err.response && err.response.body && err.response.body.errors;
+            throw err;
+          }))
+          .finally(action(() => { 
+            this.inProgress = false;
+            Promise.resolve();
+           }));
       }),
       setModal: action(function() {
         this.viewModal = !this.viewModal;

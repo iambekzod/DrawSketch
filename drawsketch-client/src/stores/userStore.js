@@ -7,7 +7,7 @@ class UserStore {
       currentUser: { },
       token: window.localStorage.getItem('jwt'),
       inProgress: false,
-      room: { },
+      room: window.localStorage.getItem('room'),
 
       pullUser: action(function() {
         this.inProgress = true;
@@ -29,11 +29,14 @@ class UserStore {
         }
       }),
       setRoom: action(function(room) {
-        this.room = room;
-      }),
-      leaveRoom: action(function() {
-        this.room = null;
-      }),
+        if (room) {
+          this.room = room.id;
+          window.localStorage.setItem("room", room.id);
+        } else {
+          this.room = null;
+          window.localStorage.removeItem("room");
+        }
+      })
     })
   }
 }

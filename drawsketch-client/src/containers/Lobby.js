@@ -16,7 +16,22 @@ class Lobby extends Component {
   };
 
   componentDidMount() {
-    this.refreshLobby();
+    const { token, room } = this.props.userStore;
+
+    // Cannot visit lobby without being logged in
+    if (!token) {
+      this.props.history.push("/signin");
+      return null;
+    }
+
+    // If there is a room for this user, we need to wait until the promise is resolved
+    if (room) {
+      this.props.lobbyStore.leave(room).then(() => {
+        this.refreshLobby();
+      })
+    } else {
+      this.refreshLobby();
+    }
   };
 
   joinLobby = () => {
@@ -27,27 +42,16 @@ class Lobby extends Component {
     this.props.lobbyStore.setModal();
   };
 
-  removeLobby = (id) => {
-    this.props.lobbyStore.delete(id);
-  };
-
   render() {
-    const { currentUser, token } = this.props.userStore;
     const { values, errors, inProgress, rooms, viewModal } = this.props.lobbyStore;
 
-    if (!token) {
-        this.props.history.push("/signin");
-        return null;
-    }
-
     let renderRooms = rooms.map((room, i) =>
-        <tr key={i}>
+        <tr key={i} onClick={() => { alert("asd"); }}>
             <th scope="row">{room.name}</th>
             <td>{room.author}</td>
             <td>{room.players}</td>
             <td className={room.locked ? "locked" : "unlocked"}></td>
             <td>{room.rounds}</td>
-            <td onClick={() => { this.removeLobby(room.id)}} className={room.author === currentUser.username ? "remove-lobby" : null}></td>
         </tr>)
 
     return (
@@ -61,14 +65,11 @@ class Lobby extends Component {
                 onClick={this.createLobby}>Create</Button>
             <Button 
                 color="primary"
-                onClick={this.joinLobby}>Join</Button>
-            <Button 
-                color="primary"
                 onClick={this.refreshLobby}>Refresh</Button>
           </div>
         </div>
 
-        <LobbyModal toggle={this.createLobby} values={values} viewModal={viewModal}/>
+        <LobbyModal toggle={this.createLobby} values={values} history={this.props.history} viewModal={viewModal}/>
         <ResultErrors errors={errors}/>
         <LoadingSpinner inProgress={inProgress}/>
 
@@ -80,7 +81,6 @@ class Lobby extends Component {
                     <th>Players</th>
                     <th>Private</th>
                     <th>Rounds</th>
-                    <th>Settings</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -92,4 +92,4 @@ class Lobby extends Component {
   }
 }
 
-export default Lobby = inject('userStore', 'lobbyStore')(observer(Lobby))
+export default Lobby = inject('userStore', 'authStore', 'lobbyStore')(observer(Lobby))

@@ -5,6 +5,7 @@
 
 #lobby-table th, tr, td {
     text-align: center;
+    cursor: pointer;
 }
 
 .actions button {

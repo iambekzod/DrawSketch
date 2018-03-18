@@ -19,5 +19,6 @@ export default() => <Switch>
     path="/game"
     component=
     {() => <TodoList store = {observableTodoStore}/>}/>
+    
   <Route component={NotFound}/>
 </Switch>;

@@ -1,6 +1,7 @@
 import { action, extendObservable } from 'mobx';
 import api from './api';
 import userStore from './userStore';
+import lobbyStore from './lobbyStore';
 
 class AuthStore {
   constructor() {
@@ -33,6 +34,7 @@ class AuthStore {
       login: action(function() {
         this.inProgress = true;
         this.errors = undefined;
+
         return api.Auth.login(this.values.username, this.values.password)
           .then((user) => {
             userStore.setToken(user.token)
@@ -45,6 +47,9 @@ class AuthStore {
           .finally(action(() => { this.inProgress = false; }));
       }),
       logout: action(function() {
+        if (userStore.room) {
+          lobbyStore.leave(userStore.room);
+        }
         userStore.setToken(undefined);
         userStore.forgetUser();
         return Promise.resolve();

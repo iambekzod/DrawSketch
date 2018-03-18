@@ -31,33 +31,14 @@ var Room = (function () {
     };
 }());
 
-var lobbies = [{
-    id: "asdasdasda",
-    name: "hehexd",
-    author: "asd",
-    password: "",
-    locked: false,
-    timeLimit: 2000,
-    maxPlayers: 8,
-    rounds: 20,
-    players: []
-}, {
-    id: "asdasda",
-    name: "another room",
-    author: "person 123",
-    password: "asdasd",
-    locked: true,
-    timeLimit: 2000,
-    maxPlayers: 16,
-    rounds: 8,
-    players: []
-}];
+var lobbies = [];
 
 // Helper Functions ==========================================================
 
 var sanitizeInput = function (req, res, next) {
     if (!validator.isNumeric(req.body.maxPlayers)) return res.status(422).json({errors: {MaxPlayers: "must be numeric"}});
     if (!validator.isNumeric(req.body.rounds)) return res.status(422).json({errors: {Rounds: "must be numeric"}});
+    if (req.body.name === "") return res.status(422).json({errors: {RoomName: "must be non empty"}});
 
     req.body.name = validator.escape(req.body.name);
     switch (req.body.timeLimit) {
@@ -146,29 +127,6 @@ router.post('/', auth.required, sanitizeInput, function (req, res, next) {
     }).catch(next);
 });
 
-router.delete('/remove/:id/', auth.required, checkId, function (req, res, next) {
-    Accounts.findById(req.payload.id, userProjection).then(function (user) {
-        if (!user) {
-            return res.sendStatus(401);
-        }
-
-        var index = lobbies.findIndex(function (e) {
-            return (e.id == req.params.id);
-        });
-        if (index === -1) {
-            return res.status(409).json({errors: {RoomId: "does not exist"}});
-        }
-
-        var room = lobbies[index];
-        if (room.author !== user.username) return res.status(403).json({errors: {Owner: "invalid authorization"}});
-        if (room.players.length !== 0) return res.status(403).json({errors: {Forbidden: "cannot remove lobby"}});
-
-        lobbies.splice(index, 1);
-        res.json(lobbies);
-
-    }).catch(next);
-});
-
 router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
     Accounts.findById(req.payload.id, userProjection).then(function (user) {
         if (!user) {
@@ -197,6 +155,7 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
 });
 
 router.post('/leave/:id/', auth.required, checkId, function (req, res, next) {
+    console.log(req.params.id);
     Accounts.findById(req.payload.id, userProjection).then(function (user) {
         if (!user) {
             return res.sendStatus(401);

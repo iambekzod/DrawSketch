@@ -23,4 +23,4 @@ class Home extends Component {
   }
 }
 
-export default Home = inject('userStore')(observer(Home))
+export default Home = inject('userStore', 'lobbyStore')(observer(Home))

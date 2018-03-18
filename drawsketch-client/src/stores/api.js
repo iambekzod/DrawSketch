@@ -70,12 +70,10 @@ const Lobby = {
     requests.get(`/lobby/${id}`),
   createLobby: (room) =>
     requests.post('/lobby/', room),
-  removeLobby: (id) =>
-    requests.del(`/lobby/remove/${id}`),
-  joinLobby: (id) =>
+  joinRoom: (id) =>
     requests.post(`/lobby/join/${id}`),
-  leaveLobby: (id) =>
-    requests.post(`lobby/leave/${id}`)
+  leaveRoom: (id) =>
+    requests.post(`/lobby/leave/${id}`)
 }
 
 export default {

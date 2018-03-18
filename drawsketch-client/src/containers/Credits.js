@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import "../style/form.css";
 
-export default class Credits extends Component {
+import { inject, observer } from "mobx-react";
+
+class Credits extends Component {
 
   render() {
     return (
@@ -31,3 +33,5 @@ export default class Credits extends Component {
     );
   }
 }
+
+export default Credits = inject('userStore', 'authStore', 'lobbyStore')(observer(Credits))

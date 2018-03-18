@@ -30,27 +30,6 @@ router.get('/', auth.required, function(req, res, next) {
   }).catch(next);
 });
 
-router.put('/update', auth.required, function(req, res, next){
-  Accounts.findById(req.payload.id).then(function(user){
-    if(!user){ return res.sendStatus(401); }
-
-    // only update fields that were actually passed...
-    if(req.body.email){
-      user.email = req.body.email;
-    }
-    if(req.body.password){
-      user.setPassword(req.body.user.password);
-    }
-    if(req.body.winner){
-      user.wins += 1;
-    }
-
-    return user.save().then(function(){
-      return res.json(user.toAuthJSON());
-    });
-  }).catch(next);
-});
-
 router.post('/signin', function(req, res, next) {
   req.body.user.username = validator.escape(req.body.user.username);
   req.body.user.password = validator.escape(req.body.user.password);  

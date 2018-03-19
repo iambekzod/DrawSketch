@@ -11,30 +11,19 @@ const session = require('express-session');
 const https = require('https');
 const socketIO = require('socket.io');
 const cors = require('cors');
+<<<<<<< HEAD
 const short = require('short-uuid');
+=======
+
+>>>>>>> fbbc046acfd39a78c33e8564c4d47d2f2aa6179d
 const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
-
-// Helper functions ===================================================
-
-function generateSalt() {
-    return crypto
-        .randomBytes(16)
-        .toString('base64');
-}
-
-function generateHash(password, salt) {
-    var hash = crypto.createHmac('sha512', salt);
-    hash.update(password);
-    return hash.digest('base64');
-}
+require('./config/passport.js');
 
 // Database =================================================== Connection URL
 mongoose.connect(keys.mongoURL);
 
-// https://scotch.io/tutorials/using-mongoosejs-in-node-js-and-mongodb-applicati
-// o ns Server ===================================================
-
+// Server ===================================================
 const app = express();
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -54,9 +43,7 @@ app.use(session({
 
 app.use(require('./routes'));
 app.use(function (req, res, next) {
-    res
-        .status(501)
-        .end("Invalid API endpoint: " + req.url);
+    res.status(501).end("Invalid API endpoint: " + req.url);
     console.log("HTTP Response", res.statusCode);
 });
 
@@ -68,16 +55,15 @@ var config = {
 };
 const PORT = 3001;
 
-server = https
-    .createServer(config, app)
-    .listen(PORT, function (err) {
-        if (err) 
-            console.log(err);
-        else 
-            console.log("HTTPS server on https://localhost:%s", PORT);
-        }
-    );
+server = https.createServer(config, app).listen(PORT, function (err) {
+    if (err) 
+        console.log(err);
+    else 
+        console.log("HTTPS server on https://localhost:%s", PORT);
+    }
+);
 
+<<<<<<< HEAD
 // io.on('connection', function (socket) {     console.log('a user connected: '
 // + socket.id + " total: " + io.engine.clientsCount); socket.on('disconnect',
 // function () {         console.log('user disconnected');     });
@@ -119,3 +105,12 @@ server = https
 // socket.emit('check-register', "Username already exists");             }   });
 //     }); //socket.on('drawing', (data) => socket.broadcast.emit('drawing',
 // data)); });
+=======
+const io = socketIO(server);
+
+io.on('connection', function (socket) {
+    socket.on("gameState", (state) => {
+        io.emit('return', state)
+    })
+})
+>>>>>>> fbbc046acfd39a78c33e8564c4d47d2f2aa6179d

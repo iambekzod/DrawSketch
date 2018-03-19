@@ -7,7 +7,7 @@ import {ListGroup, ListGroupItem} from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
 const sideBarStyle = {
-    width: "6%",
+    width: "12%",
     fontSize: "1.5em"
 }
 

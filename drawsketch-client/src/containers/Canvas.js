@@ -9,6 +9,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import io from 'socket.io-client';
 import {Guesser} from './testUpdate'
 import {observableTodoStore, ObservableTodoStore} from '../stores/gameStore'
+import ChatBox from "./ChatBox";
 
 const colors = {
     blue: "2C86DF",
@@ -69,6 +70,7 @@ export const TodoList = observer(class TodoList extends React.Component {
                 <Row>
                     <SideBar store={this.props.store}/>
                     <canvas className="whiteboard" ref="canvas" width={656} height={400}/>
+                    <ChatBox/>
                 </Row>
                 <Provider store={newStore}>
                     <div>

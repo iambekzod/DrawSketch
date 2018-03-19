@@ -1,0 +1,28 @@
+.chat-box {
+    margin-left: 25px;
+    width: 400px;
+    height: 402px;
+    border: 1px solid black;
+}
+
+.messages {
+    margin: 10px 0px 0px 10px;
+    width: 380px;
+    height: 325px;
+    border: 1px solid black;
+}
+
+.message {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: row;
+}
+
+.username {
+    color: green;
+    font-weight: bold;
+}
+
+.from-me {
+    color: blue;
+}

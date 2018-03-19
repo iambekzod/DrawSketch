@@ -16,6 +16,13 @@ const paletteStyle = {
     height: "25px"
 }
 
+const listGroupStyle = {
+    border: "1",
+    display: "flex",
+    justifyContent: "center",
+    alignContent: "center"
+}
+
 export const SideBar = observer(class TodoList extends React.Component {
     constructor(props) {
         super(props)
@@ -35,49 +42,32 @@ export const SideBar = observer(class TodoList extends React.Component {
             <ListGroup className="list-group-flush" style={sideBarStyle}>
                 <ListGroupItem
                     action
-                    style={{
-                    border: "0 none",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignContent: "center"
-                }}
+                    style={listGroupStyle}
                     onClick={this.paint}>
                     <i className="fa fa-pencil"></i>
                 </ListGroupItem>
+                
                 <ListGroupItem
                     action
-                    style={{
-                    border: "0 none",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignContent: "center"
-                }}
+                    style={listGroupStyle}
                     >
                     <CustomDropDown store={this.props.store} iconType="slider">
                         <i className="fa fa-bullseye"></i>
                     </CustomDropDown>
                 </ListGroupItem>
-                <CustomDropDown store={this.props.store} iconType="color">
-                    <ListGroupItem
-                        action
-                        style={{
-                        border: "0 none",
-                        display: "flex"
-                    }}>
+                <ListGroupItem
+                    action
+                    style={listGroupStyle}>
+                    <CustomDropDown store={this.props.store} iconType="color">
                         <img
                             src="https://image.flaticon.com/icons/svg/61/61092.svg"
                             alt="palette"
                             style={paletteStyle}></img>
-                    </ListGroupItem>
-                </CustomDropDown>
+                    </CustomDropDown>
+                </ListGroupItem>
                 <ListGroupItem
                     action
-                    style={{
-                    border: "0 none",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignContent: "center"
-                }}
+                    style={listGroupStyle}
                     onClick={this.erase}>
                     <i className="fa fa-eraser"></i>
                 </ListGroupItem>

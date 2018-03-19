@@ -24,23 +24,10 @@ export const TodoList = observer(class TodoList extends React.Component {
         this.redraw = this
             .redraw
             .bind(this);
+        this.socket = io('https://localhost:3001/');
     }
     componentDidMount() {
-        const socket = io('https://localhost:3001/');
         const store = this.props.store
-        setInterval(() => {
-            const gameState = {
-                xPos: store.getX,
-                yPos: store.getY,
-                color: store.getColor,
-                width: store.getPenWidth,
-                curWidth: store.getWidth,
-                curColor: store.getCurColor,
-                isPainting: store.Paint,
-                dragging: store.getDrag
-            }
-            socket.emit('gameState', JSON.stringify(gameState));
-        }, 500)
         const canvas = this.refs.canvas
         autorun(() => console.log(this.props.store.Paint));
         var self = this;
@@ -99,6 +86,17 @@ export const TodoList = observer(class TodoList extends React.Component {
                 context.stroke();
             }
         }
+        const gameState = {
+            xPos: store.getX,
+            yPos: store.getY,
+            color: store.getColor,
+            width: store.getPenWidth,
+            curWidth: store.getWidth,
+            curColor: store.getCurColor,
+            isPainting: store.Paint,
+            dragging: store.getDrag
+        }
+        this.socket.emit('gameState', JSON.stringify(gameState));
     }
     testReDraw(ref) {
         const canvas = ref

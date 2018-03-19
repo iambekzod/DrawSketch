@@ -19,6 +19,14 @@ const itemStyle = {
 
 }
 
+const listGroupStyle = {
+    border: "1",
+    display: "flex",
+    justifyContent: "center",
+    alignContent: "center",
+    height: "50px"
+}
+
 export const CustomDropDown = class CustomDropDown extends Component {
     constructor(props) {
         super(props)
@@ -115,6 +123,14 @@ export const CustomDropDown = class CustomDropDown extends Component {
 
         console.log(menu)
         return (
+            <ListGroupItem 
+            action
+            style={listGroupStyle}
+            onClick= {() => {
+                this.setState({
+                    btnDropright: !this.state.btnDropright
+                });
+            }}>
             <div className="container">
                 <Dropdown
                     direction="right"
@@ -126,9 +142,9 @@ export const CustomDropDown = class CustomDropDown extends Component {
                 }}>
                     <DropdownToggle
                         tag="span"
-                        onClick={this.toggle}
                         data-toggle="dropdown"
                         aria-expanded={this.state.dropdownOpen}>
+
                         {this.props.children}
                     </DropdownToggle>
                     <DropdownMenu
@@ -141,6 +157,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
                     </DropdownMenu>
                 </Dropdown>
             </div>
+            </ListGroupItem>
         )
     }
 }

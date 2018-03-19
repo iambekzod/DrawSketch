@@ -20,7 +20,8 @@ const listGroupStyle = {
     border: "1",
     display: "flex",
     justifyContent: "center",
-    alignContent: "center"
+    alignContent: "center",
+    height: "50px"
 }
 
 export const SideBar = observer(class TodoList extends React.Component {
@@ -47,24 +48,15 @@ export const SideBar = observer(class TodoList extends React.Component {
                     <i className="fa fa-pencil"></i>
                 </ListGroupItem>
                 
-                <ListGroupItem
-                    action
-                    style={listGroupStyle}
-                    >
                     <CustomDropDown store={this.props.store} iconType="slider">
-                        <i className="fa fa-bullseye"></i>
+                        <i className="fa fa-bullseye"></i>  
                     </CustomDropDown>
-                </ListGroupItem>
-                <ListGroupItem
-                    action
-                    style={listGroupStyle}>
                     <CustomDropDown store={this.props.store} iconType="color">
                         <img
                             src="https://image.flaticon.com/icons/svg/61/61092.svg"
                             alt="palette"
                             style={paletteStyle}></img>
-                    </CustomDropDown>
-                </ListGroupItem>
+                    </CustomDropDown>   
                 <ListGroupItem
                     action
                     style={listGroupStyle}

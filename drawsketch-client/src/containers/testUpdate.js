@@ -1,7 +1,7 @@
 import React from 'react'
 import {observer, inject} from "mobx-react"
 import "../style/form.css";
-import {Col, Row} from 'reactstrap';
+import {Col, Row, Input} from 'reactstrap';
 import {autorun} from "mobx";
 import {SideBar} from './SideBar';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -21,37 +21,72 @@ export const Guesser = inject("store")(observer(class TodoList extends React.Com
         this.redraw = this
             .redraw
             .bind(this);
+        this.socket = io('https://localhost:3001/');
+        this.state = {
+            begun: false
+        };
     }
     componentDidMount() {
         console.log(this.props.store);
         const store = this.props.store
         this.updateCanvas();
+        this.roundStarted();
     }
     render() {
+        var guess = null
+        if (this.state.begun) {
+
+            guess = <div
+                style={{
+                width: "300px",
+                height: "500px",
+                border: "solid black 1px ",
+                padding: "10px"
+            }}><Input placeholder="GUESS THE PICTURE"/>
+            </div>
+        }
         return (
-            <div>
-                <canvas
-                    style={{
-                    border: "solid red 1",
-                    marginTop: "100px",
-                    marginLeft: "100px"
-                }}
-                    ref="canvas"
-                    width={656}
-                    height={400}className="whiteboard"/>
+            <div
+                style={{
+                marginTop: "100px",
+                marginLeft: "100px"
+            }}>
+                <Row>
+                    <Col>
+                        <canvas
+                            style={{
+                            border: "solid red 1"
+                        }}
+                            ref="canvas"
+                            width={656}
+                            height={400}className="whiteboard"/>
+                    </Col>
+                    <Col>
+                        {guess}
+                    </Col>
+                </Row>
             </div>
 
         );
     }
+
+    roundStarted = () => {
+        this
+            .socket
+            .on('startRound', (game) => {
+                this.setState({begun: true});
+            })
+    }
     updateCanvas = () => {
-        const socket = io('https://localhost:3001/');
-        socket.on('return', (state) => {
-            this
-                .props
-                .store
-                .updateState(state);
-            this.redraw();
-        });
+        this
+            .socket
+            .on('return', (state) => {
+                this
+                    .props
+                    .store
+                    .updateState(state);
+                this.redraw();
+            });
     }
     redraw() {
         console.log("REDRAWING");

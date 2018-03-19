@@ -11,8 +11,8 @@ const session = require('express-session');
 const https = require('https');
 const socketIO = require('socket.io');
 const cors = require('cors');
-
-const keys = require('./keys.js');
+const short = require('short-uuid');
+const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
 
 // Helper functions ===================================================
@@ -78,14 +78,6 @@ server = https
         }
     );
 
-const io = socketIO(server);
-
-io.on('connection', function (socket) {
-    socket.on("gameState", (state) => {
-        io.emit('return', state)
-    })
-})
-
 // io.on('connection', function (socket) {     console.log('a user connected: '
 // + socket.id + " total: " + io.engine.clientsCount); socket.on('disconnect',
 // function () {         console.log('user disconnected');     });
@@ -109,20 +101,20 @@ io.on('connection', function (socket) {
 // JSON.parse(data);         if (!validator.isAlphanumeric(request.username))
 // return socket.emit('check-register', "bad username input, must be
 // alphanumeric");      if (!validator.isAlphanumeric(request.password)) return
-// socket.emit('check-register', "bad password input, must be alphanumeric");
-// if (!validator.isAlphanumeric(request.firstname)) return
+// socket.emit('check-register', "bad password input, must be alphanumeric"); if
+// (!validator.isAlphanumeric(request.firstname)) return
 // socket.emit('check-register', "bad firstname input, must be alphanumeric");
 // if (!validator.isAlphanumeric(request.lastname)) return
 // socket.emit('check-register', "bad lastname input, must be alphanumeric"); if
-// (!validator.isEmail(request.email)) return socket.emit('check-register',
-// "bad email input, must be alphanumeric"); Accounts.findOne({ username:
+// (!validator.isEmail(request.email)) return socket.emit('check-register', "bad
+// email input, must be alphanumeric"); Accounts.findOne({ username:
 // request.username, }).exec(function (err, user) {             if (err) return
 // console.log(err);            if (!user) {                 var salt =
 // generateSalt();      var hash = generateHash(request.password, salt); var
 // newUser = Accounts({                     name: request.firstname + " " +
 // request.lastname,                     username: request.username, password:
 // hash,                     salt: salt,     }); newUser.save(function (err) {
-//         if (err) console.log(err);                    else
+// if (err) console.log(err);                    else
 // socket.emit('check-register', user); });             } else {
 // socket.emit('check-register', "Username already exists");             }   });
 //     }); //socket.on('drawing', (data) => socket.broadcast.emit('drawing',

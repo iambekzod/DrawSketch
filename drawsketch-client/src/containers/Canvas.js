@@ -1,7 +1,15 @@
 import React from 'react'
 import {observer, Provider} from "mobx-react"
 import "../style/form.css";
-import {Col, Row} from 'reactstrap';
+import {
+    Col,
+    Row,
+    Button,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter
+} from 'reactstrap';
 import {autorun} from "mobx";
 import {SideBar} from './SideBar';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -9,6 +17,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import io from 'socket.io-client';
 import {Guesser} from './testUpdate'
 import {observableTodoStore, ObservableTodoStore} from '../stores/gameStore'
+import TimerExample from './timer'
 
 const colors = {
     blue: "2C86DF",
@@ -23,23 +32,21 @@ export const TodoList = observer(class TodoList extends React.Component {
         this.redraw = this
             .redraw
             .bind(this);
+        this.socket = io('https://localhost:3001/');
+        this.beginGame = this
+            .beginGame
+            .bind(this);
+        this.state = {
+            begun: false,
+            word: "",
+            modal: false
+        };
+        this.toggle = this
+            .toggle
+            .bind(this);
     }
     componentDidMount() {
-        const socket = io('https://localhost:3001/');
         const store = this.props.store
-        setInterval(() => {
-            const gameState = {
-                xPos: store.getX,
-                yPos: store.getY,
-                color: store.getColor,
-                width: store.getPenWidth,
-                curWidth: store.getWidth,
-                curColor: store.getCurColor,
-                isPainting: store.Paint,
-                dragging: store.getDrag
-            }
-            socket.emit('gameState', JSON.stringify(gameState));
-        }, 500)
         const canvas = this.refs.canvas
         autorun(() => console.log(this.props.store.Paint));
         var self = this;
@@ -62,13 +69,46 @@ export const TodoList = observer(class TodoList extends React.Component {
         canvas.addEventListener('mouseup', (e) => store.setPaint(false))
         canvas.addEventListener('mouseleave', () => store.setPaint(false))
     }
+    toggle() {
+        this.setState({
+            modal: !this.state.modal
+        });
+    }
     render() {
+        var timer = null
+        var beginButton = <Col>
+            <Button outline onClick={this.beginGame} color="primary">
+                Begin Game
+            </Button>
+        </Col>
+        if (this.state.begun) {
+            beginButton = null;
+            timer = <Row>
+                <Col>
+                    <TimerExample start={Date.now()}/>
+                </Col>
+            </Row>
+        }
         const newStore = new ObservableTodoStore();
         return (
+
             <div>
+                {timer}
+                <Modal
+                    isOpen={this.state.modal}
+                    toggle={this.toggle}
+                    className={this.props.className}>
+                    <ModalHeader toggle={this.toggle}>Draw this</ModalHeader>
+                    <ModalBody>
+                        Your Word is {this.state.word}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="secondary" onClick={this.toggle}>OK</Button>
+                    </ModalFooter>
+                </Modal>
                 <Row>
                     <SideBar store={this.props.store}/>
-                    <canvas className="whiteboard" ref="canvas" width={656} height={400}/>
+                    <canvas className="whiteboard" ref="canvas" width={656} height={400}/> {beginButton}
                 </Row>
                 <Provider store={newStore}>
                     <div>
@@ -78,6 +118,17 @@ export const TodoList = observer(class TodoList extends React.Component {
             </div>
 
         );
+    }
+
+    beginGame() {
+        var sef = this;
+        this
+            .socket
+            .emit('beginRound', JSON.stringify({id: "playerA"}))
+            .on('getWord', (word) => {
+                alert("HERE");
+                this.setState({begun: true, modal: true, word: word})
+            });
     }
     redraw() {
         const canvas = this.refs.canvas
@@ -97,6 +148,19 @@ export const TodoList = observer(class TodoList extends React.Component {
                 context.stroke();
             }
         }
+        const gameState = {
+            xPos: store.getX,
+            yPos: store.getY,
+            color: store.getColor,
+            width: store.getPenWidth,
+            curWidth: store.getWidth,
+            curColor: store.getCurColor,
+            isPainting: store.Paint,
+            dragging: store.getDrag
+        }
+        this
+            .socket
+            .emit('gameState', JSON.stringify(gameState));
     }
     testReDraw(ref) {
         const canvas = ref

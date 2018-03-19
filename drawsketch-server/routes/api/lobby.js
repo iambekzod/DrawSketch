@@ -24,8 +24,8 @@ var Room = (function () {
         this.password = request.password;
         this.locked = request.password !== "";
         this.timeLimit = request.timeLimit; // Use: Milliseconds
-        this.maxPlayers = request.maxPlayers;
-        this.rounds = request.rounds;
+        this.maxPlayers = parseInt(request.maxPlayers);
+        this.rounds = parseInt(request.rounds);
 
         this.players = [];
     };

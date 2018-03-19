@@ -1,4 +1,5 @@
 .chat-box {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin-left: 25px;
     width: 400px;
     height: 402px;
@@ -15,7 +16,6 @@
 
 .message {
     padding-left: 5px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     display: flex;
     flex-direction: row;
 }

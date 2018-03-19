@@ -10,6 +10,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const https = require('https');
 const socketIO = require('socket.io');
+const jwt = require('jsonwebtoken');
+const socketioJwt = require('socketio-jwt2');
 const cors = require('cors');
 
 const keys = require('./config/keys.js');
@@ -60,6 +62,16 @@ server = https.createServer(config, app).listen(PORT, function (err) {
 );
 
 const io = socketIO(server);
+
+io.sockets.on('connection', socketioJwt.authorize({
+    secret: keys.jwtSecret,
+    callback: false,
+    timeout: 10000 // 15 seconds to send the authentication message
+  })).on('authenticated', function(socket) {
+    //this socket is authenticated, we are good to handle more events from it.
+    console.log('welcome', socket.decoded_token.username);
+  });
+  
 
 io.on('connection', function (socket) {
     socket.on("gameState", (state) => {

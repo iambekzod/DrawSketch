@@ -1,5 +1,5 @@
 import React from 'react'
-import {observer, Provider} from "mobx-react"
+import {inject, observer, Provider} from "mobx-react"
 import "../style/form.css";
 import {Col, Row} from 'reactstrap';
 import {autorun} from "mobx";
@@ -17,7 +17,7 @@ const colors = {
     yellow: "#ffff66"
 }
 // inspired by source code from lecture 2 HTML5
-export const TodoList = observer(class TodoList extends React.Component {
+export const TodoList = (inject('userStore'))(observer(class TodoList extends React.Component {
 
     constructor(props) {
         super(props);
@@ -27,6 +27,20 @@ export const TodoList = observer(class TodoList extends React.Component {
         this.socket = io('https://localhost:3001/');
     }
     componentDidMount() {
+        var self = this;
+        this.socket.on('connect', function () {
+            self.socket.emit('authenticate', { token: self.props.userStore.token}) //send the jwt
+                .on('authenticated', function () {
+                    console.log("authenticated");
+                })
+                .on("unauthorized", function(error, callback) {
+                    if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
+                      // redirect user to login page perhaps?
+                      callback();
+                    }
+                });
+        });
+
         const store = this.props.store
         const canvas = this.refs.canvas
         autorun(() => console.log(this.props.store.Paint));
@@ -117,4 +131,4 @@ export const TodoList = observer(class TodoList extends React.Component {
             }
         }
     }
-})
+}))

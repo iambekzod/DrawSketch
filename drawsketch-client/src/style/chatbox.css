@@ -10,9 +10,11 @@
     width: 380px;
     height: 325px;
     border: 1px solid black;
+    overflow: auto;
 }
 
 .message {
+    padding-left: 5px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     display: flex;
     flex-direction: row;

@@ -15,7 +15,7 @@ class LobbyJoinModal extends Component {
 
   joinLobby = (e) => {
     e.preventDefault();
-
+    this.props.userListStore.addUser();
     this.toggle();
     this.props.lobbyStore.join().then(() => {
       this.props.history.push("/game");
@@ -49,4 +49,4 @@ class LobbyJoinModal extends Component {
   }
 }
 
-export default LobbyJoinModal = inject('userStore', 'lobbyStore')(observer(LobbyJoinModal))
+export default LobbyJoinModal = inject('userStore', 'lobbyStore', 'userListStore')(observer(LobbyJoinModal))

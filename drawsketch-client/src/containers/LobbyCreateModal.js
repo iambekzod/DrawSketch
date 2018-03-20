@@ -19,7 +19,7 @@ class LobbyCreateModal extends Component {
 
   createLobby = (e) => {
     e.preventDefault();
-
+    this.props.userListStore.addUser();
     this.toggle();
     this.props.lobbyStore.create().then(() => {
       this.props.history.push("/game");
@@ -81,4 +81,4 @@ class LobbyCreateModal extends Component {
   }
 }
 
-export default LobbyCreateModal = inject('userStore', 'lobbyStore')(observer(LobbyCreateModal))
+export default LobbyCreateModal = inject('userStore', 'lobbyStore', 'userListStore')(observer(LobbyCreateModal))

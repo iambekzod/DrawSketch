@@ -36,6 +36,7 @@ class Lobby extends Component {
     if (lock)
       this.props.lobbyStore.setJoinModal();
     else {
+      this.props.userListStore.addUser();
       this.props.lobbyStore.join().then(() => {
         this.props.history.push("/game");
       });
@@ -97,4 +98,4 @@ class Lobby extends Component {
   }
 }
 
-export default Lobby = inject('userStore', 'authStore', 'lobbyStore')(observer(Lobby))
+export default Lobby = inject('userStore', 'authStore', 'lobbyStore', 'userListStore')(observer(Lobby))

@@ -3,6 +3,7 @@ import {observer} from "mobx-react"
 import "../style/form.css";
 import {CustomDropDown} from "./CustomDropDown"
 import {ListGroup, ListGroupItem} from 'reactstrap';
+import UserList from "./UserList"
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
@@ -22,6 +23,14 @@ const listGroupStyle = {
     justifyContent: "center",
     alignContent: "center",
     height: "50px"
+}
+
+const listGroupUserStyle = {
+    border: "0 none",
+    display: "flex",
+    justifyContent: "center",
+    alignContent: "center",
+    height: "0px"
 }
 
 export const SideBar = observer(class TodoList extends React.Component {
@@ -47,21 +56,24 @@ export const SideBar = observer(class TodoList extends React.Component {
                     onClick={this.paint}>
                     <i className="fa fa-pencil"></i>
                 </ListGroupItem>
-                
-                    <CustomDropDown store={this.props.store} iconType="slider">
-                        <i className="fa fa-bullseye"></i>  
-                    </CustomDropDown>
-                    <CustomDropDown store={this.props.store} iconType="color">
-                        <img
-                            src="https://image.flaticon.com/icons/svg/61/61092.svg"
-                            alt="palette"
-                            style={paletteStyle}></img>
-                    </CustomDropDown>   
+                <CustomDropDown store={this.props.store} iconType="slider">
+                    <i className="fa fa-bullseye"></i>  
+                </CustomDropDown>
+                <CustomDropDown store={this.props.store} iconType="color">
+                    <img
+                        src="https://image.flaticon.com/icons/svg/61/61092.svg"
+                        alt="palette"
+                        style={paletteStyle}></img>
+                </CustomDropDown>   
                 <ListGroupItem
                     action
                     style={listGroupStyle}
                     onClick={this.erase}>
                     <i className="fa fa-eraser"></i>
+                </ListGroupItem>
+                <ListGroupItem
+                    style={listGroupUserStyle}>
+                    <UserList/>
                 </ListGroupItem>
             </ListGroup>
         );

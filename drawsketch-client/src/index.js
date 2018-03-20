@@ -13,12 +13,15 @@ import authStore from './stores/authStore';
 import userStore from './stores/userStore';
 import lobbyStore from './stores/lobbyStore';
 import messageStore from './stores/messageStore';
+import userListStore from './stores/userListStore';
+
 
 const stores = {
   authStore,
   userStore,
   lobbyStore,
-  messageStore
+  messageStore,
+  userListStore
 };
 
 // For easier debugging

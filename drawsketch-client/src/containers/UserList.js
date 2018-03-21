@@ -9,7 +9,6 @@ class UserList extends Component {
     return (
       <tr key={i}>
         <td>{user.username}</td>
-        <td>{user.points}</td>
       </tr>
     )
   }

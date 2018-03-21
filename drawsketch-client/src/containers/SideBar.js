@@ -25,13 +25,6 @@ const listGroupStyle = {
     height: "50px"
 }
 
-const listGroupUserStyle = {
-    border: "0 none",
-    display: "flex",
-    justifyContent: "center",
-    alignContent: "center",
-    height: "0px"
-}
 
 export const SideBar = observer(class TodoList extends React.Component {
     constructor(props) {
@@ -71,10 +64,7 @@ export const SideBar = observer(class TodoList extends React.Component {
                     onClick={this.erase}>
                     <i className="fa fa-eraser"></i>
                 </ListGroupItem>
-                <ListGroupItem
-                    style={listGroupUserStyle}>
                     <UserList/>
-                </ListGroupItem>
             </ListGroup>
         );
     }

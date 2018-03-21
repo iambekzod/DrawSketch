@@ -4,8 +4,8 @@ const validator = require('validator');
 const uuid = require('uuid/v4');
 const Accounts = require('../../models/accounts.js');
 const auth = require('../auth');
+const server = require('../../app.js');
 
-const game = require('./gameServer')
 
 // Constants ========================================================== Prevent
 // sensitive information from being dumped out
@@ -16,6 +16,7 @@ var userProjection = {
     updatedAt: 0,
     __v: 0
 };
+
 
 var Room = (function () {
     return function room(request) {
@@ -33,6 +34,7 @@ var Room = (function () {
 }());
 
 var lobbies = [];
+
 
 // Helper Functions ==========================================================
 

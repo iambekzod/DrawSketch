@@ -140,6 +140,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
                     });
                 }}>
                     <DropdownToggle
+                    
                         tag="span"
                         data-toggle="dropdown"
                         aria-expanded={this.state.dropdownOpen}>
@@ -150,13 +151,15 @@ export const CustomDropDown = class CustomDropDown extends Component {
                         style={{
                         marginLeft: "1rem"
                     }}>
-                        <div>
                             {menu}
-                        </div>
                     </DropdownMenu>
                 </Dropdown>
             </div>
+<<<<<<< HEAD
             </ListGroupItem>
+=======
+                </ListGroupItem>
+>>>>>>> serverUpdate
         )
     }
 }

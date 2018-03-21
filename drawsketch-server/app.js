@@ -13,7 +13,7 @@ const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
 const socketioJwt = require('socketio-jwt2');
 const cors = require('cors');
-
+const short = require('short-uuid');
 const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
 require('./config/passport.js');
@@ -62,6 +62,7 @@ server = https.createServer(config, app).listen(PORT, function (err) {
 );
 
 const io = socketIO(server);
+var gameServer = new GameServer();
 
 io.sockets.on('connection', socketioJwt.authorize({
     secret: keys.jwtSecret,
@@ -69,12 +70,25 @@ io.sockets.on('connection', socketioJwt.authorize({
     timeout: 10000 // 15 seconds to send the authentication message
   })).on('authenticated', function(socket) {
     //this socket is authenticated, we are good to handle more events from it.
-    console.log('welcome', socket.decoded_token.username);
-  });
-  
-
-io.on('connection', function (socket) {
-    socket.on("gameState", (state) => {
-        io.emit('return', state);
+    socket.on('join', (room) => {
+        socket.join(room);
+        gameServer.joinGame(room);
     })
-})
+    socket.on("gameState", (state) => {
+        gameServer.setGameState(state.id,state.game)
+        io.sockets.in(game.id).emit('return', JSON.stringify(gameServer.findGame(state.id).state))
+    })
+    socket.on("beginRound", (player) => {
+        game = gameServer.findGame(player.id);
+        io.sockets.in(game.id).emit('getWord', "Cat");
+        io.sockets.in(game.id)
+            .broadcast
+            .emit('startRound', JSON.stringify(game.state));
+    })
+    socket.on("join", (player) => {
+        gameServer.findGame(player.id).joinGame(player);
+    })
+    socket.on("gameState", (state) => {
+        io.emit('return', state)
+    })
+  });

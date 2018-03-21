@@ -3,7 +3,13 @@
     margin-left: 25px;
     width: 400px;
     height: 402px;
+    display: flex;
+    flex-direction: column;
     border: 1px solid black;
+}
+
+.chat-box * {
+    box-sizing: border-box;
 }
 
 .messages {
@@ -17,7 +23,7 @@
 .message {
     padding-left: 5px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .username {
@@ -27,4 +33,27 @@
 
 .from-me {
     color: blue;
+}
+
+.user-list td {
+    font-size: 12px;
+}
+
+.user-list th {
+    font-size: 16px;
+}
+
+input {
+    box-sizing: border-box;
+}
+
+.side-bar {
+    width: 12%;
+    font-size: 1.5em
+}
+
+.draw-options {
+    display: flex;
+    flex-direction: row;
+    margin-left: 11%;
 }

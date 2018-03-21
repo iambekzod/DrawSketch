@@ -23,7 +23,9 @@ export class ObservableTodoStore {
                     .map(e => e);
             },
             get getColor() {
-                return this.paintColor;
+                return this
+                    .paintColor
+                    .map(e => e);
             },
             get getWidth() {
                 return this.brushWidth;
@@ -78,8 +80,8 @@ export class ObservableTodoStore {
                 dragging: store.getDrag
                 */
                 let state = JSON.parse(returned);
+                console.log(state.dragging);
                 if (state.xPos.length !== 0) {
-                    console.log("UPDATING");
                     this.xPos = state.xPos;
                     this.yPos = state.yPos;
                     this.dragging = state.dragging;

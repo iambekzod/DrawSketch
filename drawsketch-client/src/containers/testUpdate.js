@@ -1,11 +1,12 @@
 import React from 'react'
 import {observer, inject} from "mobx-react"
-import "../style/form.css";
 import {Col, Row} from 'reactstrap';
-import {autorun} from "mobx";
 import {SideBar} from './SideBar';
+
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
+import "../style/form.css";
+
 import io from 'socket.io-client';
 
 const colors = {
@@ -23,7 +24,6 @@ export const Guesser = inject("store")(observer(class TodoList extends React.Com
             .bind(this);
     }
     componentDidMount() {
-        console.log(this.props.store);
         const store = this.props.store
         this.updateCanvas();
     }
@@ -54,7 +54,6 @@ export const Guesser = inject("store")(observer(class TodoList extends React.Com
         });
     }
     redraw() {
-        console.log("REDRAWING");
         const canvas = this.refs.canvas
         const store = this.props.store;
         const context = canvas.getContext("2d")

@@ -121,7 +121,6 @@ export const CustomDropDown = class CustomDropDown extends Component {
                     </div>
         }
 
-        console.log(menu)
         return (
             <ListGroupItem 
             action
@@ -133,7 +132,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
             }}>
             <div className="container">
                 <Dropdown
-                    direction="right"
+                    direction="up"
                     isOpen={this.state.btnDropright}
                     toggle={() => {
                     this.setState({

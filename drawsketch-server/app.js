@@ -75,6 +75,6 @@ io.sockets.on('connection', socketioJwt.authorize({
 
 io.on('connection', function (socket) {
     socket.on("gameState", (state) => {
-        io.emit('return', state)
+        io.emit('return', state);
     })
 })

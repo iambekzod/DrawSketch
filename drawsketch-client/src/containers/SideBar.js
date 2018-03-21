@@ -1,9 +1,9 @@
 import React from 'react'
 import {observer} from "mobx-react"
 import "../style/form.css";
+import "../style/sidebar.css";
 import {CustomDropDown} from "./CustomDropDown"
 import {ListGroup, ListGroupItem} from 'reactstrap';
-import UserList from "./UserList"
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
@@ -42,7 +42,7 @@ export const SideBar = observer(class TodoList extends React.Component {
     }
     render() {
         return (
-            <ListGroup className="list-group-flush" style={sideBarStyle}>
+            <div className="list-group-flush side-bar draw-options">
                 <ListGroupItem
                     action
                     style={listGroupStyle}
@@ -64,8 +64,7 @@ export const SideBar = observer(class TodoList extends React.Component {
                     onClick={this.erase}>
                     <i className="fa fa-eraser"></i>
                 </ListGroupItem>
-                    <UserList/>
-            </ListGroup>
+            </div>
         );
     }
     erase() {

@@ -26,15 +26,8 @@ var Room = (function () {
         this.password = request.password;
         this.locked = request.password !== "";
         this.timeLimit = request.timeLimit; // Use: Milliseconds
-<<<<<<< HEAD
         this.maxPlayers = parseInt(request.maxPlayers);
         this.rounds = parseInt(request.rounds);
-
-=======
-        this.maxPlayers = request.maxPlayers;
-        this.rounds = request.rounds;
-        this.drawer = ""
->>>>>>> serverUpdate
         this.players = [];
     };
 }());
@@ -185,7 +178,6 @@ router.post('/', auth.required, sanitizeInput, function (req, res, next) {
             room.author = user.username;
 
             lobbies.push(room);
-            game.Begin(room);
             return res.json(room);
         })
         .catch(next);

@@ -155,11 +155,7 @@ export const CustomDropDown = class CustomDropDown extends Component {
                     </DropdownMenu>
                 </Dropdown>
             </div>
-<<<<<<< HEAD
             </ListGroupItem>
-=======
-                </ListGroupItem>
->>>>>>> serverUpdate
         )
     }
 }

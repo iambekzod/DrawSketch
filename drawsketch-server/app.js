@@ -16,6 +16,7 @@ const cors = require('cors');
 const short = require('short-uuid');
 const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
+const GameServer = require('./routes/api/gameServer.js');
 require('./config/passport.js');
 
 // Database =================================================== Connection URL

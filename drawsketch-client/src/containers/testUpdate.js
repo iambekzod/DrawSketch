@@ -1,12 +1,6 @@
 import React from 'react'
 import {observer, inject} from "mobx-react"
-<<<<<<< HEAD
-import {Col, Row} from 'reactstrap';
-=======
-import "../style/form.css";
 import {Col, Row, Input} from 'reactstrap';
-import {autorun} from "mobx";
->>>>>>> serverUpdate
 import {SideBar} from './SideBar';
 
 import 'bootstrap/dist/css/bootstrap.css';

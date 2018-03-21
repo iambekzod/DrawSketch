@@ -71,13 +71,16 @@ io.sockets.on('connection', socketioJwt.authorize({
     timeout: 10000 // 15 seconds to send the authentication message
   })).on('authenticated', function(socket) {
     //this socket is authenticated, we are good to handle more events from it.
+    console.log("AUTH USER");
     socket.on('join', (room) => {
+        console.log("IM OVER HERE");
         socket.join(room);
         gameServer.joinGame(room);
     })
     socket.on("gameState", (state) => {
-        gameServer.setGameState(state.id,state.game)
-        io.sockets.in(game.id).emit('return', JSON.stringify(gameServer.findGame(state.id).state))
+        var state = JSON.parse(state);
+        var updated = gameServer.setGameState(state.id,state.game)
+        io.sockets.in(1).emit('return', JSON.stringify(updated.state))
     })
     socket.on("beginRound", (player) => {
         game = gameServer.findGame(player.id);
@@ -85,11 +88,5 @@ io.sockets.on('connection', socketioJwt.authorize({
         io.sockets.in(game.id)
             .broadcast
             .emit('startRound', JSON.stringify(game.state));
-    })
-    socket.on("join", (player) => {
-        gameServer.findGame(player.id).joinGame(player);
-    })
-    socket.on("gameState", (state) => {
-        io.emit('return', state)
     })
   });

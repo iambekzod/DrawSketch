@@ -31,6 +31,8 @@ export const Guesser = inject("store")(observer(class TodoList extends React.Com
         const store = this.props.store
         this.updateCanvas();
         this.roundStarted();
+            // Connected, let's sign-up for to receive messages for this room
+        this.socket.emit('join', 1);
     }
     render() {
         var guess = null

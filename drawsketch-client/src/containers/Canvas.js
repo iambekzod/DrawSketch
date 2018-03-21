@@ -175,7 +175,7 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
         }
         this
             .socket
-            .emit('gameState', JSON.stringify(gameState));
+            .emit('gameState', JSON.stringify({id:1,game:gameState}));
     }
     testReDraw(ref) {
         const canvas = ref

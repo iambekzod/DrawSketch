@@ -45,7 +45,7 @@ class Game {
 }
 class GameServer {
     constructor(server){
-        this.games = [];
+        this.games = [new Game(1)];
     }
     findGame(id){
         var game = this.games.find((game) => game.id === id);
@@ -63,9 +63,12 @@ class GameServer {
 
         game.playerJoin(player);
     }
-    setGameState(state,id){
+    setGameState(id,state){
         var game = this.findGame(id);
-        game.setGameState(state)
+        var gameIndex = this.games.indexOf(game);
+        this.games[gameIndex].setState(state);
+        return this.games[gameIndex];
+
     }
 }
 module.exports =

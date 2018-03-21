@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {inject, observer} from "mobx-react";
-import { Form, Input} from "reactstrap";
 import "../style/chatbox.css";
 
 class Message extends Component {

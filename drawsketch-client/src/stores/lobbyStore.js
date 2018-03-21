@@ -27,7 +27,7 @@ class LobbyStore {
         this.values.timeLimit = "0:30";
         this.values.password = '';
         this.values.locked = false;
-        this.values.joinId = '',
+        this.values.joinId = '';
         this.values.joinPassword = '';
       }),
       setRoomName: action((set) => this.values.name = set),

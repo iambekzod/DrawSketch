@@ -1,7 +1,6 @@
 import { action, extendObservable } from 'mobx';
 import api from './api';
 import userStore from './userStore';
-import lobbyStore from './lobbyStore';
 
 class AuthStore {
   constructor() {

@@ -13,7 +13,7 @@ class UserList extends Component {
     )
   }
   render() {
-    const { values, users } = this.props.userListStore;
+    const { users } = this.props.userListStore;
     return (
       <Table dark size="sm">
         <thead>

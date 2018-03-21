@@ -23,12 +23,16 @@
 .message {
     padding-left: 5px;
     display: flex;
-    flex-direction: column;
 }
 
 .username {
     color: green;
     font-weight: bold;
+    padding-right: 3px;
+}
+
+.message-body {
+    word-wrap: break-word;
 }
 
 .from-me {
@@ -56,4 +60,12 @@ input {
     display: flex;
     flex-direction: row;
     margin-left: 11%;
+}
+
+.draw-option {
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    height: 50px;
 }

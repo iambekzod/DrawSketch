@@ -7,24 +7,6 @@ import {ListGroup, ListGroupItem} from 'reactstrap';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
-const sideBarStyle = {
-    width: "12%",
-    fontSize: "1.5em"
-}
-
-const paletteStyle = {
-    width: "25px",
-    height: "25px"
-}
-
-const listGroupStyle = {
-    border: "1",
-    display: "flex",
-    justifyContent: "center",
-    alignContent: "center",
-    height: "50px"
-}
-
 
 export const SideBar = observer(class TodoList extends React.Component {
     constructor(props) {
@@ -36,7 +18,7 @@ export const SideBar = observer(class TodoList extends React.Component {
             .paint
             .bind(this);
     }
-    paint(){
+    paint() {
         this.props.store.setCurColor("black");
         this.props.store.setWidth(2);
     }
@@ -45,7 +27,7 @@ export const SideBar = observer(class TodoList extends React.Component {
             <div className="list-group-flush side-bar draw-options">
                 <ListGroupItem
                     action
-                    style={listGroupStyle}
+                    className="draw-option"
                     onClick={this.paint}>
                     <i className="fa fa-pencil"></i>
                 </ListGroupItem>
@@ -53,14 +35,11 @@ export const SideBar = observer(class TodoList extends React.Component {
                     <i className="fa fa-bullseye"></i>  
                 </CustomDropDown>
                 <CustomDropDown store={this.props.store} iconType="color">
-                    <img
-                        src="https://image.flaticon.com/icons/svg/61/61092.svg"
-                        alt="palette"
-                        style={paletteStyle}></img>
+                    <i className="fa fa-paint-brush"></i>
                 </CustomDropDown>   
                 <ListGroupItem
                     action
-                    style={listGroupStyle}
+                    className="draw-option"
                     onClick={this.erase}>
                     <i className="fa fa-eraser"></i>
                 </ListGroupItem>
@@ -75,6 +54,6 @@ export const SideBar = observer(class TodoList extends React.Component {
         this
             .props
             .store
-            .setWidth(50)
+            .setWidth(50);
     }
 })

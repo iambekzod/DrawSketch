@@ -10,9 +10,7 @@ class ChatBox extends Component {
     handleSubmitForm = (e) => {
       e.preventDefault();
 
-      //alert(this.props.messageStore.values.guess);
       this.props.messageStore.addGuess();
-      //this.props.messageStore.messages.push(this.props.messageStore.values.guess);
     };
 
     render() {

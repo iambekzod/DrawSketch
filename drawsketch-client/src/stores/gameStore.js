@@ -78,7 +78,7 @@ export class ObservableTodoStore {
                 dragging: store.getDrag
                 */
                 let state = JSON.parse(returned);
-                if (state.xPos.length != 0) {
+                if (state.xPos.length !== 0) {
                     console.log("UPDATING");
                     this.xPos = state.xPos;
                     this.yPos = state.yPos;

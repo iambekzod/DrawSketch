@@ -1,5 +1,4 @@
 const socketIO = require('socket.io');
-const short = require('short-uuid');
 const server = require('./lobby.js');
 
 function Begin(game) {

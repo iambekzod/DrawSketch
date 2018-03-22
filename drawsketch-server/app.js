@@ -13,7 +13,6 @@ const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
 const socketioJwt = require('socketio-jwt2');
 const cors = require('cors');
-const short = require('short-uuid');
 const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
 const GameServer = require('./routes/api/gameServer.js');

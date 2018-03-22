@@ -5,6 +5,7 @@ import SignIn from "./containers/SignIn";
 import SignUp from "./containers/SignUp";
 import Credits from "./containers/Credits";
 import Lobby from "./containers/Lobby";
+import Game from "./containers/Game";
 import NotFound from "./containers/NotFound";
 import {TodoList} from "./containers/Drawer"
 import {observableTodoStore} from './stores/gameStore'
@@ -18,7 +19,7 @@ export default() => <Switch>
   <Route
     path="/game"
     component=
-    {() => <TodoList store = {observableTodoStore}/>}/>
+    {() => <Game store = {observableTodoStore}/>}/>
     
   <Route component={NotFound}/>
 </Switch>;

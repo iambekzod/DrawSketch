@@ -2,7 +2,7 @@ import React from 'react'
 import {observer, inject} from "mobx-react"
 import {Alert,Col, Row, Input} from 'reactstrap';
 import {SideBar} from './SideBar';
-import Chatbox from './ChatBox';
+import ChatBox from './ChatBox';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
 import "../style/form.css";
@@ -16,14 +16,14 @@ const colors = {
     yellow: "#ffff66"
 }
 // inspired by source code from lecture 2 HTML5
-export const Guesser = inject("store")(observer(class TodoList extends React.Component {
+export const Guesser = inject("store")(observer(class Guesser extends React.Component {
 
     constructor(props) {
         super(props);
         this.redraw = this
             .redraw
             .bind(this);
-        this.socket = io('https://localhost:3001/');
+        this.socket = this.props.socket;
         this.state = {
             begun: false,
             guess: ""
@@ -57,14 +57,14 @@ export const Guesser = inject("store")(observer(class TodoList extends React.Com
         var alert = null
         if (this.state.begun) {
 
-            guess = <Chatbox sendMessage = {this.makeGuess}/>
+            guess = <ChatBox sendMessage = {this.makeGuess}/>
         }
         if(this.state.guess == "right"){
             alert = <Alert color="success"> YOUR GUESS WAS CORRECT </Alert>
         }
-        if(this.state.guess == "wrong"){
-            alert = <Alert color="danger"> YOUR GUESS WAS WRONG </Alert>
-        }
+        // if(this.state.guess == "wrong"){
+        //     alert = <Alert color="danger"> YOUR GUESS WAS WRONG </Alert>
+        // }
 
         return (
             <div

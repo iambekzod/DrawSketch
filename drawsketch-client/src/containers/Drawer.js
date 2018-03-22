@@ -14,6 +14,7 @@ import {autorun} from "mobx";
 import {SideBar} from './SideBar';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
+import "../style/sidebar.css";
 import io from 'socket.io-client';
 import {Guesser} from './Guesser'
 import {ObservableTodoStore} from '../stores/gameStore'
@@ -22,12 +23,12 @@ import LeftSideBar from './LeftSideBar';
 import ChatBox from "./ChatBox";
 
 // inspired by source code from lecture 2 HTML5
-export const TodoList = (inject('userStore'))(observer(class TodoList extends React.Component {
+export const Game = (inject('userStore'))(observer(class Game extends React.Component {
 
     constructor(props) {
         super(props);
         var self = this;
-        this.socket = io('https://localhost:3001/');
+        this.socket = this.props.socket;
         this.redraw = this
             .redraw
             .bind(this);
@@ -69,11 +70,11 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
 
         });
 
-        this.socket.emit()
+        // this.socket.emit()
 
         canvas.addEventListener('mousemove', (function (e) {
             if (store.Paint) {
-                console.log(store.getX);
+                // console.log(store.getX);
                 store.addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
                 self.redraw();
             }
@@ -86,13 +87,16 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
             modal: !this.state.modal
         });
     }
+    makeGuess = (guess) => {
+        this.socket.emit('guess', guess)
+    }
     render() {
         var timer = null
-        var beginButton = <Col>
+        var beginButton = <div className="begin-btn">
             <Button outline onClick={this.beginGame} color="primary">
                 Begin Game
             </Button>
-        </Col>
+        </div>
         if (this.state.begun) {
             beginButton = null;
             timer = <Row>
@@ -121,10 +125,15 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
 
                 <Row>
                     <LeftSideBar/>
-                    <canvas className="whiteboard" ref="canvas" width={656} height={400}/> {beginButton}
-                    <ChatBox/>
+                    <canvas className="whiteboard" ref="canvas" width={656} height={400}/>
+                    <ChatBox sendMessage = {this.makeGuess}/>
                 </Row>
-                <SideBar store={this.props.store}/>
+
+                <Row>
+                    <SideBar store={this.props.store}/>
+                    {beginButton}
+                </Row>
+
                 <Provider store={newStore}>
                     <div>
                         <Guesser token = {this.props.userStore.token} redraw ={this.testReDraw}/>
@@ -141,7 +150,6 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
             .socket
             .emit('beginRound', JSON.stringify({id: "playerA"}))
             .on('getWord', (word) => {
-                alert("HERE");
                 this.setState({begun: true, modal: true, word: word})
             });
     }

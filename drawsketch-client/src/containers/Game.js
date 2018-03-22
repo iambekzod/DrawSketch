@@ -22,7 +22,7 @@ import LeftSideBar from './LeftSideBar';
 import ChatBox from "./ChatBox";
 
 // inspired by source code from lecture 2 HTML5
-export const TodoList = (inject('userStore'))(observer(class TodoList extends React.Component {
+class Game extends React.Component {
 
     constructor(props) {
         super(props);
@@ -69,11 +69,11 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
 
         });
 
-        this.socket.emit()
+        // this.socket.emit()
 
         canvas.addEventListener('mousemove', (function (e) {
             if (store.Paint) {
-                console.log(store.getX);
+                // console.log(store.getX);
                 store.addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
                 self.redraw();
             }
@@ -88,11 +88,11 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
     }
     render() {
         var timer = null
-        var beginButton = <Col>
+        var beginButton =
             <Button outline onClick={this.beginGame} color="primary">
                 Begin Game
             </Button>
-        </Col>
+
         if (this.state.begun) {
             beginButton = null;
             timer = <Row>
@@ -141,7 +141,6 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
             .socket
             .emit('beginRound', JSON.stringify({id: "playerA"}))
             .on('getWord', (word) => {
-                alert("HERE");
                 this.setState({begun: true, modal: true, word: word})
             });
     }
@@ -196,4 +195,6 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
             }
         }
     }
-}))
+}
+
+export default Game = inject('userStore')(observer(Game))

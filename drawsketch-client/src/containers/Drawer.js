@@ -18,12 +18,11 @@ import "../style/sidebar.css";
 import io from 'socket.io-client';
 import {Guesser} from './Guesser'
 import {ObservableTodoStore} from '../stores/gameStore'
-import TimerExample from './timer'
 import LeftSideBar from './LeftSideBar';
 import ChatBox from "./ChatBox";
 
 // inspired by source code from lecture 2 HTML5
-export const Drawer = (inject('userStore'))(observer(class Drawer extends React.Component {
+export const Drawer = (inject('store'))(observer(class Drawer extends React.Component {
 
     constructor(props) {
         super(props);
@@ -48,19 +47,6 @@ export const Drawer = (inject('userStore'))(observer(class Drawer extends React.
         const store = this.props.store;
         const canvas = this.refs.canvas;
         var self = this;
-        this.socket.on('connect', function () {
-            self.socket.emit('authenticate', { token: self.props.userStore.token}) //send the jwt
-                .on('authenticated', function () {
-                    self.socket.emit('join', 1);
-                })
-                .on("unauthorized", function(error, callback) {
-                    console.log("unauthenticated");
-                    if (error.data.type === "UnauthorizedError" || error.data.code === "invalid_token") {
-                        // redirect user to login page perhaps?
-                        callback();
-                    }
-                });
-        });
         canvas.addEventListener('mousedown', function (e) {
             var mouseX = e.pageX - this.offsetLeft;
             var mouseY = e.pageY - this.offsetTop;
@@ -88,10 +74,11 @@ export const Drawer = (inject('userStore'))(observer(class Drawer extends React.
         });
     }
     makeGuess = (guess) => {
-        this.socket.emit('guess', guess)
+        this
+            .socket
+            .emit('guess', guess)
     }
     render() {
-        var timer = null
         var beginButton = <div className="begin-btn">
             <Button outline onClick={this.beginGame} color="primary">
                 Begin Game
@@ -99,17 +86,11 @@ export const Drawer = (inject('userStore'))(observer(class Drawer extends React.
         </div>
         if (this.state.begun) {
             beginButton = null;
-            timer = <Row>
-                <Col>
-                    <TimerExample start={Date.now()}/>
-                </Col>
-            </Row>
         }
         const newStore = new ObservableTodoStore();
         return (
 
             <div>
-                {timer}
                 <Modal
                     isOpen={this.state.modal}
                     toggle={this.toggle}
@@ -124,21 +105,19 @@ export const Drawer = (inject('userStore'))(observer(class Drawer extends React.
                 </Modal>
 
                 <Row>
-                    <LeftSideBar/>
                     <canvas className="whiteboard" ref="canvas" width={656} height={400}/>
-                    <ChatBox sendMessage = {this.makeGuess}/>
+                    <ChatBox sendMessage={this.makeGuess}/>
                 </Row>
 
                 <Row>
-                    <SideBar store={this.props.store}/>
-                    {beginButton}
+                    <Col>
+                        <SideBar store={this.props.store}/>
+                    </Col>
+                    <Col>
+                        {beginButton}
+                    </Col>
                 </Row>
 
-                <Provider store={newStore}>
-                    <div>
-                        <Guesser token = {this.props.userStore.token} redraw ={this.testReDraw}/>
-                    </div>
-                </Provider>
             </div>
 
         );
@@ -183,7 +162,7 @@ export const Drawer = (inject('userStore'))(observer(class Drawer extends React.
         }
         this
             .socket
-            .emit('gameState', JSON.stringify({id:1,game:gameState}));
+            .emit('gameState', JSON.stringify({id: 1, game: gameState}));
     }
     testReDraw(ref) {
         const canvas = ref

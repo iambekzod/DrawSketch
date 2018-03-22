@@ -17,9 +17,13 @@ export default() => <Switch>
   <Route path="/signup" exact component={SignUp}/>
   <Route path="/lobby" exact component={Lobby}/>
   <Route
-    path="/game"
+    path="/game/draw"
     component=
-    {() => <Game store = {observableTodoStore}/>}/>
-    
+    {() => <Game userType = "draw" store = {observableTodoStore}/>}/>
+  <Route
+    path="/game/guess"
+    component=
+    {() => <Game userType = "guess" store = {observableTodoStore}/>}/>
+
   <Route component={NotFound}/>
 </Switch>;

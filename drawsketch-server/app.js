@@ -13,9 +13,10 @@ const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
 const socketioJwt = require('socketio-jwt2');
 const cors = require('cors');
-
+const short = require('short-uuid');
 const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
+const GameServer = require('./routes/api/gameServer.js');
 require('./config/passport.js');
 
 // Database =================================================== Connection URL
@@ -62,6 +63,7 @@ server = https.createServer(config, app).listen(PORT, function (err) {
 );
 
 const io = socketIO(server);
+var gameServer = new GameServer();
 
 io.sockets.on('connection', socketioJwt.authorize({
     secret: keys.jwtSecret,
@@ -69,12 +71,34 @@ io.sockets.on('connection', socketioJwt.authorize({
     timeout: 10000 // 15 seconds to send the authentication message
   })).on('authenticated', function(socket) {
     //this socket is authenticated, we are good to handle more events from it.
-    console.log('welcome', socket.decoded_token.username);
-  });
-  
-
-io.on('connection', function (socket) {
-    socket.on("gameState", (state) => {
-        io.emit('return', state);
+    console.log("AUTH USER");
+    socket.on('join', (room) => {
+        socket.join(room);
     })
-})
+    socket.on("gameState", (state) => {
+        var state = JSON.parse(state);
+        var updated = gameServer.setGameState(state.id,state.game)
+        io.sockets.in(1).emit('return', JSON.stringify(updated.state))
+    })
+    socket.on("beginRound", (player) => {
+        game = gameServer.findGame(1);
+        io.sockets.in(game.id).emit('getWord', "Cat");
+        io.sockets.in(game.id)
+            .emit('startRound', JSON.stringify(game.state));
+    })
+    socket.on("guess", (guess) => {
+        game = gameServer.findGame(1);
+        if(guess == 'cat'){
+            console.log("THE GUESS IS CORRECT");
+            io.sockets.in(game.id).emit('right',game)
+        }
+        else{
+            io.sockets.in(game.id).emit('wrong', game)
+        }
+    })
+    socket.on("endRound", (game) => {
+        game = gameServer.findGame(1);
+        io.sockets.in(game.id)
+        .emit('newRound', JSON.stringify(game.state));
+    })
+  });

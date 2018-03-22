@@ -73,9 +73,7 @@ io.sockets.on('connection', socketioJwt.authorize({
     //this socket is authenticated, we are good to handle more events from it.
     console.log("AUTH USER");
     socket.on('join', (room) => {
-        console.log("IM OVER HERE");
         socket.join(room);
-        gameServer.joinGame(room);
     })
     socket.on("gameState", (state) => {
         var state = JSON.parse(state);
@@ -83,10 +81,24 @@ io.sockets.on('connection', socketioJwt.authorize({
         io.sockets.in(1).emit('return', JSON.stringify(updated.state))
     })
     socket.on("beginRound", (player) => {
-        game = gameServer.findGame(player.id);
+        game = gameServer.findGame(1);
         io.sockets.in(game.id).emit('getWord', "Cat");
         io.sockets.in(game.id)
-            .broadcast
             .emit('startRound', JSON.stringify(game.state));
+    })
+    socket.on("guess", (guess) => {
+        game = gameServer.findGame(1);
+        if(guess == 'cat'){
+            console.log("THE GUESS IS CORRECT");
+            io.sockets.in(game.id).emit('right',game)
+        }
+        else{
+            io.sockets.in(game.id).emit('wrong', game)
+        }
+    })
+    socket.on("endRound", (game) => {
+        game = gameServer.findGame(1);
+        io.sockets.in(game.id)
+        .emit('newRound', JSON.stringify(game.state));
     })
   });

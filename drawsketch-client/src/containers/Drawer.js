@@ -15,7 +15,7 @@ import {SideBar} from './SideBar';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
 import io from 'socket.io-client';
-import {Guesser} from './testUpdate'
+import {Guesser} from './Guesser'
 import {ObservableTodoStore} from '../stores/gameStore'
 import TimerExample from './timer'
 import LeftSideBar from './LeftSideBar';
@@ -50,7 +50,7 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
         this.socket.on('connect', function () {
             self.socket.emit('authenticate', { token: self.props.userStore.token}) //send the jwt
                 .on('authenticated', function () {
-                    console.log("authenticated");
+                    self.socket.emit('join', 1);
                 })
                 .on("unauthorized", function(error, callback) {
                     console.log("unauthenticated");
@@ -127,7 +127,7 @@ export const TodoList = (inject('userStore'))(observer(class TodoList extends Re
                 <SideBar store={this.props.store}/>
                 <Provider store={newStore}>
                     <div>
-                        <Guesser redraw ={this.testReDraw}/>
+                        <Guesser token = {this.props.userStore.token} redraw ={this.testReDraw}/>
                     </div>
                 </Provider>
             </div>

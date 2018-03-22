@@ -106,7 +106,6 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
 
                 <Row>
                     <canvas className="whiteboard" ref="canvas" width={656} height={400}/>
-                    <ChatBox sendMessage={this.makeGuess}/>
                 </Row>
 
                 <Row>

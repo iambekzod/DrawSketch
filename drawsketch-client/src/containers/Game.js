@@ -8,7 +8,8 @@ import {
     Modal,
     ModalHeader,
     ModalBody,
-    ModalFooter
+    ModalFooter,
+    Alert
 } from 'reactstrap';
 import {autorun} from "mobx";
 import {SideBar} from './SideBar';
@@ -28,7 +29,9 @@ class Game extends React.Component {
         super(props)
         this.socket = io.connect("https://localhost:3001");
         this.state = {
-            begun: false
+            begun: false,
+            newRound: false,
+            userType: this.props.userType
         };
 
     }
@@ -54,16 +57,33 @@ class Game extends React.Component {
                     });
             });
         this.roundStarted();
+        this.roundEnded();
     }
     roundStarted = () => {
         this
             .socket
             .on('startRound', (game) => {
-                this.setState({begun: true});
+                this.setState({begun: true, newRound: false});
+            })
+    }
+
+    roundEnded = () => {
+        this
+            .socket
+            .on('roundEnd', (game) => {
+                this.setState({begun: false, newRound: true});
+                setTimeout(() => {
+                    if (this.state.userType == 'draw') {
+                        this.setState({userType: 'guess'})
+                    } else {
+                        this.setState({userType: 'draw'})
+                    }
+                })
             })
     }
     render() {
         var timer = null
+        var roundAlert = null;
         if (this.state.begun) {
             timer = <Row>
                 <Col>
@@ -71,15 +91,21 @@ class Game extends React.Component {
                 </Col>
             </Row>
         }
+        if (this.state.newRound) {
+            roundAlert = <Alert color="warning">
+                NEW ROUND STARTING SOON
+            </Alert>
+        }
         var userType = null;
-        if (this.props.userType == 'draw') {
+        if (this.state.userType == 'draw') {
             userType = <Drawer socket={this.socket}/>
         }
-        if (this.props.userType == 'guess') {
+        if (this.state.userType == 'guess') {
             userType = <Guesser socket={this.socket}/>
         }
         return (
             <div>
+                {roundAlert}
                 {timer}
                 <Provider store={this.props.store}>
                     <Row>

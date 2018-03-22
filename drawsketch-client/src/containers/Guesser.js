@@ -104,6 +104,10 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
             .socket
             .on('right', (guess) => {
                 this.setState({guess: "right"});
+                console.log(this.socket);
+                this
+                    .socket
+                    .emit('endRound', "something");
             })
     }
     updateCanvas = () => {

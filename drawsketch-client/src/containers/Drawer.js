@@ -146,23 +146,4 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
             .socket
             .emit('gameState', JSON.stringify({id: 1, game: gameState}));
     }
-    testReDraw(ref) {
-        const canvas = ref
-        const store = this.props.store;
-        const context = canvas.getContext("2d")
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
-        context.lineJoin = "round";
-
-        for (var i = 0; i < store.getX.length; i++) {
-            context.lineWidth = store.getPenWidth[i];
-            if (store.dragging[i]) {
-                context.beginPath();
-                context.moveTo(store.getX[i - 1], store.getY[i - 1])
-                context.lineTo(store.getX[i], store.getY[i]);
-                context.closePath();
-                context.strokeStyle = store.paintColor[i];
-                context.stroke();
-            }
-        }
-    }
 }))

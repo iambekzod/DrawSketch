@@ -105,7 +105,6 @@ class Game extends React.Component {
                         }}>{userType}
                         </div>
                     </Row>
-
                 </Provider>
             </div>
         )

@@ -13,12 +13,6 @@ import "../style/dropdown.css";
 import Slider from 'react-rangeslider'
 import 'react-rangeslider/lib/index.css'
 
-
-const itemStyle = {
-    border: "0 none"
-
-}
-
 const listGroupStyle = {
     border: "1",
     display: "flex",

@@ -4,24 +4,16 @@ import "../style/form.css";
 import {
     Col,
     Row,
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
     Alert
 } from 'reactstrap';
-import {autorun} from "mobx";
-import {SideBar} from './SideBar';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
 import io from 'socket.io-client';
-import {Guesser} from './Guesser'
-import {ObservableTodoStore} from '../stores/gameStore'
+
 import TimerExample from './timer'
 import LeftSideBar from './LeftSideBar';
-import ChatBox from "./ChatBox";
 import {Drawer} from "./Drawer";
+import {Guesser} from './Guesser'
 
 // inspired by source code from lecture 2 HTML5
 class Game extends React.Component {
@@ -73,11 +65,8 @@ class Game extends React.Component {
             .on('roundEnd', (game) => {
                 this.setState({begun: false, newRound: true});
                 setTimeout(() => {
-                    if (this.state.userType == 'draw') {
-                        this.setState({userType: 'guess'})
-                    } else {
-                        this.setState({userType: 'draw'})
-                    }
+                    let type = (this.state.userType === 'draw') ? 'guess' : 'draw';
+                    this.setState({userType: type});
                 })
             })
     }
@@ -97,10 +86,10 @@ class Game extends React.Component {
             </Alert>
         }
         var userType = null;
-        if (this.state.userType == 'draw') {
+        if (this.state.userType === 'draw') {
             userType = <Drawer socket={this.socket}/>
         }
-        if (this.state.userType == 'guess') {
+        if (this.state.userType === 'guess') {
             userType = <Guesser socket={this.socket}/>
         }
         return (

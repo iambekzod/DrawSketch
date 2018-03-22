@@ -7,7 +7,6 @@ import Credits from "./containers/Credits";
 import Lobby from "./containers/Lobby";
 import Game from "./containers/Game";
 import NotFound from "./containers/NotFound";
-import {TodoList} from "./containers/Drawer"
 import {observableTodoStore} from './stores/gameStore'
 
 export default() => <Switch>

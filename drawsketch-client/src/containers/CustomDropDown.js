@@ -6,7 +6,6 @@ import {
     Row,
     Dropdown,
     DropdownMenu,
-    DropdownItem,
     DropdownToggle
 } from 'reactstrap';
 import "../style/dropdown.css";

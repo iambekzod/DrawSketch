@@ -1,19 +1,11 @@
 import React from 'react'
 import {observer, inject} from "mobx-react"
-import {Alert, Col, Row, Input} from 'reactstrap';
-import {SideBar} from './SideBar';
+import {Alert, Col, Row} from 'reactstrap';
 import ChatBox from './ChatBox';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
 import "../style/form.css";
 
-import io from 'socket.io-client';
-
-const colors = {
-    blue: "2C86DF",
-    red: "#ff1a1a",
-    yellow: "#ffff66"
-}
 // inspired by source code from lecture 2 HTML5
 export const Guesser = inject("store")(observer(class Guesser extends React.Component {
 
@@ -29,8 +21,6 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
         };
     }
     componentDidMount() {
-        var self = this;
-        const store = this.props.store
         this.updateCanvas();
         this.roundStarted();
         this.rightGuess();
@@ -47,7 +37,7 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
 
             guess = <ChatBox sendMessage={this.makeGuess}/>
         }
-        if (this.state.guess == "right") {
+        if (this.state.guess === "right") {
             alert = <Alert color="success">
                 YOUR GUESS WAS CORRECT
             </Alert>

@@ -1,8 +1,7 @@
 import React from 'react'
-import {inject, observer, Provider} from "mobx-react"
+import {inject, observer} from "mobx-react"
 import "../style/form.css";
 import {
-    Col,
     Row,
     Button,
     Modal,
@@ -10,23 +9,16 @@ import {
     ModalBody,
     ModalFooter
 } from 'reactstrap';
-import {autorun} from "mobx";
 import {SideBar} from './SideBar';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
 import "../style/sidebar.css";
-import io from 'socket.io-client';
-import {Guesser} from './Guesser'
-import {ObservableTodoStore} from '../stores/gameStore'
-import LeftSideBar from './LeftSideBar';
-import ChatBox from "./ChatBox";
 
 // inspired by source code from lecture 2 HTML5
 export const Drawer = (inject('store'))(observer(class Drawer extends React.Component {
 
     constructor(props) {
         super(props);
-        var self = this;
         this.socket = this.props.socket;
         this.redraw = this
             .redraw
@@ -79,17 +71,13 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
             .emit('guess', guess)
     }
     render() {
-        var beginButton = <div className="begin-btn">
-            <Button outline onClick={this.beginGame} color="primary">
-                Begin Game
-            </Button>
-        </div>
-        if (this.state.begun) {
-            beginButton = null;
-        }
-        const newStore = new ObservableTodoStore();
-        return (
+        var beginButton = (!this.state.begun) ? <div className="begin-btn">
+                <Button outline onClick={this.beginGame} color="primary">
+                    Begin Game
+                </Button>
+            </div> : null
 
+        return (
             <div>
                 <Modal
                     isOpen={this.state.modal}
@@ -100,7 +88,7 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
                         Your Word is {this.state.word}
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="secondary" onClick={this.toggle}>OK</Button>
+                        <Button color="primary" onClick={this.toggle}>OK</Button>
                     </ModalFooter>
                 </Modal>
 
@@ -109,12 +97,8 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
                 </Row>
 
                 <Row>
-                    <Col>
-                        <SideBar store={this.props.store}/>
-                    </Col>
-                    <Col>
-                        {beginButton}
-                    </Col>
+                    <SideBar store={this.props.store}/>
+                    {beginButton}
                 </Row>
 
             </div>
@@ -123,7 +107,6 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
     }
 
     beginGame() {
-        var sef = this;
         this
             .socket
             .emit('beginRound', JSON.stringify({id: "playerA"}))

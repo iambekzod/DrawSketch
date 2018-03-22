@@ -85,12 +85,17 @@ class Game extends React.Component {
             modal: !this.state.modal
         });
     }
+    makeGuess = (guess) => {
+        this.socket.emit('guess', guess)
+    }
     render() {
         var timer = null
-        var beginButton =
-            <Button outline onClick={this.beginGame} color="primary">
-                Begin Game
-            </Button>
+        var beginButton = 
+            <div className="begin-btn">
+                <Button outline onClick={this.beginGame} color="primary">
+                    Begin Game
+                </Button>
+            </div>
 
         if (this.state.begun) {
             beginButton = null;
@@ -120,10 +125,15 @@ class Game extends React.Component {
 
                 <Row>
                     <LeftSideBar/>
-                    <canvas className="whiteboard" ref="canvas" width={656} height={400}/> {beginButton}
-                    <ChatBox/>
+                    <canvas className="whiteboard" ref="canvas" width={656} height={400}/>
+                    <ChatBox sendMessage = {this.makeGuess}/>
                 </Row>
-                <SideBar store={this.props.store}/>
+
+                <Row>
+                    <SideBar store={this.props.store}/>
+                    {beginButton}
+                </Row>
+
                 <Provider store={newStore}>
                     <div>
                         <Guesser socket={this.socket} token = {this.props.userStore.token} redraw ={this.testReDraw}/>

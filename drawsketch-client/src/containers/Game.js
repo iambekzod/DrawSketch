@@ -73,7 +73,6 @@ class Game extends React.Component {
 
         canvas.addEventListener('mousemove', (function (e) {
             if (store.Paint) {
-                // console.log(store.getX);
                 store.addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
                 self.redraw();
             }
@@ -127,7 +126,7 @@ class Game extends React.Component {
                 <SideBar store={this.props.store}/>
                 <Provider store={newStore}>
                     <div>
-                        <Guesser token = {this.props.userStore.token} redraw ={this.testReDraw}/>
+                        <Guesser socket={this.socket} token = {this.props.userStore.token} redraw ={this.testReDraw}/>
                     </div>
                 </Provider>
             </div>

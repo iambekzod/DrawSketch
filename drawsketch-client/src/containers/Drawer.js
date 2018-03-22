@@ -23,7 +23,7 @@ import LeftSideBar from './LeftSideBar';
 import ChatBox from "./ChatBox";
 
 // inspired by source code from lecture 2 HTML5
-export const Game = (inject('userStore'))(observer(class Game extends React.Component {
+export const Drawer = (inject('userStore'))(observer(class Drawer extends React.Component {
 
     constructor(props) {
         super(props);

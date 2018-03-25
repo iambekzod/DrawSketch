@@ -13,6 +13,7 @@ const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
 const socketioJwt = require('socketio-jwt2');
 const cors = require('cors');
+const path = require('path');
 const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
 const GameServer = require('./routes/api/gameServer.js');
@@ -23,10 +24,12 @@ mongoose.connect(keys.mongoURL);
 
 // Server ===================================================
 const app = express();
-app.use(express.static('public'));
+// app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cors());
+
+app.use(express.static(path.join(__dirname, '../drawsketch-client/build')));
 
 app.use(session({
     secret: keys.sessionSecret,

@@ -5,7 +5,7 @@ import userStore from './userStore';
 import authStore from './authStore';
 
 const superagent = superagentPromise(_superagent, global.Promise);
-const API_ROOT = 'https://localhost:3001/api';
+const API_ROOT = 'https://drawsketch-server.herokuapp.com/api';
 
 const handleErrors = err => {
   if (err && err.response && err.response.status === 401) {

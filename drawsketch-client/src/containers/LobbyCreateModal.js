@@ -20,7 +20,10 @@ class LobbyCreateModal extends Component {
   createLobby = (e) => {
     e.preventDefault();
     this.toggle();
-    this.props.lobbyStore.create().then(() => {
+    this.props.lobbyStore.create().then((room) => {
+      this.props.lobbyStore.setJoinId(room.id);
+      return this.props.lobbyStore.join();
+    }).then(() => {
       this.props.userListStore.addUser();
       this.props.history.push("/game/" + this.props.userStore.room);
     });

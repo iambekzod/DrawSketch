@@ -2,18 +2,17 @@
 
 // Imports ===================================================
 const crypto = require('crypto');
-const socketio = require("socket.io");
 const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const https = require('https');
+const http = require('http');
 const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
 const socketioJwt = require('socketio-jwt2');
 const cors = require('cors');
-const path = require('path');
+
 const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
 const GameServer = require('./routes/api/gameServer.js');
@@ -25,12 +24,24 @@ mongoose.connect(keys.mongoURL);
 
 // Server ===================================================
 const app = express();
-// app.use(express.static('public'));
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-app.use(cors());
 
-app.use(express.static(path.join(__dirname, '../drawsketch-client/build')));
+//https://www.namecheap.com/support/knowledgebase/article.aspx/9737/2208/pointing-a-domain-to-the-heroku-app#www.yourdomain.tld
+//https://gist.github.com/Shourai/bfd9f549a41c836c99c0c660c9271df6
+
+var whitelist = ['https://drawsketch.herokuapp.com', 'http://drawsketch.me', 'http://localhost:3000']
+app.use(cors({ 
+    credentials: true, 
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    }
+}));
 
 app.use(session({
     secret: keys.sessionSecret,
@@ -51,21 +62,15 @@ app.use(function (req, res, next) {
     console.log("HTTP Response", res.statusCode);
 });
 
-var privateKey = fs.readFileSync('server.key');
-var certificate = fs.readFileSync('server.crt');
-var config = {
-    key: privateKey,
-    cert: certificate
-};
-const PORT = 3001;
+const PORT = process.env.PORT || 8080;
 
-server = https
-    .createServer(config, app)
+server = http
+    .createServer(app)
     .listen(PORT, function (err) {
         if (err) 
             console.log(err);
         else 
-            console.log("HTTPS server on https://localhost:%s", PORT);
+            console.log("HTTP server listening on port %s", PORT);
         }
     );
 

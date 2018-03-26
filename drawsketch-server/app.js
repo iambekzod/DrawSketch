@@ -17,6 +17,7 @@ const path = require('path');
 const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
 const GameServer = require('./routes/api/gameServer.js');
+const lobbies = require('./routes/api/rooms.js');
 require('./config/passport.js');
 
 // Database =================================================== Connection URL
@@ -70,7 +71,7 @@ server = https
 
 const io = socketIO(server);
 var gameServer = new GameServer();
-
+console.log(lobbies);
 io
     .sockets
     .on('connection', socketioJwt.authorize({

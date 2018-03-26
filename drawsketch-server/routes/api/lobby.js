@@ -5,7 +5,7 @@ const uuid = require('uuid/v4');
 const Accounts = require('../../models/accounts.js');
 const auth = require('../auth');
 const server = require('../../app.js');
-
+const lobbies = require('./rooms.js');
 
 // Constants ========================================================== Prevent
 // sensitive information from being dumped out
@@ -31,11 +31,8 @@ var Room = (function () {
     };
 }());
 
-var lobbies = [];
-
 
 // Helper Functions ==========================================================
-
 var sanitizeInput = function (req, res, next) {
     if (!validator.isNumeric(req.body.maxPlayers)) 
         return res.status(422).json({

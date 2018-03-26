@@ -31,7 +31,7 @@ class Game extends React.Component {
         var self = this;
         Promise.all([this.props.userStore.pullUser(), this.props.lobbyStore.getRoom(this.props.match.params.id)]).then
         ((values) => {
-            console.log(values);
+            console.log(this);
             // this
             // .socket
             // .on('connect', function () {

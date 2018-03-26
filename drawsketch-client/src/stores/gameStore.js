@@ -1,6 +1,6 @@
 import {action, extendObservable} from 'mobx'
 
-export class ObservableTodoStore {
+class GameStore {
     constructor() {
         extendObservable(this, {
             isPainting: false,
@@ -97,4 +97,4 @@ export class ObservableTodoStore {
     }
 }
 
-export const observableTodoStore = new ObservableTodoStore();
+export default new GameStore();

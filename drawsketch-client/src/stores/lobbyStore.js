@@ -72,6 +72,7 @@ class LobbyStore {
         this.errors = undefined;
         return api.Lobby.createRoom(this.values)
           .then((room) => {
+            console.log(room);
             this.join(room.id);
           })
           .catch(action((err) => {

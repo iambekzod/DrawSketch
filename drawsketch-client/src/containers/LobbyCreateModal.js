@@ -19,10 +19,10 @@ class LobbyCreateModal extends Component {
 
   createLobby = (e) => {
     e.preventDefault();
-    this.props.userListStore.addUser();
     this.toggle();
     this.props.lobbyStore.create().then(() => {
-      this.props.history.push("/game");
+      this.props.userListStore.addUser();
+      this.props.history.push("/game/" + this.props.userStore.room);
     });
   };
 

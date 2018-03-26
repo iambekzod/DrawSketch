@@ -23,33 +23,37 @@ class Game extends React.Component {
         this.state = {
             begun: false,
             newRound: false,
-            userType: this.props.userType
+            userType: "",
         };
 
     }
     componentDidMount() {
         var self = this;
-        this
-            .socket
-            .on('connect', function () {
-                self
-                    .socket
-                    .emit('authenticate', {token: self.props.userStore.token}) //send the jwt
-                    .on('authenticated', function () {
-                        self
-                            .socket
-                            .emit('join', 1);
-                    })
-                    .on("unauthorized", function (error, callback) {
-                        console.log("unauthenticated");
-                        if (error.data.type === "UnauthorizedError" || error.data.code === "invalid_token") {
-                            // redirect user to login page perhaps?
-                            callback();
-                        }
-                    });
-            });
-        this.roundStarted();
-        this.roundEnded();
+        Promise.all([this.props.userStore.pullUser(), this.props.lobbyStore.getRoom(this.props.match.params.id)]).then
+        ((values) => {
+            console.log(values);
+            // this
+            // .socket
+            // .on('connect', function () {
+            //     self
+            //         .socket
+            //         .emit('authenticate', {token: self.props.userStore.token}) //send the jwt
+            //         .on('authenticated', function () {
+            //             self
+            //                 .socket
+            //                 .emit('join', 1);
+            //         })
+            //         .on("unauthorized", function (error, callback) {
+            //             console.log("unauthenticated");
+            //             if (error.data.type === "UnauthorizedError" || error.data.code === "invalid_token") {
+            //                 // redirect user to login page perhaps?
+            //                 callback();
+            //             }
+            //         });
+            // });
+            // this.roundStarted();
+            // this.roundEnded();
+        })
     }
     roundStarted = () => {
         this
@@ -96,7 +100,7 @@ class Game extends React.Component {
             <div>
                 {roundAlert}
                 {timer}
-                <Provider store={this.props.store}>
+                <Provider store={this.props.gameStore}>
                     <Row>
                         <LeftSideBar/>
                         <div
@@ -111,4 +115,4 @@ class Game extends React.Component {
     }
 }
 
-export default Game = inject('userStore')(observer(Game))
+export default Game = inject('userStore', 'lobbyStore', 'gameStore')(observer(Game))

@@ -20,7 +20,6 @@ var userProjection = {
 
 var Room = (function () {
     return function room(request) {
-        this.id = request.id;
         this.name = request.name;
         this.author = request.author;
         this.password = request.password;
@@ -128,7 +127,9 @@ router.get('/', auth.required, function (req, res, next) {
 // H lQVkh4vG0iYKoeHfd5RQcC6OvFTuLASuP-ycE" -H "Content-Type: application/json"
 // -k https://localhost:3001/api/lobby/abcde/
 router.get('/:id/', auth.required, checkId, function (req, res, next) {
+    console.log("Request: " + req.params.id);
     var index = lobbies.findIndex(function (e) {
+        console.log("lobby: " + e.id);
         return (e.id == req.params.id);
     });
     if (index === -1) {

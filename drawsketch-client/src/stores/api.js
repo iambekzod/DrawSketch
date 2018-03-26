@@ -58,11 +58,6 @@ const Auth = {
     requests.post('/user/signup', { user }),
 };
 
-const Game = {
-  connectedUsers: () =>
-    requests.get('/game/connected'),
-}
-
 const Lobby = {
   getRooms: () =>
     requests.get('/lobby/'),
@@ -78,6 +73,5 @@ const Lobby = {
 
 export default {
   Auth,
-  Game,
   Lobby
 };

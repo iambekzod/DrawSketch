@@ -14,14 +14,15 @@ import userStore from './stores/userStore';
 import lobbyStore from './stores/lobbyStore';
 import messageStore from './stores/messageStore';
 import userListStore from './stores/userListStore';
-
+import gameStore from './stores/gameStore'
 
 const stores = {
   authStore,
   userStore,
   lobbyStore,
   messageStore,
-  userListStore
+  userListStore,
+  gameStore
 };
 
 // For easier debugging

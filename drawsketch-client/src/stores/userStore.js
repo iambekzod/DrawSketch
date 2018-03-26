@@ -8,14 +8,15 @@ class UserStore {
       token: window.localStorage.getItem('jwt'),
       inProgress: false,
       room: window.localStorage.getItem('room'),
-
       pullUser: action(function() {
         this.inProgress = true;
         return api.Auth.current()
           .then(action((user) => { 
-            this.currentUser = user; }))
-          .finally(action(() => { this.inProgress = false; }))
+            this.currentUser = user;
+            return user; }))
+          .finally(action((user) => { this.inProgress = false; return user; }))
       }),
+
       forgetUser: action(function() {
         this.currentUser = null;
       }),

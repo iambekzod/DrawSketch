@@ -31,14 +31,14 @@ app.use(bodyParser.json());
 //https://www.namecheap.com/support/knowledgebase/article.aspx/9737/2208/pointing-a-domain-to-the-heroku-app#www.yourdomain.tld
 //https://gist.github.com/Shourai/bfd9f549a41c836c99c0c660c9271df6
 
-var whitelist = ['https://drawsketch.herokuapp.com', 'http://drawsketch.me', 'http://localhost:3000']
+var whitelist = ['https://drawsketch.herokuapp.com', 'https://drawsketch.me', 'http://localhost:3000']
 app.use(cors({ 
     credentials: true, 
     origin: function (origin, callback) {
         if (whitelist.indexOf(origin) !== -1) {
             callback(null, true)
         } else {
-            callback(new Error('Not allowed by CORS'))
+            callback(new Error('Not allowed by CORS: ' + origin))
         }
     }
 }));

@@ -5,7 +5,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-// const session = require('express-session');
 const http = require('http');
 const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
@@ -16,6 +15,7 @@ const path = require('path');
 const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
 const GameServer = require('./routes/api/gameServer.js');
+const morgan = require('morgan');
 require('./config/passport.js');
 
 // Database =================================================== Connection URL
@@ -23,13 +23,18 @@ mongoose.connect(keys.mongoURL);
 
 // Server ===================================================
 const app = express();
-// app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-//https://www.namecheap.com/support/knowledgebase/article.aspx/9737/2208/pointing-a-domain-to-the-heroku-app#www.yourdomain.tld
-//https://gist.github.com/Shourai/bfd9f549a41c836c99c0c660c9271df6
+console.log("Environment: " + app.get('env'));
+if (app.get('env') == 'production') {
+    app.use(morgan('common', 
+        { skip: function(req, res) { return res.statusCode < 400 }, 
+        stream: __dirname + '/../morgan.log' }));
+  } else {
+    app.use(morgan('dev'));
+  }
 
 // var whitelist = ['https://drawsketch.herokuapp.com', 'https://drawsketch.me', 'http://localhost:8080']
 // app.use(cors({ 
@@ -40,17 +45,6 @@ app.use(bodyParser.json());
 //         } else {
 //             callback(new Error('Not allowed by CORS: ' + origin))
 //         }
-//     }
-// }));
-
-// app.use(session({
-//     secret: keys.sessionSecret,
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: {
-//         maxAge: 60 * 60 * 24 * 7, // 1 week in number of seconds
-//         httpOnly: true,
-//         sameSite: true
 //     }
 // }));
 

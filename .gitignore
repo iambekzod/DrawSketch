@@ -9,6 +9,7 @@ client/node_modules
 
 # production
 /build
+client/build
 
 jsconfig.json
 

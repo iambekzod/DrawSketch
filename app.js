@@ -28,7 +28,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 if (app.get('env') == 'production') {
-    app.use(morgan('combined'));
+    app.use(morgan('combined', {
+        skip: function (req, res) { return res.statusCode < 400 }
+      }));
 } else {
     app.use(morgan('dev'));
 }

@@ -6,18 +6,25 @@ const validator = require('validator');
 const Accounts = require('../../models/accounts.js');
 const auth = require('../auth');
 
+var sanitizeUserPass = function(req, res, next) {
+  req.body.user.username = validator.escape(req.body.user.username);
+  req.body.user.password = validator.escape(req.body.user.password);
+
+  next();
+}
+
 var sanitizeInput = function (req, res, next) {
   if (!validator.isAlpha(req.body.user.firstname)) return res.status(422).json({errors: {Firstname: "must contain only letters"}});
   if (!validator.isAlpha(req.body.user.lastname)) return res.status(422).json({errors: {Lastname: "must contain only letters"}});
   if (!validator.isEmail(req.body.user.email)) return res.status(422).json({errors: {Email: "must be of proper email format"}});
-  if (req.body.user.password !== req.body.user.confirmPassword) return res.status(401).json({errors: {Passwords: " do not match"}});
 
-  req.body.user.username = validator.escape(req.body.user.username);
+  sanitizeUserPass(req, res, next);
+  req.body.user.confirmPassword = validator.escape(req.body.user.confirmPassword);
   req.body.user.firstname = validator.escape(req.body.user.firstname);
   req.body.user.lastname = validator.escape(req.body.user.lastname);
   req.body.user.email = validator.escape(req.body.user.email);
-  req.body.user.password = validator.escape(req.body.user.password);
-  req.body.user.confirmPassword = validator.escape(req.body.user.confirmPassword);
+
+  if (req.body.user.password !== req.body.user.confirmPassword) return res.status(401).json({errors: {Passwords: " do not match"}});
 
   next();
 }
@@ -30,10 +37,7 @@ router.get('/', auth.required, function(req, res, next) {
   }).catch(next);
 });
 
-router.post('/signin', function(req, res, next) {
-  req.body.user.username = validator.escape(req.body.user.username);
-  req.body.user.password = validator.escape(req.body.user.password);  
-
+router.post('/signin', sanitizeUserPass, function(req, res, next) {
   if(!req.body.user.username){
     return res.status(422).json({errors: {username: "can't be blank"}});
   }
@@ -67,7 +71,7 @@ router.post('/signup', sanitizeInput, function(req, res, next) {
         if (err.errors["username"]) return res.status(422).json({errors: { Username: "is taken" }});
         if (err.errors["email"]) return res.status(422).json({errors: { Email: "is being used by another user" }});
 
-        return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return soemthing
+        return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return something
       } else return res.json(newUser.toAuthJSON());
   });
 });

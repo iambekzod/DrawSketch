@@ -16,6 +16,9 @@ class Credits extends Component {
               CSS components from <a href="https://reactstrap.github.io/">ReactStrap</a>
             </li>
             <li>
+              Deploying React App + Node Express together as One App https://daveceddia.com/create-react-app-express-production/
+            </li>
+            <li>
               Setup a MongoDB connection to our mLabs server using&nbsp;
               <a href="https://scotch.io/tutorials/using-mongoosejs-in-node-js-and-mongodb-applications">MongooseJS</a>
             </li>

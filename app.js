@@ -27,14 +27,11 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-console.log("Environment: " + app.get('env'));
 if (app.get('env') == 'production') {
-    app.use(morgan('common', 
-        { skip: function(req, res) { return res.statusCode < 400 }, 
-        stream: __dirname + '/../morgan.log' }));
-  } else {
+    app.use(morgan('combined'));
+} else {
     app.use(morgan('dev'));
-  }
+}
 
 // var whitelist = ['https://drawsketch.herokuapp.com', 'https://drawsketch.me', 'http://localhost:8080']
 // app.use(cors({ 

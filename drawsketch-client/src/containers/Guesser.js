@@ -25,10 +25,6 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
         this.roundStarted();
         this.rightGuess();
         this.wrongGuess();
-        // Connected, let's sign-up for to receive messages for this room
-        this
-            .socket
-            .emit('join', 1);
     }
     render() {
         var guess = null

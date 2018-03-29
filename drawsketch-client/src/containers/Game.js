@@ -19,40 +19,52 @@ import {Guesser} from './Guesser'
 class Game extends React.Component {
     constructor(props) {
         super(props)
-        this.socket = io.connect("https://localhost:3001");
+        this.socket = io.connect("http://localhost:8080");
         this.state = {
             begun: false,
             newRound: false,
             userType: "",
+            game: ""
         };
 
     }
     componentDidMount() {
-        var self = this;
-        Promise.all([this.props.userStore.pullUser(), this.props.lobbyStore.getRoom(this.props.match.params.id)]).then((values) => {
-            console.log(this);
-            // this
-            // .socket
-            // .on('connect', function () {
-            //     self
-            //         .socket
-            //         .emit('authenticate', {token: self.props.userStore.token}) //send the jwt
-            //         .on('authenticated', function () {
-            //             self
-            //                 .socket
-            //                 .emit('join', 1);
-            //         })
-            //         .on("unauthorized", function (error, callback) {
-            //             console.log("unauthenticated");
-            //             if (error.data.type === "UnauthorizedError" || error.data.code === "invalid_token") {
-            //                 // redirect user to login page perhaps?
-            //                 callback();
-            //             }
-            //         });
-            // });
-            // this.roundStarted();
-            // this.roundEnded();
-        })
+        this
+        .socket
+        .on('connect', () => {
+            this
+                .socket
+                .emit('authenticate', {token: this.props.userStore.token}) //send the jwt
+                .on('authenticated', () => {
+                    Promise.all([this.props.userStore.pullUser(), this.props.lobbyStore.getRoom(this.props.match.params.id)]).then((values) => {
+                        if(values[1].players.find((e) => e.username == values[0].username).length == 0){
+                            alert("UNAUTHORIZED");
+                            return;
+                        }
+                        this.setState({game: values[1]});
+                        if(values[0].username == values[1].drawer.username){
+                            this.setState({userType:"draw"});
+                        }
+                        else{
+                            this.setState({userType:"guess"});
+                        }
+                        this.props.gameStore.updateState(JSON.stringify(values[1].gameState));
+                        this.props.gameStore.setPaint(false);
+                        this.roundStarted();
+                        this.roundEnded();
+                        this
+                        .socket
+                        .emit('join', values);
+                    })
+                })
+                .on("unauthorized", function (error, callback) {
+                    console.log("unauthenticated");
+                    if (error.data.type === "UnauthorizedError" || error.data.code === "invalid_token") {
+                        // redirect user to login page perhaps?
+                        callback();
+                    }
+                });
+        });
     }
     roundStarted = () => {
         this
@@ -90,10 +102,10 @@ class Game extends React.Component {
         }
         var userType = null;
         if (this.state.userType === 'draw') {
-            userType = <Drawer socket={this.socket}/>
+            userType = <Drawer game = {this.state.game} socket={this.socket}/>
         }
         if (this.state.userType === 'guess') {
-            userType = <Guesser socket={this.socket}/>
+            userType = <Guesser game = {this.state.game} socket={this.socket}/>
         }
         return (
             <div>

@@ -76,7 +76,6 @@ server = http
 
 const io = socketIO(server);
 var gameServer = new GameServer();
-console.log(lobbies);
 io
     .sockets
     .on('connection', socketioJwt.authorize({
@@ -86,14 +85,32 @@ io
         //this socket is authenticated, we are good to handle more events from it.
         console.log("AUTH USER");
         socket.on('join', (room) => {
-            socket.join(room);
+            const found = gameServer.findGame(room[1].id);
+            if(found == null){
+                console.log("CREATING ROOM");
+                gameServer.createGame(room[1].id);
+                console.log("PLAYER JOINING", room[0].username);
+                gameServer.joinGame(room[0], room[1].id);
+            }
+            else{
+                const game = gameServer.games[found]
+                if(game.inGame(room[0]) == false){
+                    console.log("PLAYER JOINING", room[0].username);
+                    gameServer.joinGame(room[0], room[1].id);
+                }
+            }
+        socket.join(room[1].id)
         })
         socket.on("gameState", (state) => {
             var state = JSON.parse(state);
             var updated = gameServer.setGameState(state.id, state.game)
+            var game = lobbies.find((room) => room.id === state.id);
+            const index = lobbies.indexOf(game);
+            console.log(lobbies[index].gameState);
+            lobbies[index].gameState = state.game;
             io
                 .sockets
-                . in(1)
+                . in(state.id)
                 .emit('return', JSON.stringify(updated.state))
         })
         socket.on("beginRound", (player) => {
@@ -124,7 +141,7 @@ io
         })
         socket.on("endRound", (game) => {
             console.log("ABOUT TO END ROUND");
-            game = gameServer.findGame(1);
+            game = gameServer.findGame(1);	
             io
                 .sockets
                 . in(game.id)

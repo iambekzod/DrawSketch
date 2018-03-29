@@ -28,6 +28,16 @@ var Room = (function () {
         this.maxPlayers = parseInt(request.maxPlayers);
         this.rounds = parseInt(request.rounds);
         this.players = [];
+        this.gameState = {
+            isPainting: false,
+            xPos: [],
+            yPos: [],
+            width: [],
+            dragging: [],
+            paintColor: [],
+            curWidth: 2,
+            curColor: "black",
+        }
     };
 }());
 

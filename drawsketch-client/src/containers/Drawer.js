@@ -144,6 +144,6 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
         }
         this
             .socket
-            .emit('gameState', JSON.stringify({id: 1, game: gameState}));
+            .emit('gameState', JSON.stringify({id: this.props.game.id, game: gameState}));
     }
 }))

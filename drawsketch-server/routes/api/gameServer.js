@@ -40,32 +40,41 @@ class Game {
     setState(gameState){
         this.state = gameState;
     }
+    inGame(player){
+        const found = this.players.find( (e) => e.username == player.username)
+        if(!found){
+            return false
+        }
+        return true
+    }
 }
 class GameServer {
     constructor(server){
-        this.games = [new Game(1)];
+        this.games = [];
     }
     findGame(id){
         var game = this.games.find((game) => game.id === id);
         if(!game){
             return null
         }
-        return game
+        const index = this.games.indexOf(game);
+        return index
 
     }
     createGame(id){
-        games.push(new Game(id))
+        const newGame = new Game(id)
+        this.games.push(newGame)
+        return  newGame
     }
     joinGame(player,id){
         var game = this.findGame(id);
-
-        game.playerJoin(player);
+        this.games[game].playerJoin(player);
+        return this.games[game];
     }
     setGameState(id,state){
         var game = this.findGame(id);
-        var gameIndex = this.games.indexOf(game);
-        this.games[gameIndex].setState(state);
-        return this.games[gameIndex];
+        this.games[game].setState(state);
+        return this.games[game];
 
     }
 }

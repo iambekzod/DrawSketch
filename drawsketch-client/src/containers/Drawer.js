@@ -39,13 +39,18 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
         const store = this.props.store;
         const canvas = this.refs.canvas;
         var self = this;
+        this
+            .props
+            .store
+            .updateState(JSON.stringify(this.props.game.gameState));
+        this.redraw();
         canvas.addEventListener('mousedown', function (e) {
             var mouseX = e.pageX - this.offsetLeft;
             var mouseY = e.pageY - this.offsetTop;
             store.setPaint(true);
             store.addClick(mouseX, mouseY, false);
             self.redraw();
-
+            self.sendState();
         });
 
         // this.socket.emit()
@@ -55,6 +60,7 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
                 // console.log(store.getX);
                 store.addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
                 self.redraw();
+                self.sendState();
             }
         }));
         canvas.addEventListener('mouseup', (e) => store.setPaint(false))
@@ -71,11 +77,13 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
             .emit('guess', guess)
     }
     render() {
-        var beginButton = (!this.state.begun) ? <div className="begin-btn">
-                <Button outline onClick={this.beginGame} color="primary">
-                    Begin Game
-                </Button>
-            </div> : null
+        var beginButton = (!this.state.begun)
+            ? <div className="begin-btn">
+                    <Button outline onClick={this.beginGame} color="primary">
+                        Begin Game
+                    </Button>
+                </div>
+            : null
 
         return (
             <div>
@@ -97,8 +105,7 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
                 </Row>
 
                 <Row>
-                    <SideBar store={this.props.store}/>
-                    {beginButton}
+                    <SideBar store={this.props.store}/> {beginButton}
                 </Row>
 
             </div>
@@ -120,7 +127,6 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
         const context = canvas.getContext("2d")
         context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
         context.lineJoin = "round";
-
         for (var i = 0; i < store.getX.length; i++) {
             context.lineWidth = store.getPenWidth[i];
             if (store.dragging[i]) {
@@ -132,6 +138,10 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
                 context.stroke();
             }
         }
+
+    }
+    sendState() {
+        const store = this.props.store;
         const gameState = {
             xPos: store.getX,
             yPos: store.getY,

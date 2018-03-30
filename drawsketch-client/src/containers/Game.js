@@ -119,6 +119,7 @@ class Game extends React.Component {
         }
         var userType = null;
         if (this.state.userType === 'draw') {
+            console.log(this.props.gameStore.getX);
             userType = <Drawer game={this.state.game} socket={this.socket}/>
         }
         if (this.state.userType === 'guess') {

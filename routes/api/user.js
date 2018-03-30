@@ -7,6 +7,8 @@ const Accounts = require('../../models/accounts.js');
 const auth = require('../auth');
 
 var sanitizeUserPass = function(req, res, next) {
+  if (!validator.isAlphanumeric(req.body.user.username)) return res.status(422).json({errors: {Username: "must contain only letters and numbers"}})
+  
   req.body.user.username = validator.escape(req.body.user.username);
   req.body.user.password = validator.escape(req.body.user.password);
 
@@ -14,7 +16,6 @@ var sanitizeUserPass = function(req, res, next) {
 }
 
 var sanitizeInput = function (req, res, next) {
-  if (!validator.isAlphanumeric(req.body.user.username)) return res.status(422).json({errors: {Username: "must contain only letters and numbers"}})
   if (!validator.isAlpha(req.body.user.firstname)) return res.status(422).json({errors: {Firstname: "must contain only letters"}});
   if (!validator.isAlpha(req.body.user.lastname)) return res.status(422).json({errors: {Lastname: "must contain only letters"}});
   if (!validator.isEmail(req.body.user.email)) return res.status(422).json({errors: {Email: "must be of proper email format"}});
@@ -45,10 +46,10 @@ router.post('/signin', sanitizeUserPass, function(req, res, next) {
     return res.status(422).json({errors: {password: "can't be blank"}});
   }
 
-  passport.authenticate('local', {session: false}, function(err, user, info){
-    if(err){ return next(err); }
+  passport.authenticate('local', { session: false }, function(err, user, info){
+    if (err) { return next(err); }
 
-    if(user){
+    if (user) {
       return res.json(user.toAuthJSON());
     } else {
       return res.status(422).json(info);

@@ -9,6 +9,7 @@ const http = require('http');
 const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
 const socketioJwt = require('socketio-jwt2');
+const cookieSession = require('cookie-session')
 // const cors = require('cors');
 const path = require('path');
 
@@ -16,6 +17,7 @@ const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
 const GameServer = require('./routes/api/gameServer.js');
 const morgan = require('morgan');
+const helmet = require('helmet');
 require('./config/passport.js');
 
 // Database =================================================== Connection URL
@@ -26,14 +28,28 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(helmet());
+
+var cookieOptions = {
+    secret: keys.sessionSecret,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        sameSite: true
+    }
+};
 
 if (app.get('env') == 'production') {
+    cookieOptions.cookie.secure = true;
     app.use(morgan('combined', {
         skip: function (req, res) { return res.statusCode < 400 }
       }));
 } else {
     app.use(morgan('dev'));
 }
+console.log(cookieOptions);
+app.use(cookieSession(cookieOptions));
 
 // var whitelist = ['https://drawsketch.herokuapp.com', 'https://drawsketch.me', 'http://localhost:8080']
 // app.use(cors({ 

@@ -48,7 +48,7 @@ router.get('/signup/google',
 router.get('/signup/google/callback', passport.authenticate('google'), function(req, res, next) {
   var token = req.user.jwtoken;
   res.cookie('auth', token);
-  res.redirect('http://localhost:3000/username');
+  res.redirect('/username');
 });
 
 router.post('/google', auth.required, function(req, res, next) {

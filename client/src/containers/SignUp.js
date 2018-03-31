@@ -41,7 +41,7 @@ class SignUp extends Component {
               disabled={inProgress} 
               type="submit" 
               size="lg"
-              href='http://localhost:8080/api/user/signup/google'
+              href='/api/user/signup/google'
               block>
               Google+
         </Button>

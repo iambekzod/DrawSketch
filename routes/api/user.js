@@ -4,6 +4,7 @@ const passport = require('passport');
 const validator = require('validator');
 
 const Accounts = require('../../models/accounts.js');
+const googleAccounts = mongoose.model('googleAccounts');
 const auth = require('../auth');
 
 var sanitizeUserPass = function(req, res, next) {
@@ -36,6 +37,42 @@ router.get('/', auth.required, function(req, res, next) {
   }).catch(next);
 });
 
+// passport.authenticate gets the code of that user that tells google we can get info of the profile and email
+router.get('/signup/google', 
+  passport.authenticate('google', {
+    scope: ['profile', 'email']
+  })
+);
+
+// passport.authenticate sees the code and gives us the information, done in passport.js
+router.get('/signup/google/callback', passport.authenticate('google'), function(req, res, next) {
+  var token = req.user.jwtoken;
+  res.cookie('auth', token);
+  res.redirect('http://localhost:3000/username');
+});
+
+router.post('/google', auth.required, function(req, res, next) {
+  googleAccounts.findOne({jwtoken : req.body.cookie}).then(function(user){
+    if(!user){ return res.sendStatus(401); }
+
+    return res.json(user.toAuthJSON());
+  }).catch(next);
+});
+
+router.post('/google_username', sanitizeUserPass, function(req, res, next) {
+  if(!req.body.user.username){
+    return res.status(422).json({errors: {username: "can't be blank"}});
+  }
+
+  googleAccounts.findOne({ jwtoken: req.body.user.cookie }).then(user => {
+    user.username = req.body.user.username;
+    user.save(function (err, newUser) {
+      if (err) return handleError(err);
+      res.send(newUser);
+    });
+  });
+});
+
 router.post('/signin', sanitizeUserPass, function(req, res, next) {
   if(!req.body.user.username){
     return res.status(422).json({errors: {username: "can't be blank"}});
@@ -56,7 +93,7 @@ router.post('/signin', sanitizeUserPass, function(req, res, next) {
   })(req, res, next);
 });
 
-router.post('/signup', sanitizeUserPass, sanitizeInput, async (req, res, next) => {
+router.post('/signup', sanitizeUserPass, sanitizeInput,  function(req, res, next) {
   var newUser = Accounts({
     username: req.body.user.username,
     firstname: req.body.user.firstname,

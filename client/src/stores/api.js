@@ -52,10 +52,14 @@ const requests = {
 const Auth = {
   current: () =>
     requests.get('/user'),
+  googleCurrent: (cookie) =>
+    requests.post('/user/google', {cookie}),
   login: (username, password) =>
     requests.post('/user/signin', { user: { username, password } }),
   register: (user) =>
     requests.post('/user/signup', { user }),
+  googleRegister: (user) =>
+    requests.post('/user/google_username', { user })
 };
 
 const Game = {

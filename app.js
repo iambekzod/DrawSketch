@@ -13,9 +13,12 @@ const socketioJwt = require('socketio-jwt2');
 const path = require('path');
 
 const keys = require('./config/keys.js');
+const passport = require('passport');
 const Accounts = require('./models/accounts.js');
+const GoogleAccounts = require('./models/googleAccounts.js');
 const GameServer = require('./routes/api/gameServer.js');
 const morgan = require('morgan');
+
 require('./config/passport.js');
 
 // Database =================================================== Connection URL
@@ -46,6 +49,8 @@ if (app.get('env') == 'production') {
 //         }
 //     }
 // }));
+
+app.use(passport.initialize());
 
 app.use(require('./routes'));
 app.use(function (req, res, next) {

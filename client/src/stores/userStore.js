@@ -16,6 +16,13 @@ class UserStore {
             this.currentUser = user; }))
           .finally(action(() => { this.inProgress = false; }))
       }),
+      pullGoogleUser: action(function(cookie){
+        this.inProgress = true;
+        return api.Auth.googleCurrent(cookie)
+          .then(action((user) => { 
+            this.currentUser = user; }))
+          .finally(action(() => { this.inProgress = false; }))
+      }),
       forgetUser: action(function() {
         this.currentUser = null;
       }),

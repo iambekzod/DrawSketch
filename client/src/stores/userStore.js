@@ -5,8 +5,8 @@ class UserStore {
   constructor() {
     extendObservable(this, {
       currentUser: { },
-      token: window.localStorage.getItem('jwt'),
       inProgress: false,
+      token: window.localStorage.getItem('jwt'),
       room: window.localStorage.getItem('room'),
 
       pullUser: action(function() {

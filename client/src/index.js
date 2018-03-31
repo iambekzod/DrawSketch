@@ -5,6 +5,7 @@ import './style/index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
+import { CookiesProvider } from 'react-cookie';
 import { useStrict } from 'mobx';
 import { Provider } from 'mobx-react';
 import promiseFinally from 'promise.prototype.finally';
@@ -31,9 +32,11 @@ promiseFinally.shim();
 useStrict(true);
 
 ReactDOM.render((
-  <Provider {...stores}>
-    <BrowserRouter>
-      <Route component={App} />
-    </BrowserRouter>
-  </Provider>), document.getElementById('root'));
+  <CookiesProvider>
+    <Provider {...stores}>
+      <BrowserRouter>
+        <Route component={App} />
+      </BrowserRouter>
+    </Provider>
+  </CookiesProvider>), document.getElementById('root'));
 registerServiceWorker();

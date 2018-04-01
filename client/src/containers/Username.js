@@ -13,7 +13,10 @@ class Username extends Component {
   handleSubmitForm = (e) => {
     e.preventDefault();
     this.props.authStore.updateGoogleUsername()
-      .then(() => this.props.history.replace('/lobby'));
+      .then((user) => { 
+        this.props.userStore.setToken(user.token);
+        this.props.userStore.pullUser().then(() => this.props.history.replace('/lobby'));
+      });
   };
 
   render() {

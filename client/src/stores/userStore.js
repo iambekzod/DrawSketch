@@ -7,7 +7,6 @@ class UserStore {
       token: window.localStorage.getItem('jwt'),
       googleToken: window.localStorage.getItem('google-jwt'),
       inProgress: false,
-      token: window.localStorage.getItem('jwt'),
       room: window.localStorage.getItem('room'),
 
       pullUser: action(function() {

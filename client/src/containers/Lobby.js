@@ -11,6 +11,12 @@ import { Table, Button } from "reactstrap";
 import { inject, observer } from 'mobx-react';
 
 class Lobby extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+        user: null
+    };
+  }
 
   componentDidMount() {
     const { token, room } = this.props.userStore;
@@ -28,6 +34,15 @@ class Lobby extends Component {
       })
     } else {
       this.props.lobbyStore.getRooms();
+    }
+
+    var self = this;
+    if (token) {
+      this.props.userStore.pullUser().then(function (resultUser) {
+        self.setState({
+          user: resultUser
+        });
+      });    
     }
   };
 
@@ -59,10 +74,13 @@ class Lobby extends Component {
             <td>{room.rounds}</td>
         </tr>)
 
+    let user = (this.state.user) ? this.state.user.username : null;
+
     return (
       <div className="lobby">
         <div className="control-panel">
           <h1>Lobby</h1>
+          <p>Welcome <span className="user">{user}</span></p>
           <p>Create a lobby and start up a match with your friends!</p>
           <div className="actions">
             <Button 

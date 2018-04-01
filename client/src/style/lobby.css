@@ -8,6 +8,15 @@
     cursor: pointer;
 }
 
+.actions {
+    margin-top: 15px;
+}
+
+.user {
+    font-weight: bold;
+    font-size: 18px;
+}
+
 .actions button {
     margin-right: 10px;
 }

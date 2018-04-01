@@ -25,7 +25,6 @@ class SignIn extends Component {
   responseGoogle = (response) => {
     this.props.authStore.verifyGoogleToken(response.tokenId)
       .then((result) => {
-
         if (result.redirect) {
           this.props.userStore.setGoogleToken(result.token);
           this.props.history.replace("/username");

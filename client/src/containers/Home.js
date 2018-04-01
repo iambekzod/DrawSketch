@@ -8,7 +8,7 @@ class Home extends Component {
     this.state = {
         user: null
     };
-}
+  }
 
   componentDidMount() {
     var self = this;

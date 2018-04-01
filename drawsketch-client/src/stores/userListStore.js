@@ -7,18 +7,24 @@ class userListStore {
     extendObservable(this, {
         inProgress: false,
         errors: undefined,
-        users: [{username:"drawsketch", isMe: false},
-                {username:"weiqiang", isMe: false}],
-        values: {
-            points: 0
-        },
-        setPoints: action((set) => this.values.points = set),
-        reset: action((set) => {
-            this.values.points = 0;
+        users: [{username:"drawsketch", isMe: false, points: 0},
+                {username:"weiqiang", isMe: false, points: 0}],
+        setPoints: action((name, points) => {
+            var user = this.users.find(function(user) {
+                return user.username === name;
+            });
+
+            user.points += points
         }),
+
+        reset: action((set) => {
+            this.users.forEach(user => {
+                user.points = 0;
+            });
+        }),
+
         addUser: action(() => {
-            this.users.push({username: userStore.currentUser.username, isMe: true});
-            this.values.points = 0;
+            this.users.push({username: userStore.currentUser.username, isMe: true, points: 0});
       }),
     })
   }

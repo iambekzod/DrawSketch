@@ -65,7 +65,6 @@ var sanitizeInput = function (req, res, next) {
         });
     
     req.body.name = validator.escape(req.body.name);
-    console.log(req.body.timeLimit);
     switch (req.body.timeLimit) {
         case "0:30":
             req.body.timeLimit = 30;
@@ -99,6 +98,15 @@ var sanitizeInput = function (req, res, next) {
     req.body.maxPlayers = validator.escape(req.body.maxPlayers);
     req.body.rounds = validator.escape(req.body.rounds);
 
+    numRounds = parseInt(req.body.rounds);
+    if (numRounds < 4 || numRounds > 16) {
+        return res.status(422).json({
+            errors: {
+                rounds: "must be between 4 and 16 rounds"
+            }
+        });
+    }
+
     next();
 }
 
@@ -129,12 +137,6 @@ router.get('/', auth.required, function (req, res, next) {
     return res.json(filterIds.slice(0, 10));
 });
 
-// curl -X GET -H "Authorization: Token
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhYTgwZDU1NDA2ODJlMzc2YTFmYjQ2
-// Y
-// iIsInVzZXJuYW1lIjoiYXNkIiwiZXhwIjoxNTI2NDA1Njc3LCJpYXQiOjE1MjEyMjE2Nzd9.vF69i
-// H lQVkh4vG0iYKoeHfd5RQcC6OvFTuLASuP-ycE" -H "Content-Type: application/json"
-// -k https://localhost:3001/api/lobby/abcde/
 router.get('/:id/', auth.required, checkId, function (req, res, next) {
     console.log("Request: " + req.params.id);
     var index = lobbies.findIndex(function (e) {
@@ -154,14 +156,6 @@ router.get('/:id/', auth.required, checkId, function (req, res, next) {
     return res.json(lobbies[index]);
 });
 
-// curl -X POST -H "Authorization: Token
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhYTgwZDU1NDA2ODJlMzc2YTFmYjQ2
-// Y
-// iIsInVzZXJuYW1lIjoiYXNkIiwiZXhwIjoxNTI2NDA1Njc3LCJpYXQiOjE1MjEyMjE2Nzd9.vF69i
-// H lQVkh4vG0iYKoeHfd5RQcC6OvFTuLASuP-ycE" -H "Content-Type: application/json"
-// -d '{"id": "abcd", "name": "room name", "password": "mypass", "timeLimit":
-// "2000", "maxPlayers": "8", "rounds": "20"}' -k
-// https://localhost:3001/api/lobby/
 router.post('/', auth.required, sanitizeInput, function (req, res, next) {
     Accounts
         .findById(req.payload.id)

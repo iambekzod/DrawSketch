@@ -121,6 +121,7 @@ io
             const found = gameServer.findGame(JSON.parse(game).id);
             lobbies[found].started = true;
             lobbies[found].roundsPlayed++;
+            /* someone else convert round time to seconds */
             interval = startTimer(found, 60);
             console.log(interval);
             io
@@ -176,6 +177,12 @@ function pickPlayer(game) {
 
 function endRound(gameIndex) {
     clearInterval(interval);
+    if (lobbies[gameIndex].roundsPlayed == lobbies[gameIndex].rounds) {
+        io
+            .sockets
+            . in(gameServer.games[gameIndex].id)
+            .emit('gameOver', lobbies[gameIndex]);
+    }
     const index = pickPlayer(lobbies[gameIndex]);
     console.log("INDEX IS ", index);
     lobbies[gameIndex].started = false;

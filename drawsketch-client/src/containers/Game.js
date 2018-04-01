@@ -23,7 +23,8 @@ class Game extends React.Component {
             userType: "",
             game: "",
             curPlayer: "",
-            rounds: 0
+            rounds: 0,
+            over: false
         };
 
     }
@@ -120,6 +121,15 @@ class Game extends React.Component {
             })
     }
 
+    gameOver = () => {
+        this
+            .socket
+            .on('gameOver', (game) => {
+                this.setState({over: true, game: game})
+            })
+
+    }
+
     roundEnded = () => {
         this
             .socket
@@ -146,6 +156,9 @@ class Game extends React.Component {
             })
     }
     render() {
+        /* render something here if over is true then redirect to lobby
+
+        */
         var timer = null
         var roundAlert = null;
         if (this.state.begun) {

@@ -53,6 +53,7 @@ class AuthStore {
           lobbyStore.leave(userStore.room);
         }
         userStore.setToken(undefined);
+        userStore.setGoogleToken(undefined);
         return Promise.resolve();
       }),
       register: action(function() {
@@ -68,20 +69,28 @@ class AuthStore {
           }))
           .finally(action(() => { this.inProgress = false; }));
       }),
-
       verifyGoogleToken: action(function(token) {
         this.inProgress = true;
         this.errors = undefined;
         
         return api.Auth.verifyGoogleToken(token)
-          .then((user) => userStore.setToken(user.token))
+          .catch(action((err) => {
+            this.errors = err.response && err.response.body && err.response.body.errors;
+            throw err;
+          }))
+          .finally(action((user) => { this.inProgress = false; return user; }));
+      }),
+      updateGoogleUsername: action(function() {
+        this.inProgress = true;
+        this.errors = undefined;
+        
+        return api.Auth.updateGoogleUsername({ username: this.values.username, token: userStore.googleToken })
           .catch(action((err) => {
             this.errors = err.response && err.response.body && err.response.body.errors;
             throw err;
           }))
           .finally(action((user) => { this.inProgress = false; }));
-      }),
-      
+      })
     })
   }
 }

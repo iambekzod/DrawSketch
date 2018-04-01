@@ -15,7 +15,6 @@ const path = require('path');
 const keys = require('./config/keys.js');
 const passport = require('passport');
 const Accounts = require('./models/accounts.js');
-const GoogleAccounts = require('./models/googleAccounts.js');
 const GameServer = require('./routes/api/gameServer.js');
 const morgan = require('morgan');
 

@@ -26,11 +26,18 @@ class SignIn extends Component {
     var id_token = response.getAuthResponse().id_token;
 
     this.props.authStore.verifyGoogleToken(id_token)
-      .then(() => {
-        this.props.userStore.pullUser().then((user) => {
-          console.log(user);
-          this.props.history.replace('/lobby')
-        });
+      .then((result) => {
+        console.log(result);
+
+        if (result.redirect) {
+          this.props.userStore.setGoogleToken(result.token);
+          this.props.history.replace("/username");
+        } else {
+          this.props.userStore.setToken(result.token);
+          this.props.userStore.pullUser().then((user) => {
+            this.props.history.replace("/lobby");
+          });
+        }
       });
   }
 

@@ -118,7 +118,7 @@ router.get('/', auth.required, function (req, res, next) {
             rounds: room.rounds
         };
     });
-    return res.json(filterIds.slice(0, 10));
+    return res.json(filterIds);
 });
 
 // curl -X GET -H "Authorization: Token

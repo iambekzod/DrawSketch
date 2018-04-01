@@ -5,9 +5,9 @@ const validator = require('validator');
 const { OAuth2Client } = require('google-auth-library');
 
 const Accounts = require('../../models/accounts.js');
-const GoogleAccounts = require('../../models/googleAccounts.js');
 const auth = require('../auth');
 const keys = require('../../config/keys');
+const client = new OAuth2Client(keys.clientID);
 
 var sanitizeUserPass = function(req, res, next) {
   req.body.user.username = validator.escape(req.body.user.username);
@@ -41,16 +41,6 @@ var checkToken = function (req, res, next) {
 }
 
 router.get('/', auth.required, function(req, res, next) {
-
-  if (req.payload.google) {
-    GoogleAccounts.findOne({googleId: req.payload.id}).then(function (user){
-      if (!user) { 
-        return res.sendStatus(401);
-      }
-
-      return res.json(user.toAuthJSON());
-    }).catch(next);
-  } else {
     Accounts.findById(req.payload.id).then(function (user){
       if (!user) { 
         return res.sendStatus(401);
@@ -58,13 +48,11 @@ router.get('/', auth.required, function(req, res, next) {
 
       return res.json(user.toAuthJSON());
     }).catch(next);
-  }
 });
 
-router.post('/signup/google', checkToken, function(req, res, next) {
+router.post('/signin/google', checkToken, function(req, res, next) {
 
   //https://developers.google.com/identity/sign-in/web/backend-auth
-  const client = new OAuth2Client(keys.clientID);
   async function verify() {
     const ticket = await client.verifyIdToken({
         idToken: req.body.token,
@@ -73,27 +61,11 @@ router.post('/signup/google', checkToken, function(req, res, next) {
     const payload = ticket.getPayload();
     const userId = payload['sub'];
 
-    GoogleAccounts.findOne({googleId : userId}).then(function (user) {
+    Accounts.findOne({googleId : userId}).then(function (user) {
       if (!user) {
-        var newUser = GoogleAccounts({
-          username: "",
-          googleId: userId,
-          firstname: payload["given_name"],
-          lastname: payload["family_name"],
-          email: payload["email"],
-          wins: 0,
-        });
-    
-        return newUser.save().then((user) => {
-          return res.json(user.toAuthJSON());
-        }).catch((err) => {
-          if (err.errors["googleId"]) return res.status(422).json({errors: { There: "is an account assosciated with this user already" }});
-          if (err.errors["email"]) return res.status(422).json({errors: { Email: "is being used by another user" }});
-      
-          return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return something
-        });
+        return res.json({ redirect: true, token: req.body.token });
       }
-  
+
       return res.json(user.toAuthJSON());
     }).catch(next);
   }
@@ -101,6 +73,46 @@ router.post('/signup/google', checkToken, function(req, res, next) {
   verify().catch((err) => {
     return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return 
   });
+});
+
+router.put('/update/username', checkToken, function(req, res, next) {
+  if(!req.body.username){
+    return res.status(422).json({errors: {username: "can't be blank"}});
+  }
+  if (!validator.isAlphanumeric(req.body.username)) return res.status(422).json({errors: {Username: "must contain only letters and numbers"}})
+  req.body.username = validator.escape(req.body.username);
+
+  async function verify() {
+    const ticket = await client.verifyIdToken({
+        idToken: req.body.token,
+        audience: keys.clientID,
+    });
+    const payload = ticket.getPayload();
+    const userId = payload['sub'];
+
+    var newUser = Accounts({
+      username: req.body.username,
+      googleId: userId,
+      firstname: payload["given_name"],
+      lastname: payload["family_name"],
+      email: payload["email"],
+      wins: 0,
+    });
+
+    return newUser.save().then((user) => {
+      return res.json(user.toAuthJSON());
+    }).catch((err) => {
+      if (err.errors["username"]) return res.status(422).json({errors: { There: "is an account associated with this username already" }});
+      if (err.errors["email"]) return res.status(422).json({errors: { Email: "is being used by another user" }});
+
+      return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return something
+    });
+  }
+
+  verify().catch((err) => {
+    return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return 
+  });
+
 });
 
 router.post('/signin', sanitizeUserPass, function(req, res, next) {

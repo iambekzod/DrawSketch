@@ -3,11 +3,26 @@ import { inject, observer } from "mobx-react";
 import "../style/form.css";
 
 class Home extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+        user: null
+    };
+}
+
+  componentDidMount() {
+    var self = this;
+    if (this.props.userStore.token) {
+      this.props.userStore.pullUser().then(function (resultUser) {
+        self.setState({
+          user: resultUser
+        });
+      });    
+    }
+  }
 
   render() {
-    const user = this.props.userStore.token;
-
-    if (!user) {
+    if (!this.state.user) {
       return (
         <div className="Home">
           <div className="lander">
@@ -17,7 +32,12 @@ class Home extends Component {
         </div>
       );
     } else {
-      this.props.history.push("/lobby");
+      var newPath = "/lobby";
+      if (this.state.user.username === "") {
+        newPath = "/username";
+      }
+
+      this.props.history.push(newPath);
       return null;
     }
   }

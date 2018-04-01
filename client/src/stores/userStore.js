@@ -5,6 +5,7 @@ class UserStore {
   constructor() {
     extendObservable(this, {
       token: window.localStorage.getItem('jwt'),
+      googleToken: window.localStorage.getItem('google-jwt'),
       inProgress: false,
       room: window.localStorage.getItem('room'),
 
@@ -21,6 +22,15 @@ class UserStore {
         } else {
             this.token = null;
             window.localStorage.removeItem("jwt");
+        }
+      }),
+      setGoogleToken: action(function(setToken) {
+        if (setToken) {
+            this.googleToken = setToken;
+            window.localStorage.setItem("google-jwt", setToken);
+        } else {
+            this.googleToken = null;
+            window.localStorage.removeItem("google-jwt");
         }
       }),
       setRoom: action(function(room) {

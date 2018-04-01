@@ -56,10 +56,12 @@ const Auth = {
     requests.post('/user/google', {cookie}),
   login: (username, password) =>
     requests.post('/user/signin', { user: { username, password } }),
+  verifyGoogleToken: (token) =>
+    requests.post('/user/signin/google', { token }),
+  updateGoogleUsername: (username) =>
+    requests.put('/user/update/username', username),
   register: (user) =>
     requests.post('/user/signup', { user }),
-  verifyGoogleToken: (token) =>
-    requests.post('/user/signup/google', { token }),
 };
 
 const Game = {

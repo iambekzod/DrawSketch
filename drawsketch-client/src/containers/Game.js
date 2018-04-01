@@ -10,7 +10,6 @@ import TimerExample from './timer'
 import LeftSideBar from './LeftSideBar';
 import {Drawer} from "./Drawer";
 import {Guesser} from './Guesser'
-import {I} from 'glamorous';
 
 // inspired by source code from lecture 2 HTML5
 class Game extends React.Component {
@@ -22,7 +21,9 @@ class Game extends React.Component {
             newRound: false,
             userType: "",
             game: "",
-            curPlayer: ""
+            curPlayer: "",
+            rounds: 0,
+            over: false
         };
 
     }
@@ -50,12 +51,12 @@ class Game extends React.Component {
         this
             .fetchGame()
             .then((values) => {
-                if (values[1].players.find((e) => e.username == values[0].username).length == 0) {
+                if (values[1].players.find((e) => e.username === values[0].username).length === 0) {
                     alert("UNAUTHORIZED");
                     return;
                 }
-                this.setState({curPlayer: values[0], game: values[1]});
-                if (values[0].username == values[1].drawer.username) {
+                this.setState({rounds: values[1].roundsPlayed, begun: values[1].started, curPlayer: values[0], game: values[1]});
+                if (values[0].username === values[1].drawer.username) {
                     this.setState({userType: "draw"});
                 } else {
                     this.setState({userType: "guess"});
@@ -82,7 +83,11 @@ class Game extends React.Component {
             .socket
             .on('startRound', (game) => {
                 alert("GOING TO START ROUND");
-                this.setState({begun: true, newRound: false});
+                this.setState({
+                    rounds: this.state.rounds + 1,
+                    begun: true,
+                    newRound: false
+                });
             })
     }
     fetchGame() {
@@ -115,26 +120,51 @@ class Game extends React.Component {
             })
     }
 
+    gameOver = () => {
+        this
+            .socket
+            .on('gameOver', (game) => {
+                this.setState({over: true, game: game})
+            })
+
+    }
+
     roundEnded = () => {
         this
             .socket
             .on('roundEnd', (game) => {
-                if (this.state.curPlayer.username == game.drawer.username) {
-                    this.setState({userType: "draw"});
-                } else {
-                    this.setState({userType: "guess"});
-                }
+                this
+                    .props
+                    .gameStore
+                    .reset();
                 this.setState({game: game, begun: false, newRound: true});
+                const store = this.props.gameStore;
+                const gameState = {
+                    xPos: store.getX,
+                    yPos: store.getY,
+                    color: store.getColor,
+                    width: store.getPenWidth,
+                    curWidth: store.getWidth,
+                    curColor: store.getCurColor,
+                    isPainting: store.Paint,
+                    dragging: store.getDrag
+                }
+                this
+                    .socket
+                    .emit('gameState', JSON.stringify({id: this.state.game.id, game: gameState}));
             })
     }
     render() {
+        /* render something here if over is true then redirect to lobby
+
+        */
         var timer = null
         var roundAlert = null;
         if (this.state.begun) {
             console.log("PASSING IN NEW DATA");
             timer = <Row>
                 <Col>
-                    <TimerExample start={Date.now()}/>
+                    <TimerExample game={this.state.game} socket={this.socket} start={Date.now()}/>
                 </Col>
             </Row>
         }
@@ -142,18 +172,29 @@ class Game extends React.Component {
             roundAlert = <Alert color="warning">
                 NEW ROUND STARTING SOON
             </Alert>
+            setTimeout(() => {
+                window
+                    .location
+                    .reload();
+            }, 3000);
         }
         var userType = null;
         if (this.state.userType === 'draw') {
-            userType = <Drawer game={this.state.game} socket={this.socket}/>
+            userType = <Drawer
+                game={this.state.game}
+                user={this.state.curPlayer}
+                socket={this.socket}/>
         }
         if (this.state.userType === 'guess') {
-            userType = <Guesser game={this.state.game} socket={this.socket}/>
+            userType = <Guesser
+                game={this.state.game}
+                user={this.state.curPlayer}
+                socket={this.socket}/>
         }
         return (
             <div>
                 {roundAlert}
-                {timer}
+                ROUND {this.state.rounds + ":  "}{timer}
                 <Provider store={this.props.gameStore}>
                     <Row>
                         <LeftSideBar/>

@@ -36,14 +36,15 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
             .bind(this);
     }
     componentDidMount() {
+        console.log("REFS", this.refs);
         console.log("CANVAS MOUNTING");
         console.log("PASSED IN", this.props.game);
-        const store = this.props.store;
         console.log(this.props.game.gameState);
         this
             .props
             .store
             .updateState(JSON.stringify(this.props.game.gameState));
+        this.setState({begun: this.props.game.started});
         console.log(this.props.store.getX);
         this.redraw();
     }
@@ -121,7 +122,7 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
     }
 
     beginGame() {
-        if (this.props.game.players.length == 1) {
+        if (this.props.game.players.length === 1) {
             alert("NEED MORE PLAYERS TO BEGIN")
             return;
         }

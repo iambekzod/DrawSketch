@@ -7,9 +7,10 @@ class UserList extends Component {
   //handlePointsChange = e => this.props.userListStore.setPoints(e.target.value);
   //handleNewUserChange = e => this.props.userListStore.addUser();
   renderUser(user, i) {
+    const fromMe = user.isMe ? 'from-me' : '';
     return (
-      <tr key={i}>
-        <td>{user.username}</td>
+      <tr className={`${fromMe}`} key={i}>
+        <td>{user.username} : {user.points}</td>
       </tr>
     )
   }

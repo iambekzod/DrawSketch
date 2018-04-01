@@ -21,10 +21,15 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
         };
     }
     componentDidMount() {
+        console.log("REFS", this.refs)
+        this.setState({begun: this.props.game.started});
         this.updateCanvas();
         this.roundStarted();
         this.rightGuess();
         this.wrongGuess();
+    }
+    componentWillUnmount() {
+        console.log("UMOUNTING");
     }
     render() {
         var guess = null
@@ -38,8 +43,11 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
                 YOUR GUESS WAS CORRECT
             </Alert>
         }
-        // if(this.state.guess == "wrong"){     alert = <Alert color="danger"> YOUR
-        // GUESS WAS WRONG </Alert> }
+        // if (this.state.guess === "wrong") {
+        //     alert = <Alert color="danger">
+        //         YOUR GUESS WAS WRONG
+        //     </Alert>
+        // }
 
         return (
             <div
@@ -54,7 +62,7 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
                             style={{
                             border: "solid red 1"
                         }}
-                            ref="canvas"
+                            ref="gcanvas"
                             width={656}
                             height={400}className="whiteboard"/>
                     </Col>
@@ -71,6 +79,7 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
             .socket
             .emit('guess', {
                 id: this.props.game.id,
+                user: this.props.user,
                 guess: guess
             })
     }
@@ -98,6 +107,7 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
                     .emit('endRound', this.props.game.id);
             })
     }
+
     updateCanvas = () => {
         this
             .socket
@@ -110,7 +120,7 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
             });
     }
     redraw() {
-        const canvas = this.refs.canvas
+        const canvas = this.refs.gcanvas
         const store = this.props.store;
         const context = canvas.getContext("2d")
         context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas

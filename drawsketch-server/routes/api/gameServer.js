@@ -1,3 +1,5 @@
+/* deprecated class only use for now is compatability need to refactor, most of the logic is in Game object in lobby.js */
+
 const socketIO = require('socket.io');
 const server = require('./lobby.js');
 function Begin(game) {
@@ -35,6 +37,7 @@ class Game {
         this.currentWord = "";
     }
     playerJoin(player) {
+        player["points"] = 0;
         this
             .players
             .push(player);

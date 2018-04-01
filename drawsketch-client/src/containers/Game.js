@@ -54,7 +54,7 @@ class Game extends React.Component {
                     alert("UNAUTHORIZED");
                     return;
                 }
-                this.setState({curPlayer: values[0], game: values[1]});
+                this.setState({begun: values[1].started, curPlayer: values[0], game: values[1]});
                 if (values[0].username == values[1].drawer.username) {
                     this.setState({userType: "draw"});
                 } else {
@@ -134,7 +134,7 @@ class Game extends React.Component {
             console.log("PASSING IN NEW DATA");
             timer = <Row>
                 <Col>
-                    <TimerExample start={Date.now()}/>
+                    <TimerExample game={this.state.game} socket={this.socket} start={Date.now()}/>
                 </Col>
             </Row>
         }

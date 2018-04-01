@@ -77,6 +77,7 @@ server = http
 
 const io = socketIO(server);
 var gameServer = new GameServer();
+var interval;
 io
     .sockets
     .on('connection', socketioJwt.authorize({
@@ -117,8 +118,11 @@ io
                 .emit('return', JSON.stringify(updated.state))
         })
         socket.on("beginRound", (game) => {
-            found = gameServer.findGame(JSON.parse(game).id);
-            console.log("FOUND IS ", found);
+            const found = gameServer.findGame(JSON.parse(game).id);
+            lobbies[found].started = true;
+            lobbies[found].roundsPlayed++;
+            interval = startTimer(found, 60);
+            console.log(interval);
             io
                 .sockets
                 . in(gameServer.games[found].id)
@@ -129,14 +133,19 @@ io
                 .emit('startRound', JSON.stringify(game.state));
         })
         socket.on("guess", (guess) => {
-            found = gameServer.findGame(guess.id);
+            const found = gameServer.findGame(guess.id);
             if (guess.guess == gameServer.games[found].currentWord) {
-                console.log("THE GUESS IS CORRECT");
+                console.log(guess.user);
+                const userIndex = lobbies[found]
+                    .players
+                    .indexOf(guess.user);
+                console.log(userIndex);
                 io
                     .sockets
                     . in(gameServer.games[found].id)
                     .emit('right', gameServer.games[found])
             } else {
+                console.log("WRONG");
                 io
                     .sockets
                     . in(gameServer.games[found].id)
@@ -144,12 +153,65 @@ io
             }
         })
         socket.on("endRound", (game) => {
-            console.log(game);
-            found = gameServer.findGame(game);
-            lobbies[found].drawer = lobbies[found].players[1];
-            io
-                .sockets
-                . in(gameServer.games[found].id)
-                .emit('roundEnd', lobbies[found]);
+            const found = gameServer.findGame(game);
+            endRound(found);
+            console.log(interval);
+            clearInterval(interval);
         })
     });
+
+function pickPlayer(game) {
+    var index = 0;
+    while (game.drawer.username != game.players[index].username) {
+        index++;
+    }
+    if (index == 0 || index < game.players.length - 1) {
+        console.log("IM HERE");
+        return index + 1;
+    }
+    return 0;
+}
+
+function endRound(gameIndex) {
+    const index = pickPlayer(lobbies[gameIndex]);
+    console.log("INDEX IS ", index);
+    lobbies[gameIndex].started = false;
+    lobbies[gameIndex].drawer = lobbies[gameIndex].players[index];
+    io
+        .sockets
+        . in(gameServer.games[gameIndex].id)
+        .emit('roundEnd', lobbies[gameIndex]);
+}
+
+//  countdown timer from
+// https://stackoverflow.com/questions/20618355/the-simplest-possible-javascript
+// - countdown-timer //
+function startTimer(index, duration) {
+    var timer = duration,
+        minutes,
+        seconds;
+    var interval = setInterval(function () {
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10
+            ? "0" + minutes
+            : minutes;
+        seconds = seconds < 10
+            ? "0" + seconds
+            : seconds;
+
+        const time = minutes + ":" + seconds;
+        lobbies[index].timeElapsed = time;
+        io
+            .sockets
+            . in(gameServer.games[index].id)
+            .emit('tick', time);
+
+        if (--timer < 0) {
+            endRound(index);
+            clearInterval(this);
+        }
+    }, 1000);
+    return interval;
+}

@@ -44,6 +44,7 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
             .props
             .store
             .updateState(JSON.stringify(this.props.game.gameState));
+        this.setState({begun: this.props.game.started});
         console.log(this.props.store.getX);
         this.redraw();
     }

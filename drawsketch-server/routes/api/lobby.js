@@ -17,7 +17,6 @@ var userProjection = {
     __v: 0
 };
 
-
 var Room = (function () {
     return function room(request) {
         this.name = request.name;
@@ -28,6 +27,7 @@ var Room = (function () {
         this.maxPlayers = parseInt(request.maxPlayers);
         this.rounds = parseInt(request.rounds);
         this.players = [];
+        this.started = false;
         this.gameState = {
             isPainting: false,
             xPos: [],
@@ -36,11 +36,12 @@ var Room = (function () {
             dragging: [],
             paintColor: [],
             curWidth: 2,
-            curColor: "black",
-        }
+            curColor: "black"
+        },
+        this.timeElapsed = "";
+        this.roundsPlayed = 0;
     };
 }());
-
 
 // Helper Functions ==========================================================
 var sanitizeInput = function (req, res, next) {
@@ -252,6 +253,7 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
             if (room.players.length == 0) {
                 room.drawer = user;
             }
+            user["score"] = 0;
             room
                 .players
                 .push(user);

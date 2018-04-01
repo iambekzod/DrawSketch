@@ -21,6 +21,7 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
         };
     }
     componentDidMount() {
+        this.setState({begun: this.props.game.started});
         this.updateCanvas();
         this.roundStarted();
         this.rightGuess();
@@ -38,8 +39,11 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
                 YOUR GUESS WAS CORRECT
             </Alert>
         }
-        // if(this.state.guess == "wrong"){     alert = <Alert color="danger"> YOUR
-        // GUESS WAS WRONG </Alert> }
+        if (this.state.guess == "wrong") {
+            alert = <Alert color="danger">
+                YOUR GUESS WAS WRONG
+            </Alert>
+        }
 
         return (
             <div
@@ -71,6 +75,7 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
             .socket
             .emit('guess', {
                 id: this.props.game.id,
+                user: this.props.user,
                 guess: guess
             })
     }
@@ -93,9 +98,11 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
             .socket
             .on('right', (guess) => {
                 this.setState({guess: "right"});
-                this
-                    .socket
-                    .emit('endRound', this.props.game.id);
+                setTimeout(() => {
+                    this
+                        .socket
+                        .emit('endRound', this.props.game.id);
+                }, 3000)
             })
     }
     updateCanvas = () => {

@@ -52,8 +52,6 @@ const requests = {
 const Auth = {
   current: () =>
     requests.get('/user'),
-  googleCurrent: (cookie) =>
-    requests.post('/user/google', {cookie}),
   login: (username, password) =>
     requests.post('/user/signin', { user: { username, password } }),
   verifyGoogleToken: (token) =>

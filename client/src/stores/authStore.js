@@ -14,7 +14,8 @@ class AuthStore {
           lastname: '',
           email: '', 
           password: '',
-          confirmPassword: ''
+          confirmPassword: '',
+          cookie: ''
       },
 
       setUsername: action((set) => this.values.username = set),
@@ -23,6 +24,7 @@ class AuthStore {
       setEmail: action((set) => this.values.email = set),
       setPassword: action((set) => this.values.password = set),
       setConfirmPassword: action((set) => this.values.confirmPassword = set),
+      setCookie: action((set) => this.values.cookie = set),
       reset: action((set) => {
         this.values.username = '';
         this.values.firstname = '';
@@ -30,6 +32,7 @@ class AuthStore {
         this.values.email = '';
         this.values.password = '';
         this.values.confirmPassword = '';
+        this.values.cookie = '';
       }),
       login: action(function() {
         this.inProgress = true;
@@ -39,7 +42,6 @@ class AuthStore {
           .then((user) => {
             userStore.setToken(user.token)
           })
-          .then(() => userStore.pullUser())
           .catch(action((err) => {
             this.errors = err.response && err.response.body && err.response.body.errors;
             throw err;
@@ -51,7 +53,7 @@ class AuthStore {
           lobbyStore.leave(userStore.room);
         }
         userStore.setToken(undefined);
-        userStore.forgetUser();
+        userStore.setGoogleToken(undefined);
         return Promise.resolve();
       }),
       register: action(function() {
@@ -67,7 +69,28 @@ class AuthStore {
           }))
           .finally(action(() => { this.inProgress = false; }));
       }),
-      
+      verifyGoogleToken: action(function(token) {
+        this.inProgress = true;
+        this.errors = undefined;
+        
+        return api.Auth.verifyGoogleToken(token)
+          .catch(action((err) => {
+            this.errors = err.response && err.response.body && err.response.body.errors;
+            throw err;
+          }))
+          .finally(action((user) => { this.inProgress = false; return user; }));
+      }),
+      updateGoogleUsername: action(function() {
+        this.inProgress = true;
+        this.errors = undefined;
+        
+        return api.Auth.updateGoogleUsername({ username: this.values.username, token: userStore.googleToken })
+          .catch(action((err) => {
+            this.errors = err.response && err.response.body && err.response.body.errors;
+            throw err;
+          }))
+          .finally(action((user) => { this.inProgress = false; }));
+      })
     })
   }
 }

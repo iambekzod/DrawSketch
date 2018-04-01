@@ -18,7 +18,6 @@ var accountsSchema = new Schema({
   },
   password: {
     type: String,
-    required: true
   },
   email: {
     type: String,
@@ -28,8 +27,8 @@ var accountsSchema = new Schema({
   },
   salt: {
     type: String,
-    required: true
   },
+  googleId: String,
   wins: Number
 }, {timestamps: true});
 
@@ -42,6 +41,8 @@ function generateHash(password, salt) {
 }
 
 accountsSchema.methods.validPassword = function (password) {
+  if (this.password == null || this.salt == null) return false;
+
   return this.password === generateHash(password, this.salt);
 };
 

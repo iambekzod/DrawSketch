@@ -2,9 +2,12 @@ const mongoose = require('mongoose');
 const router = require('express').Router();
 const passport = require('passport');
 const validator = require('validator');
+const { OAuth2Client } = require('google-auth-library');
 
 const Accounts = require('../../models/accounts.js');
 const auth = require('../auth');
+const keys = require('../../config/keys');
+const client = new OAuth2Client(keys.clientID);
 
 var sanitizeUserPass = function(req, res, next) {
   if (!validator.isAlphanumeric(req.body.user.username)) return res.status(422).json({errors: {Username: "must contain only letters and numbers"}})
@@ -29,12 +32,88 @@ var sanitizeInput = function (req, res, next) {
   next();
 }
 
-router.get('/', auth.required, function(req, res, next) {
-  Accounts.findById(req.payload.id).then(function(user){
-    if(!user){ return res.sendStatus(401); }
+var checkToken = function (req, res, next) {
+  if(!req.body.token){
+    return res.status(422).json({errors: {token: "can't be blank"}});
+  }
 
-    return res.json(user.toAuthJSON());
-  }).catch(next);
+  req.body.token = validator.escape(req.body.token);
+  next();
+}
+
+router.get('/', auth.required, function(req, res, next) {
+    Accounts.findById(req.payload.id).then(function (user){
+      if (!user) { 
+        return res.sendStatus(401);
+      }
+
+      return res.json(user.toAuthJSON());
+    }).catch(next);
+});
+
+router.post('/signin/google', checkToken, function(req, res, next) {
+
+  //https://developers.google.com/identity/sign-in/web/backend-auth
+  async function verify() {
+    const ticket = await client.verifyIdToken({
+        idToken: req.body.token,
+        audience: keys.clientID,
+    });
+    const payload = ticket.getPayload();
+    const userId = payload['sub'];
+
+    Accounts.findOne({googleId: userId}).then(function (user) {
+      if (!user) {
+        return res.json({ redirect: true, token: req.body.token });
+      }
+
+      return res.json(user.toAuthJSON());
+    }).catch(next);
+  }
+
+  verify().catch((err) => {
+    return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return 
+  });
+});
+
+router.put('/update/username', checkToken, function(req, res, next) {
+  if(!req.body.username){
+    return res.status(422).json({errors: {username: "can't be blank"}});
+  }
+  if (!validator.isAlphanumeric(req.body.username)) return res.status(422).json({errors: {Username: "must contain only letters and numbers"}})
+  req.body.username = validator.escape(req.body.username);
+
+  async function verify() {
+    const ticket = await client.verifyIdToken({
+        idToken: req.body.token,
+        audience: keys.clientID,
+    });
+    const payload = ticket.getPayload();
+    const userId = payload['sub'];
+
+    var newUser = Accounts({
+      username: req.body.username,
+      googleId: userId,
+      firstname: payload["given_name"],
+      lastname: payload["family_name"],
+      email: payload["email"],
+      wins: 0,
+    });
+
+    return newUser.save().then((user) => {
+      return res.json(user.toAuthJSON());
+    }).catch((err) => {
+      if (err.errors["username"]) return res.status(422).json({errors: { There: "is an account associated with this username already" }});
+      if (err.errors["email"]) return res.status(422).json({errors: { Email: "is being used by another user" }});
+
+      return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return something
+    });
+  }
+
+  verify().catch((err) => {
+    return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return 
+  });
+
 });
 
 router.post('/signin', sanitizeUserPass, function(req, res, next) {
@@ -57,7 +136,7 @@ router.post('/signin', sanitizeUserPass, function(req, res, next) {
   })(req, res, next);
 });
 
-router.post('/signup', sanitizeUserPass, sanitizeInput, async (req, res, next) => {
+router.post('/signup', sanitizeUserPass, sanitizeInput,  function(req, res, next) {
   var newUser = Accounts({
     username: req.body.user.username,
     firstname: req.body.user.firstname,

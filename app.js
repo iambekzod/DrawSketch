@@ -13,8 +13,10 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 
 const keys = require('./config/keys.js');
+const passport = require('passport');
 const Accounts = require('./models/accounts.js');
 const GameServer = require('./routes/api/gameServer.js');
+
 require('./config/passport.js');
 
 // Database =================================================== Connection URL
@@ -35,6 +37,7 @@ if (app.get('env') == 'production') {
     app.use(morgan('dev'));
 }
 
+app.use(passport.initialize());
 app.use(require('./routes'));
 app.use(function (req, res, next) {
     res

@@ -4,7 +4,8 @@ import api from './api';
 class UserStore {
   constructor() {
     extendObservable(this, {
-      currentUser: { },
+      token: window.localStorage.getItem('jwt'),
+      googleToken: window.localStorage.getItem('google-jwt'),
       inProgress: false,
       token: window.localStorage.getItem('jwt'),
       room: window.localStorage.getItem('room'),
@@ -12,12 +13,8 @@ class UserStore {
       pullUser: action(function() {
         this.inProgress = true;
         return api.Auth.current()
-          .then(action((user) => { 
-            this.currentUser = user; }))
-          .finally(action(() => { this.inProgress = false; }))
-      }),
-      forgetUser: action(function() {
-        this.currentUser = null;
+          .then(action((user) => { return user; }))
+          .finally(action((user) => { this.inProgress = false; return user; }))
       }),
       setToken: action(function(setToken) {
         if (setToken) {
@@ -26,6 +23,15 @@ class UserStore {
         } else {
             this.token = null;
             window.localStorage.removeItem("jwt");
+        }
+      }),
+      setGoogleToken: action(function(setToken) {
+        if (setToken) {
+            this.googleToken = setToken;
+            window.localStorage.setItem("google-jwt", setToken);
+        } else {
+            this.googleToken = null;
+            window.localStorage.removeItem("google-jwt");
         }
       }),
       setRoom: action(function(room) {

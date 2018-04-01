@@ -1,6 +1,5 @@
 import { action, extendObservable } from 'mobx';
 import api from './api';
-import userStore from './userStore';
 
 class userListStore {
   constructor() {
@@ -16,8 +15,8 @@ class userListStore {
         reset: action((set) => {
             this.values.points = 0;
         }),
-        addUser: action(() => {
-            this.users.push({username: userStore.currentUser.username, isMe: true});
+        addUser: action((username) => {
+            this.users.push({username: username, isMe: true});
             this.values.points = 0;
       }),
     })

@@ -15,7 +15,7 @@ import {Guesser} from './Guesser'
 class Game extends React.Component {
     constructor(props) {
         super(props)
-        this.socket = io.connect("http://localhost:8080");
+        this.socket = io.connect("https://drawsketch.me/");
         this.state = {
             begun: false,
             newRound: false,

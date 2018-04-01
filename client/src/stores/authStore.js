@@ -31,8 +31,7 @@ class AuthStore {
         this.values.lastname = '';
         this.values.email = '';
         this.values.password = '';
-        this.values.confirmPassword = '';
-        this.values.cookie = '';
+        this.values.confirmPassword = ''
       }),
       login: action(function() {
         this.inProgress = true;

@@ -39,7 +39,6 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
         console.log("REFS", this.refs);
         console.log("CANVAS MOUNTING");
         console.log("PASSED IN", this.props.game);
-        const store = this.props.store;
         console.log(this.props.game.gameState);
         this
             .props
@@ -123,7 +122,7 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
     }
 
     beginGame() {
-        if (this.props.game.players.length == 1) {
+        if (this.props.game.players.length === 1) {
             alert("NEED MORE PLAYERS TO BEGIN")
             return;
         }

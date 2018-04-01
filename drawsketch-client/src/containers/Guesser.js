@@ -43,11 +43,11 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
                 YOUR GUESS WAS CORRECT
             </Alert>
         }
-        if (this.state.guess == "wrong") {
-            alert = <Alert color="danger">
-                YOUR GUESS WAS WRONG
-            </Alert>
-        }
+        // if (this.state.guess === "wrong") {
+        //     alert = <Alert color="danger">
+        //         YOUR GUESS WAS WRONG
+        //     </Alert>
+        // }
 
         return (
             <div

@@ -111,7 +111,7 @@ class LobbyStore {
           .finally(action(() => { 
             this.inProgress = false;
             userStore.setRoom(null);
-            Promise.resolve();
+            return Promise.resolve();
            }));
       }),
       setCreateModal: action(function() {

@@ -27,7 +27,7 @@ export default class TimerExample extends React.Component {
             <div style={{
                 textAlign: "center"
             }}>
-                {this.state.elapsed != '00:00'
+                {this.state.elapsed !== '00:00'
                     ? (
                         <h1
                             style={{

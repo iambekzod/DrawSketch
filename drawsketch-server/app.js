@@ -121,8 +121,7 @@ io
             const found = gameServer.findGame(JSON.parse(game).id);
             lobbies[found].started = true;
             lobbies[found].roundsPlayed++;
-            /* someone else convert round time to seconds */
-            interval = startTimer(found, 60);
+            interval = startTimer(found, lobbies[found].timeLimit);
             console.log(interval);
             io
                 .sockets

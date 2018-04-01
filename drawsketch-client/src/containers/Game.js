@@ -10,7 +10,6 @@ import TimerExample from './timer'
 import LeftSideBar from './LeftSideBar';
 import {Drawer} from "./Drawer";
 import {Guesser} from './Guesser'
-import {I} from 'glamorous';
 
 // inspired by source code from lecture 2 HTML5
 class Game extends React.Component {
@@ -52,12 +51,12 @@ class Game extends React.Component {
         this
             .fetchGame()
             .then((values) => {
-                if (values[1].players.find((e) => e.username == values[0].username).length == 0) {
+                if (values[1].players.find((e) => e.username === values[0].username).length === 0) {
                     alert("UNAUTHORIZED");
                     return;
                 }
                 this.setState({rounds: values[1].roundsPlayed, begun: values[1].started, curPlayer: values[0], game: values[1]});
-                if (values[0].username == values[1].drawer.username) {
+                if (values[0].username === values[1].drawer.username) {
                     this.setState({userType: "draw"});
                 } else {
                     this.setState({userType: "guess"});

@@ -23,7 +23,7 @@ var Room = (function () {
         this.author = request.author;
         this.password = request.password;
         this.locked = request.password !== "";
-        this.timeLimit = request.timeLimit; // Use: Milliseconds
+        this.timeLimit = request.timeLimit; // Use: seconds
         this.maxPlayers = parseInt(request.maxPlayers);
         this.rounds = parseInt(request.rounds);
         this.players = [];
@@ -65,24 +65,25 @@ var sanitizeInput = function (req, res, next) {
         });
     
     req.body.name = validator.escape(req.body.name);
+    console.log(req.body.timeLimit);
     switch (req.body.timeLimit) {
         case "0:30":
-            req.body.timeLimit = 30000;
+            req.body.timeLimit = 30;
             break;
         case "1:00":
-            req.body.timeLimit = 60000;
+            req.body.timeLimit = 60;
             break;
         case "1:30":
-            req.body.timeLimit = 90000;
+            req.body.timeLimit = 90;
             break;
         case "2:00":
-            req.body.timeLimit = 120000;
+            req.body.timeLimit = 120;
             break;
         case "2:30":
-            req.body.timeLimit = 150000;
+            req.body.timeLimit = 150;
             break;
         case "3:00":
-            req.body.timeLimit = 180000;
+            req.body.timeLimit = 180;
             break;
         default:
             return res

@@ -230,6 +230,10 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
             }
 
             if (room.locked) {
+                if(!req.body.password){
+                    return res.status(422).json({errors: {password: "can't be blank"}});
+                }
+
                 req.body.password = validator.escape(req.body.password);
                 if (room.password !== req.body.password) {
                     return res

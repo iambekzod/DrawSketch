@@ -22,7 +22,7 @@ class Credits extends Component {
               Structure a React app with MobX <a href="https://github.com/gothinkster/react-mobx-realworld-example-app">Click Me</a>
             </li>
             <li>
-              Setup a MongoDB connection to our mLabs server using&nbsp;
+              Setup a MongoDB connection to a mLabs server using&nbsp;
               <a href="https://scotch.io/tutorials/using-mongoosejs-in-node-js-and-mongodb-applications">MongooseJS</a>
             </li>
             <li>Occasionaly&nbsp;

@@ -7,16 +7,15 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const http = require('http');
 const socketIO = require('socket.io');
-const jwt = require('jsonwebtoken');
 const socketioJwt = require('socketio-jwt2');
-// const cors = require('cors');
 const path = require('path');
+const morgan = require('morgan');
+const helmet = require('helmet');
 
 const keys = require('./config/keys.js');
 const passport = require('passport');
 const Accounts = require('./models/accounts.js');
 const GameServer = require('./routes/api/gameServer.js');
-const morgan = require('morgan');
 
 require('./config/passport.js');
 
@@ -28,6 +27,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(helmet());
 
 if (app.get('env') == 'production') {
     app.use(morgan('combined', {
@@ -37,20 +37,7 @@ if (app.get('env') == 'production') {
     app.use(morgan('dev'));
 }
 
-// var whitelist = ['https://drawsketch.herokuapp.com', 'https://drawsketch.me', 'http://localhost:8080']
-// app.use(cors({ 
-//     credentials: true, 
-//     origin: function (origin, callback) {
-//         if (whitelist.indexOf(origin) !== -1) {
-//             callback(null, true)
-//         } else {
-//             callback(new Error('Not allowed by CORS: ' + origin))
-//         }
-//     }
-// }));
-
 app.use(passport.initialize());
-
 app.use(require('./routes'));
 app.use(function (req, res, next) {
     res

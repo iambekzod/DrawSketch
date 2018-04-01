@@ -20,8 +20,8 @@ class Game {
             dragging: [],
             paintColor: [],
             curWidth: 2,
-            curColor: "black",
-        }
+            curColor: "black"
+        };
         // will change -> create new file with lists of words
         this.words = [
             "cat",
@@ -31,52 +31,71 @@ class Game {
             "video game",
             "baseball",
             "book"
-        ]
+        ];
+        this.currentWord = "";
     }
-    playerJoin(player){
-        this.players.push(player);
+    playerJoin(player) {
+        this
+            .players
+            .push(player);
     }
 
-    setState(gameState){
+    setState(gameState) {
         this.state = gameState;
     }
-    inGame(player){
-        const found = this.players.find( (e) => e.username == player.username)
-        if(!found){
-            return false
+    inGame(player) {
+        const found = this
+            .players
+            .find((e) => e.username == player.username);
+        if (!found) {
+            return false;
         }
-        return true
+        return true;
+    }
+    getWord() {
+        const random = Math.floor(Math.random() * this.words.length);
+        this.currentWord = this.words[random];
+        return this.words[random];
     }
 }
 class GameServer {
-    constructor(server){
+    constructor(server) {
         this.games = [];
     }
-    findGame(id){
-        var game = this.games.find((game) => game.id === id);
-        if(!game){
+    findGame(id) {
+        var game = this
+            .games
+            .find((game) => game.id === id);
+        if (!game) {
             return null
         }
-        const index = this.games.indexOf(game);
+        const index = this
+            .games
+            .indexOf(game);
         return index
 
     }
-    createGame(id){
+    createGame(id) {
         const newGame = new Game(id)
-        this.games.push(newGame)
-        return  newGame
+        this
+            .games
+            .push(newGame)
+        return newGame
     }
-    joinGame(player,id){
+    joinGame(player, id) {
         var game = this.findGame(id);
-        this.games[game].playerJoin(player);
+        this
+            .games[game]
+            .playerJoin(player);
         return this.games[game];
     }
-    setGameState(id,state){
+    setGameState(id, state) {
         var game = this.findGame(id);
-        this.games[game].setState(state);
+        this
+            .games[game]
+            .setState(state);
         return this.games[game];
 
     }
 }
-module.exports =
-    GameServer
+module.exports = GameServer

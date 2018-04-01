@@ -36,14 +36,21 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
             .bind(this);
     }
     componentDidMount() {
+        console.log("CANVAS MOUNTING");
+        console.log("PASSED IN", this.props.game);
         const store = this.props.store;
-        const canvas = this.refs.canvas;
-        var self = this;
+        console.log(this.props.game.gameState);
         this
             .props
             .store
             .updateState(JSON.stringify(this.props.game.gameState));
+        console.log(this.props.store.getX);
         this.redraw();
+    }
+    addListeners() {
+        const store = this.props.store;
+        const canvas = this.refs.canvas;
+        var self = this;
         canvas.addEventListener('mousedown', function (e) {
             var mouseX = e.pageX - this.offsetLeft;
             var mouseY = e.pageY - this.offsetTop;
@@ -114,9 +121,14 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
     }
 
     beginGame() {
+        if (this.props.game.players.length == 1) {
+            alert("NEED MORE PLAYERS TO BEGIN")
+            return;
+        }
+        this.addListeners();
         this
             .socket
-            .emit('beginRound', JSON.stringify({id: "playerA"}))
+            .emit('beginRound', JSON.stringify(this.props.game))
             .on('getWord', (word) => {
                 this.setState({begun: true, modal: true, word: word})
             });
@@ -126,6 +138,7 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
         const store = this.props.store;
         const context = canvas.getContext("2d")
         context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+        console.log("REDRAWING", this.props.store);
         context.lineJoin = "round";
         for (var i = 0; i < store.getX.length; i++) {
             context.lineWidth = store.getPenWidth[i];

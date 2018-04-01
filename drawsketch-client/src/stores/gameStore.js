@@ -68,6 +68,16 @@ class GameStore {
             setPaint: action((set) => this.isPainting = set),
             setWidth: action((width) => this.brushWidth = width),
             setColor: action((color) => this.paintColor.push(color)),
+            reset: action(() => {
+                this.xPos = [];
+                this.yPos = [];
+                this.dragging = [];
+                this.penWidth = [];
+                this.paintColor = [];
+                this.brushWidth = 2;
+                this.curColor = "black";
+                this.isPainting = false;
+            }),
             updateState: action((returned) => {
                 /*
                                 xPos: store.getX,
@@ -90,6 +100,8 @@ class GameStore {
                     this.brushWidth = state.curWidth;
                     this.curColor = state.curColor;
                     this.isPainting = state.isPainting;
+                } else {
+                    this.reset();
                 }
 
             })

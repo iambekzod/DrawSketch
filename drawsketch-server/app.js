@@ -28,12 +28,13 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-//https://www.namecheap.com/support/knowledgebase/article.aspx/9737/2208/pointing-a-domain-to-the-heroku-app#www.yourdomain.tld
-//https://gist.github.com/Shourai/bfd9f549a41c836c99c0c660c9271df6
+// https://www.namecheap.com/support/knowledgebase/article.aspx/9737/2208/pointi
+// n g-a-domain-to-the-heroku-app#www.yourdomain.tld
+// https://gist.github.com/Shourai/bfd9f549a41c836c99c0c660c9271df6
 
 var whitelist = ['https://drawsketch.herokuapp.com', 'https://drawsketch.me', 'http://localhost:3000']
-app.use(cors({ 
-    credentials: true, 
+app.use(cors({
+    credentials: true,
     origin: function (origin, callback) {
         if (whitelist.indexOf(origin) !== -1) {
             callback(null, true)
@@ -86,65 +87,69 @@ io
         console.log("AUTH USER");
         socket.on('join', (room) => {
             const found = gameServer.findGame(room[1].id);
-            if(found == null){
+            if (found == null) {
                 console.log("CREATING ROOM");
                 gameServer.createGame(room[1].id);
                 console.log("PLAYER JOINING", room[0].username);
                 gameServer.joinGame(room[0], room[1].id);
-            }
-            else{
+            } else {
                 const game = gameServer.games[found]
-                if(game.inGame(room[0]) == false){
+                if (game.inGame(room[0]) == false) {
                     console.log("PLAYER JOINING", room[0].username);
                     gameServer.joinGame(room[0], room[1].id);
                 }
             }
-        socket.join(room[1].id)
+            socket.join(room[1].id)
+            io
+                .sockets
+                . in(room[1].id)
+                .emit('newUser', room[1]);
         })
         socket.on("gameState", (state) => {
             var state = JSON.parse(state);
             var updated = gameServer.setGameState(state.id, state.game)
             var game = lobbies.find((room) => room.id === state.id);
             const index = lobbies.indexOf(game);
-            console.log(lobbies[index].gameState);
             lobbies[index].gameState = state.game;
             io
                 .sockets
                 . in(state.id)
                 .emit('return', JSON.stringify(updated.state))
         })
-        socket.on("beginRound", (player) => {
-            game = gameServer.findGame(1);
+        socket.on("beginRound", (game) => {
+            found = gameServer.findGame(JSON.parse(game).id);
+            console.log("FOUND IS ", found);
             io
                 .sockets
-                . in(game.id)
-                .emit('getWord', "Cat");
+                . in(gameServer.games[found].id)
+                .emit('getWord', gameServer.games[found].getWord())
             io
                 .sockets
-                . in(game.id)
+                . in(gameServer.games[found].id)
                 .emit('startRound', JSON.stringify(game.state));
         })
         socket.on("guess", (guess) => {
-            game = gameServer.findGame(1);
-            if (guess == 'cat') {
+            found = gameServer.findGame(guess.id);
+            if (guess.guess == gameServer.games[found].currentWord) {
                 console.log("THE GUESS IS CORRECT");
                 io
                     .sockets
-                    . in(game.id)
-                    .emit('right', game)
+                    . in(gameServer.games[found].id)
+                    .emit('right', gameServer.games[found])
             } else {
                 io
                     .sockets
-                    . in(game.id)
-                    .emit('wrong', game)
+                    . in(gameServer.games[found].id)
+                    .emit('wrong', gameServer.games[found])
             }
         })
         socket.on("endRound", (game) => {
-            console.log("ABOUT TO END ROUND");
-            game = gameServer.findGame(1);	
+            console.log(game);
+            found = gameServer.findGame(game);
+            lobbies[found].drawer = lobbies[found].players[1];
             io
                 .sockets
-                . in(game.id)
-                .emit('roundEnd', JSON.stringify(game.state));
+                . in(gameServer.games[found].id)
+                .emit('roundEnd', lobbies[found]);
         })
     });

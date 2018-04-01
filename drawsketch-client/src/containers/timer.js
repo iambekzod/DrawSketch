@@ -12,6 +12,7 @@ export default class TimerExample extends React.Component {
 
         // componentDidMount is called by react when the component has been rendered on
         // the page. We can set the interval here:
+        console.log("REMOUNTED");
 
         this.timer = setInterval(this.tick, 50);
     }

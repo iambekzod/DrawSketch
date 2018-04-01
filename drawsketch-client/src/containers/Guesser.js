@@ -69,7 +69,10 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
     makeGuess = (guess) => {
         this
             .socket
-            .emit('guess', guess)
+            .emit('guess', {
+                id: this.props.game.id,
+                guess: guess
+            })
     }
     roundStarted = () => {
         this
@@ -90,10 +93,9 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
             .socket
             .on('right', (guess) => {
                 this.setState({guess: "right"});
-                console.log(this.socket);
                 this
                     .socket
-                    .emit('endRound', "something");
+                    .emit('endRound', this.props.game.id);
             })
     }
     updateCanvas = () => {

@@ -10,6 +10,7 @@ import TimerExample from './timer'
 import LeftSideBar from './LeftSideBar';
 import {Drawer} from "./Drawer";
 import {Guesser} from './Guesser'
+import {I} from 'glamorous';
 
 // inspired by source code from lecture 2 HTML5
 class Game extends React.Component {
@@ -20,10 +21,15 @@ class Game extends React.Component {
             begun: false,
             newRound: false,
             userType: "",
-            game: ""
+            game: "",
+            curPlayer: ""
         };
 
     }
+    componentWillUnmount() {
+        console.log("UMOUNTING");
+    }
+
     componentDidMount() {
         console.log("THIS IS CALLED");
         this
@@ -32,9 +38,7 @@ class Game extends React.Component {
                 this
                     .socket
                     .emit('authenticate', {token: this.props.userStore.token}) //send the jwt
-                    .on('authenticated', () => {
-                        this.fetchGame();
-                    })
+                    .on('authenticated', () => {})
                     .on("unauthorized", function (error, callback) {
                         console.log("unauthenticated");
                         if (error.data.type === "UnauthorizedError" || error.data.code === "invalid_token") {
@@ -43,17 +47,47 @@ class Game extends React.Component {
                         }
                     });
             });
+        this
+            .fetchGame()
+            .then((values) => {
+                if (values[1].players.find((e) => e.username == values[0].username).length == 0) {
+                    alert("UNAUTHORIZED");
+                    return;
+                }
+                this.setState({curPlayer: values[0], game: values[1]});
+                if (values[0].username == values[1].drawer.username) {
+                    this.setState({userType: "draw"});
+                } else {
+                    this.setState({userType: "guess"});
+                }
+                this
+                    .props
+                    .gameStore
+                    .updateState(JSON.stringify(values[1].gameState));
+                this
+                    .props
+                    .gameStore
+                    .setPaint(false);
+                this
+                    .socket
+                    .emit('join', values);
+                this.roundStarted();
+                this.roundEnded();
+                this.newUser();
+            })
+
     }
     roundStarted = () => {
         this
             .socket
             .on('startRound', (game) => {
+                alert("GOING TO START ROUND");
                 this.setState({begun: true, newRound: false});
             })
     }
-
     fetchGame() {
-        Promise.all([
+        console.log("FETCHING");
+        return (Promise.all([
             this
                 .props
                 .userStore
@@ -62,50 +96,42 @@ class Game extends React.Component {
                 .props
                 .lobbyStore
                 .getRoom(this.props.match.params.id)
-        ]).then((values) => {
-            if (values[1].players.find((e) => e.username == values[0].username).length == 0) {
-                alert("UNAUTHORIZED");
-                return;
-            }
-            this.setState({game: values[1]});
-            if (values[0].username == values[1].drawer.username) {
-                this.setState({userType: "draw"});
-            } else {
-                this.setState({userType: "guess"});
-            }
-            this
-                .props
-                .gameStore
-                .updateState(JSON.stringify(values[1].gameState));
-            this
-                .props
-                .gameStore
-                .setPaint(false);
-            this.roundStarted();
-            this.roundEnded();
-            this
-                .socket
-                .emit('join', values);
-        })
+        ]))
+    }
+
+    updateGame() {
+        this
+            .fetchGame()
+            .then((values) => {
+                this.setState({curPlayer: values[0], game: values[1]});
+            })
+    }
+
+    newUser = () => {
+        this
+            .socket
+            .on('newUser', (game) => {
+                this.updateGame();
+            })
     }
 
     roundEnded = () => {
         this
             .socket
             .on('roundEnd', (game) => {
-                this.setState({begun: false, newRound: true});
-                setTimeout(() => {
-                    let type = (this.state.userType === 'draw')
-                        ? 'guess'
-                        : 'draw';
-                    this.setState({userType: type});
-                })
+                if (this.state.curPlayer.username == game.drawer.username) {
+                    this.setState({userType: "draw"});
+                } else {
+                    this.setState({userType: "guess"});
+                }
+                this.setState({game: game, begun: false, newRound: true});
             })
     }
     render() {
         var timer = null
         var roundAlert = null;
         if (this.state.begun) {
+            console.log("PASSING IN NEW DATA");
             timer = <Row>
                 <Col>
                     <TimerExample start={Date.now()}/>
@@ -119,7 +145,6 @@ class Game extends React.Component {
         }
         var userType = null;
         if (this.state.userType === 'draw') {
-            console.log(this.props.gameStore.getX);
             userType = <Drawer game={this.state.game} socket={this.socket}/>
         }
         if (this.state.userType === 'guess') {

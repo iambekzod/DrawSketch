@@ -21,11 +21,15 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
         };
     }
     componentDidMount() {
+        console.log("REFS", this.refs)
         this.setState({begun: this.props.game.started});
         this.updateCanvas();
         this.roundStarted();
         this.rightGuess();
         this.wrongGuess();
+    }
+    componentWillUnmount() {
+        console.log("UMOUNTING");
     }
     render() {
         var guess = null
@@ -58,7 +62,7 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
                             style={{
                             border: "solid red 1"
                         }}
-                            ref="canvas"
+                            ref="gcanvas"
                             width={656}
                             height={400}className="whiteboard"/>
                     </Col>
@@ -98,13 +102,12 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
             .socket
             .on('right', (guess) => {
                 this.setState({guess: "right"});
-                setTimeout(() => {
-                    this
-                        .socket
-                        .emit('endRound', this.props.game.id);
-                }, 3000)
+                this
+                    .socket
+                    .emit('endRound', this.props.game.id);
             })
     }
+
     updateCanvas = () => {
         this
             .socket
@@ -117,7 +120,7 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
             });
     }
     redraw() {
-        const canvas = this.refs.canvas
+        const canvas = this.refs.gcanvas
         const store = this.props.store;
         const context = canvas.getContext("2d")
         context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas

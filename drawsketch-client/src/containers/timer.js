@@ -4,16 +4,12 @@ export default class TimerExample extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            elapsed: 0,
-            rounds: 1
+            elapsed: 0
         }
     }
     componentDidMount() {
         console.log(this.props.game.roundsPlayed);
-        this.setState({
-            rounds: this.state.rounds + this.props.game.roundsPlayed,
-            elapsed: this.props.game.timeElapsed
-        })
+        this.setState({elapsed: this.props.game.timeElapsed})
         this.tick();
     }
     tick = () => {
@@ -22,17 +18,6 @@ export default class TimerExample extends React.Component {
             .socket
             .on('tick', (time) => {
                 this.setState({elapsed: time})
-            })
-    }
-
-    newRound = () => {
-        this
-            .props
-            .socket
-            .on('startRound', (game) => {
-                this.setState({
-                    rounds: this.state.rounds + 1
-                })
             })
     }
 
@@ -47,7 +32,7 @@ export default class TimerExample extends React.Component {
                         <h1
                             style={{
                             color: "green"
-                        }}>ROUND {this.state.rounds + ":  "}
+                        }}>
                             {this.state.elapsed}</h1>
                     )
                     : (

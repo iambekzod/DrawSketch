@@ -253,7 +253,6 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
             if (room.players.length == 0) {
                 room.drawer = user;
             }
-            user["score"] = 0;
             room
                 .players
                 .push(user);

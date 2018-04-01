@@ -134,12 +134,16 @@ io
         })
         socket.on("guess", (guess) => {
             const found = gameServer.findGame(guess.id);
+            const user = lobbies[found]
+                .players
+                .find((player) => player.username == guess.user.username);
+            const userIndex = lobbies[found]
+                .players
+                .indexOf(user);
+            console.log(guess.guess, gameServer.games[found].currentWord);
             if (guess.guess == gameServer.games[found].currentWord) {
-                console.log(guess.user);
-                const userIndex = lobbies[found]
-                    .players
-                    .indexOf(guess.user);
-                console.log(userIndex);
+                lobbies[found].players[userIndex].wins++;
+                console.log("WINS FOR PLAYER", lobbies[found].players[userIndex].wins);
                 io
                     .sockets
                     . in(gameServer.games[found].id)
@@ -155,8 +159,6 @@ io
         socket.on("endRound", (game) => {
             const found = gameServer.findGame(game);
             endRound(found);
-            console.log(interval);
-            clearInterval(interval);
         })
     });
 
@@ -173,6 +175,7 @@ function pickPlayer(game) {
 }
 
 function endRound(gameIndex) {
+    clearInterval(interval);
     const index = pickPlayer(lobbies[gameIndex]);
     console.log("INDEX IS ", index);
     lobbies[gameIndex].started = false;
@@ -210,7 +213,6 @@ function startTimer(index, duration) {
 
         if (--timer < 0) {
             endRound(index);
-            clearInterval(this);
         }
     }, 1000);
     return interval;

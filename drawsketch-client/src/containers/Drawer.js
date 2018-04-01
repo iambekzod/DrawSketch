@@ -36,6 +36,7 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
             .bind(this);
     }
     componentDidMount() {
+        console.log("REFS", this.refs);
         console.log("CANVAS MOUNTING");
         console.log("PASSED IN", this.props.game);
         const store = this.props.store;

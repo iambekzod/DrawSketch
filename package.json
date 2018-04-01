@@ -1,0 +1,30 @@
+{
+  "name": "drawsketch-server",
+  "version": "1.0.0",
+  "description": "Backend server for the drawsketch game",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "express-jwt": "^5.3.1",
+    "google-auth-library": "^1.3.2",
+    "helmet": "^3.12.0",
+    "jsonwebtoken": "^8.2.0",
+    "mongoose": "^5.0.8",
+    "mongoose-unique-validator": "^2.0.0",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "platform": "^1.3.5",
+    "socket.io": "^2.0.4",
+    "socketio-jwt2": "^4.5.1",
+    "uuid": "^3.2.1",
+    "validator": "^9.4.1"
+  }
+}

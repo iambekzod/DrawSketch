@@ -58,8 +58,8 @@ const Auth = {
     requests.post('/user/signin', { user: { username, password } }),
   register: (user) =>
     requests.post('/user/signup', { user }),
-  googleRegister: (user) =>
-    requests.post('/user/google_username', { user })
+  verifyGoogleToken: (token) =>
+    requests.post('/user/signup/google', { token }),
 };
 
 const Game = {

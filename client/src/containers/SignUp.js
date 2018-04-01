@@ -36,16 +36,6 @@ class SignUp extends Component {
 
         <ResultErrors errors={errors} />
 
-        <Button 
-              color="primary" 
-              disabled={inProgress} 
-              type="submit" 
-              size="lg"
-              href='/api/user/signup/google'
-              block>
-              Google+
-        </Button>
-
         <Form onSubmit={this.handleSubmitForm}>
           <FormGroup>
               <Label>Username</Label>

@@ -59,6 +59,7 @@ accountsSchema.methods.generateJWT = function () {
 
   return jwt.sign({
     id: this._id,
+    google: false,
     username: this.username,
     exp: parseInt(exp.getTime() / 1000)
   }, secret);

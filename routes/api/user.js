@@ -2,10 +2,12 @@ const mongoose = require('mongoose');
 const router = require('express').Router();
 const passport = require('passport');
 const validator = require('validator');
+const { OAuth2Client } = require('google-auth-library');
 
 const Accounts = require('../../models/accounts.js');
-const googleAccounts = mongoose.model('googleAccounts');
+const GoogleAccounts = require('../../models/googleAccounts.js');
 const auth = require('../auth');
+const keys = require('../../config/keys');
 
 var sanitizeUserPass = function(req, res, next) {
   req.body.user.username = validator.escape(req.body.user.username);
@@ -29,47 +31,75 @@ var sanitizeInput = function (req, res, next) {
   next();
 }
 
-router.get('/', auth.required, function(req, res, next) {
-  Accounts.findById(req.payload.id).then(function(user){
-    if(!user){ return res.sendStatus(401); }
-
-    return res.json(user.toAuthJSON());
-  }).catch(next);
-});
-
-// passport.authenticate gets the code of that user that tells google we can get info of the profile and email
-router.get('/signup/google', 
-  passport.authenticate('google', {
-    scope: ['profile', 'email']
-  })
-);
-
-// passport.authenticate sees the code and gives us the information, done in passport.js
-router.get('/signup/google/callback', passport.authenticate('google'), function(req, res, next) {
-  var token = req.user.jwtoken;
-  res.cookie('auth', token);
-  res.redirect('/username');
-});
-
-router.post('/google', auth.required, function(req, res, next) {
-  googleAccounts.findOne({jwtoken : req.body.cookie}).then(function(user){
-    if(!user){ return res.sendStatus(401); }
-
-    return res.json(user.toAuthJSON());
-  }).catch(next);
-});
-
-router.post('/google_username', sanitizeUserPass, function(req, res, next) {
-  if(!req.body.user.username){
-    return res.status(422).json({errors: {username: "can't be blank"}});
+var checkToken = function (req, res, next) {
+  if(!req.body.token){
+    return res.status(422).json({errors: {token: "can't be blank"}});
   }
 
-  googleAccounts.findOne({ jwtoken: req.body.user.cookie }).then(user => {
-    user.username = req.body.user.username;
-    user.save(function (err, newUser) {
-      if (err) return handleError(err);
-      res.send(newUser);
+  req.body.token = validator.escape(req.body.token);
+  next();
+}
+
+router.get('/', auth.required, function(req, res, next) {
+
+  if (req.payload.google) {
+    GoogleAccounts.findOne({googleId: req.payload.id}).then(function (user){
+      if (!user) { 
+        return res.sendStatus(401);
+      }
+
+      return res.json(user.toAuthJSON());
+    }).catch(next);
+  } else {
+    Accounts.findById(req.payload.id).then(function (user){
+      if (!user) { 
+        return res.sendStatus(401);
+      }
+
+      return res.json(user.toAuthJSON());
+    }).catch(next);
+  }
+});
+
+router.post('/signup/google', checkToken, function(req, res, next) {
+
+  //https://developers.google.com/identity/sign-in/web/backend-auth
+  const client = new OAuth2Client(keys.clientID);
+  async function verify() {
+    const ticket = await client.verifyIdToken({
+        idToken: req.body.token,
+        audience: keys.clientID,
     });
+    const payload = ticket.getPayload();
+    const userId = payload['sub'];
+
+    GoogleAccounts.findOne({googleId : userId}).then(function (user) {
+      if (!user) {
+        var newUser = GoogleAccounts({
+          username: "",
+          googleId: userId,
+          firstname: payload["given_name"],
+          lastname: payload["family_name"],
+          email: payload["email"],
+          wins: 0,
+        });
+    
+        return newUser.save().then((user) => {
+          return res.json(user.toAuthJSON());
+        }).catch((err) => {
+          if (err.errors["googleId"]) return res.status(422).json({errors: { There: "is an account assosciated with this user already" }});
+          if (err.errors["email"]) return res.status(422).json({errors: { Email: "is being used by another user" }});
+      
+          return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return something
+        });
+      }
+  
+      return res.json(user.toAuthJSON());
+    }).catch(next);
+  }
+
+  verify().catch((err) => {
+    return res.status(422).json({errors: { error: err.message }}); // Fall back, to always return 
   });
 });
 

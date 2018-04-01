@@ -8,10 +8,20 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var googleAccountsSchema = new Schema({
-  googleId: String,
+  googleId: {
+    type: String,
+    required: true,
+    unique: true,
+    uniqueCaseInsensitive: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    uniqueCaseInsensitive: true
+  },
   username: String,
   wins: Number,
-  jwtoken: String
 }, {timestamps: true});
 
 googleAccountsSchema.plugin(uniqueValidator, {message: 'expected {PATH} to be unique'});
@@ -23,7 +33,9 @@ googleAccountsSchema.methods.generateJWT = function () {
   exp.setDate(today.getDate() + 60);
 
   return jwt.sign({
+    google: true,
     id: this.googleId,
+    username: this.username,
     exp: parseInt(exp.getTime() / 1000)
   }, secret);
 };
@@ -38,7 +50,7 @@ googleAccountsSchema.methods.toAuthJSON = function () {
     googleId: this.googleId,
     username: this.username,
     wins: this.wins,
-    jwtoken: this.jwtoken
+    token: this.generateJWT()
   };
 };
 

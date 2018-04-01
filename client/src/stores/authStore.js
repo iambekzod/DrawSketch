@@ -42,7 +42,6 @@ class AuthStore {
           .then((user) => {
             userStore.setToken(user.token)
           })
-          .then(() => userStore.pullUser())
           .catch(action((err) => {
             this.errors = err.response && err.response.body && err.response.body.errors;
             throw err;
@@ -54,7 +53,6 @@ class AuthStore {
           lobbyStore.leave(userStore.room);
         }
         userStore.setToken(undefined);
-        userStore.forgetUser();
         return Promise.resolve();
       }),
       register: action(function() {
@@ -71,18 +69,17 @@ class AuthStore {
           .finally(action(() => { this.inProgress = false; }));
       }),
 
-      googleRegister: action(function() {
+      verifyGoogleToken: action(function(token) {
         this.inProgress = true;
         this.errors = undefined;
         
-        return api.Auth.googleRegister(this.values)
-          .then((user) => userStore.setToken(user.jwtoken))
-          .then(() => userStore.pullGoogleUser(this.values.cookie))
+        return api.Auth.verifyGoogleToken(token)
+          .then((user) => userStore.setToken(user.token))
           .catch(action((err) => {
             this.errors = err.response && err.response.body && err.response.body.errors;
             throw err;
           }))
-          .finally(action(() => { this.inProgress = false; }));
+          .finally(action((user) => { this.inProgress = false; }));
       }),
       
     })

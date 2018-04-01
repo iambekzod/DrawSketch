@@ -1,4 +1,4 @@
-import Cookies from 'universal-cookie';
+// import Cookies from 'universal-cookie';
 import React, { Component } from "react";
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import "../style/form.css";
@@ -9,14 +9,14 @@ import { inject, observer } from 'mobx-react';
 import { Link } from "react-router-dom";
 
 class Username extends Component {
-  componentWillUnmount() {
-    this.props.authStore.reset();
-  }
+  // componentWillUnmount() {
+  //   this.props.authStore.reset();
+  // }
 
-  componentDidMount(){
-    const cookies = new Cookies();
-    this.props.authStore.setCookie(cookies.get('auth'));
-  }
+  // componentDidMount(){
+  //   const cookies = new Cookies();
+  //   this.props.authStore.setCookie(cookies.get('auth'));
+  // }
 
   handleUsernameChange = e => this.props.authStore.setUsername(e.target.value);
   handleSubmitForm = (e) => {

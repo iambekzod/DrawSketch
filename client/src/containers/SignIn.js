@@ -7,6 +7,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import { inject, observer } from 'mobx-react';
 import { Link } from 'react-router-dom';
+import GoogleLogin from 'react-google-login';
 
 class SignIn extends Component {
   componentWillUnmount() {
@@ -20,6 +21,18 @@ class SignIn extends Component {
     this.props.authStore.login()
       .then(() => this.props.history.replace('/lobby'));
   };
+
+  responseGoogle = (response) => {
+    var id_token = response.getAuthResponse().id_token;
+
+    this.props.authStore.verifyGoogleToken(id_token)
+      .then(() => {
+        this.props.userStore.pullUser().then((user) => {
+          console.log(user);
+          this.props.history.replace('/lobby')
+        });
+      });
+  }
 
   render() {
     const { values, errors, inProgress } = this.props.authStore;
@@ -60,6 +73,13 @@ class SignIn extends Component {
               block>
               Sign In
             </Button>
+
+            <GoogleLogin
+                clientId="961751684480-o11bdd2778v499aq8v7tcv2vcvent1qu.apps.googleusercontent.com"
+
+                onSuccess={this.responseGoogle}
+                onFailure={this.responseGoogle}
+              />
         </Form>
 
         <LoadingSpinner inProgress={inProgress}/>
@@ -68,4 +88,4 @@ class SignIn extends Component {
   }
 }
 
-export default SignIn = inject('authStore')(observer(SignIn))
+export default SignIn = inject('authStore', 'userStore')(observer(SignIn))

@@ -30,6 +30,16 @@ class ResultModal extends Component {
       </div>
     )
   }
+
+  renderUser(user, i) {
+    const fromMe = user.isMe ? 'from-me' : '';
+    return (
+      <tr className={`${fromMe}`} key={i}>
+        <td>{user.username} : {user.points}</td>
+      </tr>
+    )
+  }
+
   render() {
     const viewResultModal = this.props.viewResultModal;
     const { users } = this.props.userListStore;
@@ -42,8 +52,19 @@ class ResultModal extends Component {
           </ModalHeader>
           <ModalBody>
             <Fade in={true} tag="h5" className="mt-3">
+              <h1>Winner:</h1>
               {this.getWinner(users)}
             </Fade>
+            <Table className="user-list" bordered hover>
+              <thead>
+                <tr>
+                  <th>Results</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map(this.renderUser)}
+              </tbody>
+            </Table>
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={this.exitGame}>Continue</Button>

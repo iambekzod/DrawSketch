@@ -1,6 +1,6 @@
 import {action, extendObservable} from 'mobx'
 
-export class ObservableTodoStore {
+class GameStore {
     constructor() {
         extendObservable(this, {
             isPainting: false,
@@ -68,6 +68,16 @@ export class ObservableTodoStore {
             setPaint: action((set) => this.isPainting = set),
             setWidth: action((width) => this.brushWidth = width),
             setColor: action((color) => this.paintColor.push(color)),
+            reset: action(() => {
+                this.xPos = [];
+                this.yPos = [];
+                this.dragging = [];
+                this.penWidth = [];
+                this.paintColor = [];
+                this.brushWidth = 2;
+                this.curColor = "black";
+                this.isPainting = false;
+            }),
             updateState: action((returned) => {
                 /*
                                 xPos: store.getX,
@@ -80,7 +90,7 @@ export class ObservableTodoStore {
                 dragging: store.getDrag
                 */
                 let state = JSON.parse(returned);
-                console.log(state.dragging);
+                // console.log(state.dragging);
                 if (state.xPos.length !== 0) {
                     this.xPos = state.xPos;
                     this.yPos = state.yPos;
@@ -90,6 +100,8 @@ export class ObservableTodoStore {
                     this.brushWidth = state.curWidth;
                     this.curColor = state.curColor;
                     this.isPainting = state.isPainting;
+                } else {
+                    this.reset();
                 }
 
             })
@@ -97,4 +109,4 @@ export class ObservableTodoStore {
     }
 }
 
-export const observableTodoStore = new ObservableTodoStore();
+export default new GameStore();

@@ -59,13 +59,18 @@ input {
 .draw-options {
     display: flex;
     flex-direction: row;
-    margin-left: 11%;
 }
 
 .draw-option {
-    border: 1px solid black;
     display: flex;
     justify-content: center;
     align-content: center;
     height: 50px;
+}
+
+.begin-btn {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    margin-left: 70%;
 }

@@ -10,11 +10,27 @@ var Schema = mongoose.Schema;
 var accountsSchema = new Schema({
   firstname: String,
   lastname: String,
-  username: { type: String, required: true, unique: true, uniqueCaseInsensitive: true },
-  password: { type: String, required: true },
-  email: { type: String, required: true, unique: true, uniqueCaseInsensitive: true },
-  salt: { type: String, required: true },
-  wins: Number,
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    uniqueCaseInsensitive: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    uniqueCaseInsensitive: true
+  },
+  salt: {
+    type: String,
+    required: true
+  },
+  wins: Number
 }, {timestamps: true});
 
 accountsSchema.plugin(uniqueValidator, {message: 'expected {PATH} to be unique'});
@@ -25,16 +41,18 @@ function generateHash(password, salt) {
   return hash.digest('base64');
 }
 
-accountsSchema.methods.validPassword = function(password) {
+accountsSchema.methods.validPassword = function (password) {
   return this.password === generateHash(password, this.salt);
 };
 
-accountsSchema.methods.setPassword = function(password){
-  this.salt = crypto.randomBytes(16).toString('base64');
+accountsSchema.methods.setPassword = function (password) {
+  this.salt = crypto
+    .randomBytes(16)
+    .toString('base64');
   this.password = generateHash(password, this.salt);
 };
 
-accountsSchema.methods.generateJWT = function() {
+accountsSchema.methods.generateJWT = function () {
   var today = new Date();
   var exp = new Date(today);
   exp.setDate(today.getDate() + 60);
@@ -42,19 +60,19 @@ accountsSchema.methods.generateJWT = function() {
   return jwt.sign({
     id: this._id,
     username: this.username,
-    exp: parseInt(exp.getTime() / 1000),
+    exp: parseInt(exp.getTime() / 1000)
   }, secret);
 };
 
-accountsSchema.methods.toAuthJSON = function(){
+accountsSchema.methods.toAuthJSON = function () {
   return {
     username: this.username,
     firstname: this.firstname,
     lastname: this.lastname,
     password: this.password,
-    points: this.points,
+    wins: this.wins,
     email: this.email,
-    token: this.generateJWT(),
+    token: this.generateJWT()
   };
 };
 

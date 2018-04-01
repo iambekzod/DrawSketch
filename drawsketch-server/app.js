@@ -2,13 +2,12 @@
 
 // Imports ===================================================
 const crypto = require('crypto');
-const socketio = require("socket.io");
 const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const https = require('https');
+const http = require('http');
 const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
 const socketioJwt = require('socketio-jwt2');
@@ -16,6 +15,8 @@ const cors = require('cors');
 
 const keys = require('./config/keys.js');
 const Accounts = require('./models/accounts.js');
+const GameServer = require('./routes/api/gameServer.js');
+const lobbies = require('./routes/api/rooms.js');
 require('./config/passport.js');
 
 // Database =================================================== Connection URL
@@ -26,7 +27,22 @@ const app = express();
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-app.use(cors());
+
+// https://www.namecheap.com/support/knowledgebase/article.aspx/9737/2208/pointi
+// n g-a-domain-to-the-heroku-app#www.yourdomain.tld
+// https://gist.github.com/Shourai/bfd9f549a41c836c99c0c660c9271df6
+
+var whitelist = ['https://drawsketch.herokuapp.com', 'https://drawsketch.me', 'http://localhost:3000']
+app.use(cors({
+    credentials: true,
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS: ' + origin))
+        }
+    }
+}));
 
 app.use(session({
     secret: keys.sessionSecret,
@@ -41,40 +57,99 @@ app.use(session({
 
 app.use(require('./routes'));
 app.use(function (req, res, next) {
-    res.status(501).end("Invalid API endpoint: " + req.url);
+    res
+        .status(501)
+        .end("Invalid API endpoint: " + req.url);
     console.log("HTTP Response", res.statusCode);
 });
 
-var privateKey = fs.readFileSync('server.key');
-var certificate = fs.readFileSync('server.crt');
-var config = {
-    key: privateKey,
-    cert: certificate
-};
-const PORT = 3001;
+const PORT = process.env.PORT || 8080;
 
-server = https.createServer(config, app).listen(PORT, function (err) {
-    if (err) 
-        console.log(err);
-    else 
-        console.log("HTTPS server on https://localhost:%s", PORT);
-    }
-);
+server = http
+    .createServer(app)
+    .listen(PORT, function (err) {
+        if (err) 
+            console.log(err);
+        else 
+            console.log("HTTP server listening on port %s", PORT);
+        }
+    );
 
 const io = socketIO(server);
-
-io.sockets.on('connection', socketioJwt.authorize({
-    secret: keys.jwtSecret,
-    callback: false,
-    timeout: 10000 // 15 seconds to send the authentication message
-  })).on('authenticated', function(socket) {
-    //this socket is authenticated, we are good to handle more events from it.
-    console.log('welcome', socket.decoded_token.username);
-  });
-  
-
-io.on('connection', function (socket) {
-    socket.on("gameState", (state) => {
-        io.emit('return', state);
-    })
-})
+var gameServer = new GameServer();
+io
+    .sockets
+    .on('connection', socketioJwt.authorize({
+        secret: keys.jwtSecret, callback: false, timeout: 10000 // 15 seconds to send the authentication message
+    }))
+    .on('authenticated', function (socket) {
+        //this socket is authenticated, we are good to handle more events from it.
+        console.log("AUTH USER");
+        socket.on('join', (room) => {
+            const found = gameServer.findGame(room[1].id);
+            if (found == null) {
+                console.log("CREATING ROOM");
+                gameServer.createGame(room[1].id);
+                console.log("PLAYER JOINING", room[0].username);
+                gameServer.joinGame(room[0], room[1].id);
+            } else {
+                const game = gameServer.games[found]
+                if (game.inGame(room[0]) == false) {
+                    console.log("PLAYER JOINING", room[0].username);
+                    gameServer.joinGame(room[0], room[1].id);
+                }
+            }
+            socket.join(room[1].id)
+            io
+                .sockets
+                . in(room[1].id)
+                .emit('newUser', room[1]);
+        })
+        socket.on("gameState", (state) => {
+            var state = JSON.parse(state);
+            var updated = gameServer.setGameState(state.id, state.game)
+            var game = lobbies.find((room) => room.id === state.id);
+            const index = lobbies.indexOf(game);
+            lobbies[index].gameState = state.game;
+            io
+                .sockets
+                . in(state.id)
+                .emit('return', JSON.stringify(updated.state))
+        })
+        socket.on("beginRound", (game) => {
+            found = gameServer.findGame(JSON.parse(game).id);
+            console.log("FOUND IS ", found);
+            io
+                .sockets
+                . in(gameServer.games[found].id)
+                .emit('getWord', gameServer.games[found].getWord())
+            io
+                .sockets
+                . in(gameServer.games[found].id)
+                .emit('startRound', JSON.stringify(game.state));
+        })
+        socket.on("guess", (guess) => {
+            found = gameServer.findGame(guess.id);
+            if (guess.guess == gameServer.games[found].currentWord) {
+                console.log("THE GUESS IS CORRECT");
+                io
+                    .sockets
+                    . in(gameServer.games[found].id)
+                    .emit('right', gameServer.games[found])
+            } else {
+                io
+                    .sockets
+                    . in(gameServer.games[found].id)
+                    .emit('wrong', gameServer.games[found])
+            }
+        })
+        socket.on("endRound", (game) => {
+            console.log(game);
+            found = gameServer.findGame(game);
+            lobbies[found].drawer = lobbies[found].players[1];
+            io
+                .sockets
+                . in(gameServer.games[found].id)
+                .emit('roundEnd', lobbies[found]);
+        })
+    });

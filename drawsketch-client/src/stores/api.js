@@ -5,7 +5,7 @@ import userStore from './userStore';
 import authStore from './authStore';
 
 const superagent = superagentPromise(_superagent, global.Promise);
-const API_ROOT = 'https://localhost:3001/api';
+const API_ROOT = 'http://localhost:8080/api';
 
 const handleErrors = err => {
   if (err && err.response && err.response.status === 401) {
@@ -58,11 +58,6 @@ const Auth = {
     requests.post('/user/signup', { user }),
 };
 
-const Game = {
-  connectedUsers: () =>
-    requests.get('/game/connected'),
-}
-
 const Lobby = {
   getRooms: () =>
     requests.get('/lobby/'),
@@ -78,6 +73,5 @@ const Lobby = {
 
 export default {
   Auth,
-  Game,
   Lobby
 };

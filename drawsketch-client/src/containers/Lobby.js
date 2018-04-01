@@ -38,7 +38,7 @@ class Lobby extends Component {
     else {
       this.props.userListStore.addUser();
       this.props.lobbyStore.join().then(() => {
-        this.props.history.push("/game");
+        this.props.history.push("/game/" + id);
       });
     }
   };

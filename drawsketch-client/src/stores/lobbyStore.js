@@ -72,15 +72,16 @@ class LobbyStore {
         this.errors = undefined;
         return api.Lobby.createRoom(this.values)
           .then((room) => {
-            this.join(room.id);
+            return room;
           })
           .catch(action((err) => {
             this.errors = err.response && err.response.body && err.response.body.errors;
             throw err;
           }))
-          .finally(action(() => { 
+          .finally(action((room) => { 
             this.reset();
             this.inProgress = false;
+            return room;
           }));
       }),
       join: action(function() {
@@ -103,15 +104,13 @@ class LobbyStore {
         this.inProgress = true;
         this.errors = undefined;
         return api.Lobby.leaveRoom(id)
-          .then((room) => {
-            userStore.setRoom(null);
-          })
           .catch(action((err) => {
             this.errors = err.response && err.response.body && err.response.body.errors;
             throw err;
           }))
           .finally(action(() => { 
             this.inProgress = false;
+            userStore.setRoom(null);
             Promise.resolve();
            }));
       }),

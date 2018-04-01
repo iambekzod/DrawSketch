@@ -1,12 +1,12 @@
 import React from 'react'
 import {observer} from "mobx-react"
-import "../style/form.css";
-import "../style/sidebar.css";
 import {CustomDropDown} from "./CustomDropDown"
-import {ListGroup, ListGroupItem} from 'reactstrap';
+import {ListGroupItem} from 'reactstrap';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
+import "../style/form.css";
+import "../style/sidebar.css";
 
 export const SideBar = observer(class TodoList extends React.Component {
     constructor(props) {

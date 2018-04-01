@@ -2,13 +2,12 @@ import { action, extendObservable } from 'mobx';
 import api from './api';
 import userStore from './userStore';
 
-class AuthStore {
+class MessageStore {
   constructor() {
     extendObservable(this, {
       inProgress: false,
       errors: undefined,
-      messages: [{username:"drawsketch", message:"garen", fromMe: false},
-                {username:"bekzod", message:"elise", fromMe: false}],
+      messages: [],
       values: {
         guess: ''
       },
@@ -25,4 +24,4 @@ class AuthStore {
   }
 }
 
-export default new AuthStore();
+export default new MessageStore();

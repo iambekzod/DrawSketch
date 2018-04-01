@@ -23,9 +23,7 @@ class SignIn extends Component {
   };
 
   responseGoogle = (response) => {
-    var id_token = response.getAuthResponse().id_token;
-
-    this.props.authStore.verifyGoogleToken(id_token)
+    this.props.authStore.verifyGoogleToken(response.tokenId)
       .then((result) => {
 
         if (result.redirect) {

@@ -17,8 +17,14 @@ class App extends Component {
 
   handleLogout = (e) => {
     e.preventDefault();
+
+    var self = this;
     this.props.authStore.logout()
-      .then(() => this.props.history.replace('/'));
+      .then(() => { this.props.history.replace('/') 
+      self.setState({
+        user: null
+      });
+    });
   };
 
   componentDidMount() {

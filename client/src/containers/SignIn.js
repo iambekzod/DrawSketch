@@ -27,7 +27,6 @@ class SignIn extends Component {
 
     this.props.authStore.verifyGoogleToken(id_token)
       .then((result) => {
-        console.log(result);
 
         if (result.redirect) {
           this.props.userStore.setGoogleToken(result.token);
@@ -83,7 +82,8 @@ class SignIn extends Component {
 
             <GoogleLogin
                 clientId="961751684480-o11bdd2778v499aq8v7tcv2vcvent1qu.apps.googleusercontent.com"
-
+                className="btn btn-primary btn-lg btn-block"
+                buttonText="Sign In with Google"
                 onSuccess={this.responseGoogle}
                 onFailure={this.responseGoogle}
               />

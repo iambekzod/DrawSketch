@@ -61,7 +61,7 @@ router.post('/signin/google', checkToken, function(req, res, next) {
     const payload = ticket.getPayload();
     const userId = payload['sub'];
 
-    Accounts.findOne({googleId : userId}).then(function (user) {
+    Accounts.findOne({googleId: userId}).then(function (user) {
       if (!user) {
         return res.json({ redirect: true, token: req.body.token });
       }

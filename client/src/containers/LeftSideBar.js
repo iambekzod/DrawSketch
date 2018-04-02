@@ -11,7 +11,7 @@ export default class LeftSideBar extends Component {
     render() {
         return (
             <ListGroup className="list-group-flush side-bar">
-                <UserList/>
+                <UserList game={this.props.game} socket={this.props.socket} />
             </ListGroup>
         );
     }

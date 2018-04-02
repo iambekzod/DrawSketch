@@ -8,7 +8,6 @@ export default class TimerExample extends React.Component {
         }
     }
     componentDidMount() {
-        console.log(this.props.game.roundsPlayed);
         this.setState({elapsed: this.props.game.timeElapsed})
         this.tick();
     }

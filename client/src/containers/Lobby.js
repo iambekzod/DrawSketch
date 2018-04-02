@@ -33,15 +33,13 @@ class Lobby extends Component {
         self.setState({
           user: resultUser
         });
-
         if (resultUser.room) {
-          self.props.lobbyStore.leave(resultUser.room).then(() => {
+          self.props.lobbyStore.leave(resultUser.room.id).then(() => {
             self.props.lobbyStore.getRooms();
           })
         } else {
           self.props.lobbyStore.getRooms();
         }
-
       });
     }
   };
@@ -52,7 +50,6 @@ class Lobby extends Component {
       this.props.lobbyStore.setJoinModal();
     else {
       this.props.userStore.pullUser().then((user) => {
-        this.props.userListStore.addUser(user.username);
         this.props.lobbyStore.join().then(() => {
           this.props.history.push("/game/" + id);
         });

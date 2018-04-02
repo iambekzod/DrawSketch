@@ -16,10 +16,7 @@ function startTimer(duration) {
             ? "0" + seconds
             : seconds;
 
-        console.log(minutes + ":" + seconds);
-
         if (--timer < 0) {
-            console.log("TIMES Up");
             clearInterval(this)
         }
     }, 1000);

@@ -5,14 +5,12 @@ import {Col, Row, Alert} from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
 import io from 'socket.io-client';
-import validator from "validator";
-
 
 import TimerExample from './timer'
 import LeftSideBar from './LeftSideBar';
 import {Drawer} from "./Drawer";
-import {Guesser} from './Guesser'
-import ResultModal from './ResultModal'
+import {Guesser} from './Guesser';
+import ResultModal from './ResultModal';
 
 // inspired by source code from lecture 2 HTML5
 class Game extends Component {
@@ -28,17 +26,18 @@ class Game extends Component {
             rounds: 0,
             over: false
         };
-
     }
+
     componentWillUnmount() {
-        console.log("UMOUNTING");
+      this.socket.disconnect();
     }
 
     componentDidMount() {
-      if (!validator.isUUID(this.props.match.params.id)) {
+      this.props.lobbyStore.getRoom(this.props.match.params.id).catch((room) => {
         this.props.history.replace("/lobby");
         return null;
-      }
+      });
+
       var self = this;
 
         this
@@ -76,6 +75,9 @@ class Game extends Component {
                               this.roundEnded();
                               this.newUser();
                               this.gameOver();
+                          }).catch(() => {
+                            self.props.history.replace("/lobby");
+                            return null;
                           })
                     })
                     .on("unauthorized", function (error, callback) {
@@ -99,7 +101,6 @@ class Game extends Component {
     }
 
     fetchGame() {
-        console.log("FETCHING");
         return (Promise.all([
             this
                 .props
@@ -125,6 +126,7 @@ class Game extends Component {
             .socket
             .on('newUser', (game) => {
                 this.updateGame();
+
             })
     }
 
@@ -170,10 +172,9 @@ class Game extends Component {
         var roundAlert = null;
         var modal = null;
         if (this.state.over) {
-            modal = <ResultModal players={this.state.game.players} history={this.props.history} viewResultModal={this.state.over}/>
+            modal = <ResultModal players={this.state.game.players} history={this.props.history} viewResultModal={true}/>
         }
         if (this.state.begun) {
-            console.log("PASSING IN NEW DATA");
             timer = <Row>
                 <Col>
                     <TimerExample game={this.state.game} socket={this.socket} start={Date.now()}/>
@@ -210,7 +211,7 @@ class Game extends Component {
                 ROUND {this.state.rounds + ":  "}{timer}
                 <Provider store={this.props.gameStore}>
                     <Row>
-                        <LeftSideBar/>
+                        <LeftSideBar game={this.state.game} socket={this.socket} />
                         <div
                             style={{
                             marginLeft: "40px"

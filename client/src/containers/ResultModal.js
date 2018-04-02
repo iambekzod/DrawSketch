@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import { Fade, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { Label, Input, Form } from "reactstrap";
 import { observer, inject } from "mobx-react";
 import { Table } from 'reactstrap'
 
@@ -26,7 +25,7 @@ class ResultModal extends Component {
   getWinner = (players) => {
     var winner = players[0];
     var max = Math.max.apply(Math, players.map(function(player){return player.wins;}));
-    winner = players.find(function(player){ return player.wins == max; });
+    winner = players.find(function(player){ return player.wins === max; });
     return (
       <div>
         {winner.username} : {winner.wins}

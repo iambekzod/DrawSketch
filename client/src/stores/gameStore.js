@@ -79,18 +79,7 @@ class GameStore {
                 this.isPainting = false;
             }),
             updateState: action((returned) => {
-                /*
-                                xPos: store.getX,
-                yPos: store.getY,
-                color: store.getColor,
-                width: store.getPenWidth,
-                curWidth: store.getWidth,
-                curColor: store.getCurColor,
-                isPainting: store.Paint,
-                dragging: store.getDrag
-                */
                 let state = JSON.parse(returned);
-                // console.log(state.dragging);
                 if (state.xPos.length !== 0) {
                     this.xPos = state.xPos;
                     this.yPos = state.yPos;

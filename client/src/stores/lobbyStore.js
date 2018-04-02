@@ -1,6 +1,5 @@
 import { action, extendObservable } from 'mobx';
 import api from './api';
-import userStore from './userStore';
 
 class LobbyStore {
   constructor() {
@@ -88,14 +87,11 @@ class LobbyStore {
         this.inProgress = true;
         this.errors = undefined;
         return api.Lobby.joinRoom(this.values.joinId, this.values.joinPassword)
-          // .then((room) => {
-          //   userStore.setRoom(room);
-          // })
           .catch(action((err) => {
             this.errors = err.response && err.response.body && err.response.body.errors;
             throw err;
           }))
-          .finally(action(() => { 
+          .finally(action(() => {
             this.reset();
             this.inProgress = false;
           }));
@@ -110,7 +106,6 @@ class LobbyStore {
           }))
           .finally(action(() => {
             this.inProgress = false;
-            userStore.setRoom(null);
             return Promise.resolve();
            }));
       }),

@@ -6,8 +6,7 @@ class userListStore {
     extendObservable(this, {
         inProgress: false,
         errors: undefined,
-        users: [{username:"drawsketch", isMe: false, points: 0},
-                {username:"weiqiang", isMe: false, points: 0}],
+        users: [],
         setPoints: action((name, points) => {
             var user = this.users.find(function(user) {
                 return user.username === name;

@@ -68,18 +68,14 @@ io
     }))
     .on('authenticated', function (socket) {
         //this socket is authenticated, we are good to handle more events from it.
-        console.log("AUTH USER");
         socket.on('join', (room) => {
             const found = gameServer.findGame(room[1].id);
             if (found == null) {
-                console.log("CREATING ROOM");
                 gameServer.createGame(room[1].id);
-                console.log("PLAYER JOINING", room[0].username);
                 gameServer.joinGame(room[0], room[1].id);
             } else {
                 const game = gameServer.games[found]
                 if (game.inGame(room[0]) == false) {
-                    console.log("PLAYER JOINING", room[0].username);
                     gameServer.joinGame(room[0], room[1].id);
                 }
             }
@@ -105,7 +101,6 @@ io
             lobbies[found].started = true;
             lobbies[found].roundsPlayed++;
             interval = startTimer(found, lobbies[found].timeLimit);
-            console.log(interval);
             io
                 .sockets
                 . in(gameServer.games[found].id)
@@ -123,16 +118,13 @@ io
             const userIndex = lobbies[found]
                 .players
                 .indexOf(user);
-            console.log(guess.guess, gameServer.games[found].currentWord);
             if (guess.guess == gameServer.games[found].currentWord) {
                 lobbies[found].players[userIndex].wins++;
-                console.log("WINS FOR PLAYER", lobbies[found].players[userIndex].wins);
                 io
                     .sockets
                     . in(gameServer.games[found].id)
                     .emit('right', gameServer.games[found])
             } else {
-                console.log("WRONG");
                 io
                     .sockets
                     . in(gameServer.games[found].id)
@@ -143,6 +135,9 @@ io
             const found = gameServer.findGame(game);
             endRound(found);
         })
+        socket.on('disconnect', function () {
+          socket.emit('disconnected');
+        });
     });
 
 function pickPlayer(game) {
@@ -151,7 +146,6 @@ function pickPlayer(game) {
         index++;
     }
     if (index == 0 || index < game.players.length - 1) {
-        console.log("IM HERE");
         return index + 1;
     }
     return 0;
@@ -159,9 +153,6 @@ function pickPlayer(game) {
 
 function endRound(gameIndex) {
     clearInterval(interval);
-    console.log("ROUNDS PLAYED IS", lobbies[gameIndex].roundsPlayed);
-    console.log("TOTAL ROUNDS IS", lobbies[gameIndex].rounds);
-    console.log(lobbies[gameIndex].roundsPlayed == lobbies[gameIndex].rounds);
     if (lobbies[gameIndex].roundsPlayed == lobbies[gameIndex].rounds) {
         io
             .sockets
@@ -171,7 +162,6 @@ function endRound(gameIndex) {
         return;
     }
     const index = pickPlayer(lobbies[gameIndex]);
-    console.log("INDEX IS ", index);
     lobbies[gameIndex].started = false;
     lobbies[gameIndex].drawer = lobbies[gameIndex].players[index];
     io

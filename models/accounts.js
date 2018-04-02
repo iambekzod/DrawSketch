@@ -69,6 +69,7 @@ accountsSchema.methods.generateJWT = function () {
 accountsSchema.methods.toAuthJSON = function () {
   var self = this;
   return {
+    id: this._id,
     username: this.username,
     email: this.email,
     wins: this.wins,

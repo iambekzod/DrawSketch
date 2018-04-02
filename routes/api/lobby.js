@@ -213,7 +213,7 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
             if (user.room) return res.status(409)
                               .json({
                                   errors: {
-                                      User: "already joined this lobby"
+                                      User: "has already joined one lobby"
                                   }
                               });
 
@@ -280,7 +280,6 @@ router.post('/leave/:id/', auth.required, checkId, function (req, res, next) {
                         }
                     });
             }
-
             room
                 .players
                 .splice(index, 1);

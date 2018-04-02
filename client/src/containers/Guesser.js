@@ -21,7 +21,6 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
         };
     }
     componentDidMount() {
-        console.log("REFS", this.refs)
         this.setState({begun: this.props.game.started});
         this.updateCanvas();
         this.roundStarted();
@@ -29,7 +28,7 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
         this.wrongGuess();
     }
     componentWillUnmount() {
-        console.log("UMOUNTING");
+        this.socket.disconnect();
     }
     render() {
         var guess = null
@@ -43,11 +42,6 @@ export const Guesser = inject("store")(observer(class Guesser extends React.Comp
                 YOUR GUESS WAS CORRECT
             </Alert>
         }
-        // if (this.state.guess === "wrong") {
-        //     alert = <Alert color="danger">
-        //         YOUR GUESS WAS WRONG
-        //     </Alert>
-        // }
 
         return (
             <div

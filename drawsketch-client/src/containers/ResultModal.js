@@ -57,11 +57,11 @@ class ResultModal extends Component {
       <div>
         <Modal isOpen={viewResultModal} toggle={this.toggle} className={this.props.className}>
           <ModalHeader toggle={this.toggle}>
-            Winner!
+            Here are the Results!
           </ModalHeader>
           <ModalBody>
             <Fade in={true} tag="h5" className="mt-3">
-              <h1>Winner:</h1>
+              <h1>Winner!:</h1>
               {this.getWinner(players)}
             </Fade>
             <Table className="user-list" bordered hover>

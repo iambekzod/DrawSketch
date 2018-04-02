@@ -19,7 +19,7 @@ export default() => <Switch>
   <Route
     path='/game/:id'
     component=
-    {Game}/> 
+    {Game}/>
 
   <Route component={NotFound}/>
 </Switch>;

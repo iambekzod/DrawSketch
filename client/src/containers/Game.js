@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {inject, observer, Provider} from "mobx-react"
 import "../style/form.css";
 import {Col, Row, Alert} from 'reactstrap';
@@ -12,10 +12,10 @@ import {Drawer} from "./Drawer";
 import {Guesser} from './Guesser'
 
 // inspired by source code from lecture 2 HTML5
-class Game extends React.Component {
+class Game extends Component {
     constructor(props) {
         super(props)
-        this.socket = io.connect("https://drawsketch.me/");
+        this.socket = io.connect("/");
         this.state = {
             begun: false,
             newRound: false,
@@ -39,7 +39,36 @@ class Game extends React.Component {
                 this
                     .socket
                     .emit('authenticate', {token: this.props.userStore.token}) //send the jwt
-                    .on('authenticated', () => {})
+                    .on('authenticated', () => {
+                      this
+                          .fetchGame()
+                          .then((values) => {
+                              if (values[1].players.find((e) => e.username === values[0].username).length === 0) {
+                                  alert("UNAUTHORIZED");
+                                  return;
+                              }
+                              this.setState({rounds: values[1].roundsPlayed, begun: values[1].started, curPlayer: values[0], game: values[1]});
+                              if (values[0].username === values[1].drawer.username) {
+                                  this.setState({userType: "draw"});
+                              } else {
+                                  this.setState({userType: "guess"});
+                              }
+                              this
+                                  .props
+                                  .gameStore
+                                  .updateState(JSON.stringify(values[1].gameState));
+                              this
+                                  .props
+                                  .gameStore
+                                  .setPaint(false);
+                              this
+                                  .socket
+                                  .emit('join', values);
+                              this.roundStarted();
+                              this.roundEnded();
+                              this.newUser();
+                          })
+                    })
                     .on("unauthorized", function (error, callback) {
                         console.log("unauthenticated");
                         if (error.data.type === "UnauthorizedError" || error.data.code === "invalid_token") {
@@ -48,36 +77,8 @@ class Game extends React.Component {
                         }
                     });
             });
-        this
-            .fetchGame()
-            .then((values) => {
-                if (values[1].players.find((e) => e.username === values[0].username).length === 0) {
-                    alert("UNAUTHORIZED");
-                    return;
-                }
-                this.setState({rounds: values[1].roundsPlayed, begun: values[1].started, curPlayer: values[0], game: values[1]});
-                if (values[0].username === values[1].drawer.username) {
-                    this.setState({userType: "draw"});
-                } else {
-                    this.setState({userType: "guess"});
-                }
-                this
-                    .props
-                    .gameStore
-                    .updateState(JSON.stringify(values[1].gameState));
-                this
-                    .props
-                    .gameStore
-                    .setPaint(false);
-                this
-                    .socket
-                    .emit('join', values);
-                this.roundStarted();
-                this.roundEnded();
-                this.newUser();
-            })
-
     }
+
     roundStarted = () => {
         this
             .socket
@@ -90,6 +91,7 @@ class Game extends React.Component {
                 });
             })
     }
+
     fetchGame() {
         console.log("FETCHING");
         return (Promise.all([

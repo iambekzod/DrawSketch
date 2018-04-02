@@ -2,6 +2,8 @@
 
 ## Members: Bekzod Tursunov, Weiqiang Zhang, Shuyi Qiu
 
+Public URL: https://drawsketch.me/
+
 # Description
 
 A multi user drawing game where one person draws something, while the other players try to guess what is being drawn in realtime.

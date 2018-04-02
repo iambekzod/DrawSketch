@@ -1,5 +1,4 @@
 import { action, extendObservable } from 'mobx';
-import api from './api';
 
 class userListStore {
   constructor() {

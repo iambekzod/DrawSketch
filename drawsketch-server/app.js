@@ -176,11 +176,15 @@ function pickPlayer(game) {
 
 function endRound(gameIndex) {
     clearInterval(interval);
+    console.log("ROUNDS PLAYED IS", lobbies[gameIndex].roundsPlayed);
+    console.log("TOTAL ROUNDS IS", lobbies[gameIndex].rounds);
+    console.log(lobbies[gameIndex].roundsPlayed == lobbies[gameIndex].rounds);
     if (lobbies[gameIndex].roundsPlayed == lobbies[gameIndex].rounds) {
         io
             .sockets
             . in(gameServer.games[gameIndex].id)
             .emit('gameOver', lobbies[gameIndex]);
+        return;
     }
     const index = pickPlayer(lobbies[gameIndex]);
     console.log("INDEX IS ", index);

@@ -14,9 +14,6 @@ class ResultModal extends Component {
   }
 
   toggle() {
-    this.setState({
-      viewResultModal: !this.props.viewResultModal
-    });
     this.props.history.push("/lobby");
   }
 
@@ -28,14 +25,11 @@ class ResultModal extends Component {
 
   getWinner = (players) => {
     var winner = players[0];
-    for(let player in players) {
-      if (player.points > winner.points){
-        winner = player;
-      }
-    }
+    var max = Math.max.apply(Math, players.map(function(player){return player.wins;}));
+    winner = players.find(function(player){ return player.wins == max; });
     return (
       <div>
-        {winner.username} : {winner.points}
+        {winner.username} : {winner.wins}
       </div>
     )
   }
@@ -44,7 +38,7 @@ class ResultModal extends Component {
     const fromMe = player.isMe ? 'from-me' : '';
     return (
       <tr className={`${fromMe}`} key={i}>
-        <td>{player.username} : {player.points}</td>
+        <td>{player.username} : {player.wins}</td>
       </tr>
     )
   }
@@ -52,7 +46,6 @@ class ResultModal extends Component {
   render() {
     const viewResultModal = this.props.viewResultModal;
     const players = this.props.players;
-
     return (
       <div>
         <Modal isOpen={viewResultModal} toggle={this.toggle} className={this.props.className}>

@@ -3,6 +3,7 @@ var secret = require('../config/keys.js').jwtSecret;
 var crypto = require('crypto');
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
+const lobbies = require('../routes/api/rooms.js');
 
 var Schema = mongoose.Schema;
 
@@ -66,13 +67,17 @@ accountsSchema.methods.generateJWT = function () {
 };
 
 accountsSchema.methods.toAuthJSON = function () {
+  var self = this;
   return {
     username: this.username,
-    firstname: this.firstname,
-    lastname: this.lastname,
-    password: this.password,
-    wins: this.wins,
     email: this.email,
+    wins: this.wins,
+    room: lobbies.find(function(lobby) {
+      var found = lobby.players.find(function (user) {
+        return user.username === self.username;
+      });
+      if (found) return lobby;
+    }),
     token: this.generateJWT()
   };
 };

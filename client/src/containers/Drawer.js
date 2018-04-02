@@ -4,10 +4,10 @@ import "../style/form.css";
 import {
     Row,
     Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter
+    // Modal,
+    // ModalHeader,
+    // ModalBody,
+    // ModalFooter
 } from 'reactstrap';
 import {SideBar} from './SideBar';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -91,33 +91,22 @@ export const Drawer = (inject('store'))(observer(class Drawer extends React.Comp
                         Begin Game
                     </Button>
                 </div>
-            : null
-
+            : null;
+        var myWord = (this.state.word)
+            ? <p className="my-word">Your Word is {this.state.word}</p>
+            : null;
         return (
             <div>
-                <Modal
-                    isOpen={this.state.modal}
-                    toggle={this.toggle}
-                    className={this.props.className}>
-                    <ModalHeader toggle={this.toggle}>Draw this</ModalHeader>
-                    <ModalBody>
-                        Your Word is {this.state.word}
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={this.toggle}>OK</Button>
-                    </ModalFooter>
-                </Modal>
 
                 <Row>
                     <canvas className="whiteboard" ref="canvas" width={656} height={400}/>
                 </Row>
-
                 <Row>
-                    <SideBar store={this.props.store}/> {beginButton}
+                    <SideBar store={this.props.store}/>
+                    {beginButton}
+                    {myWord}
                 </Row>
-
             </div>
-
         );
     }
 

@@ -19,21 +19,12 @@ class Lobby extends Component {
   }
 
   componentDidMount() {
-    const { token, room } = this.props.userStore;
+    const { token } = this.props.userStore;
 
     // Cannot visit lobby without being logged in
     if (!token) {
       this.props.history.push("/signin");
       return null;
-    }
-
-    // If there is a room for this user, we need to wait until the promise is resolved
-    if (room) {
-      this.props.lobbyStore.leave(room).then(() => {
-        this.props.lobbyStore.getRooms();
-      })
-    } else {
-      this.props.lobbyStore.getRooms();
     }
 
     var self = this;
@@ -42,6 +33,15 @@ class Lobby extends Component {
         self.setState({
           user: resultUser
         });
+
+        if (resultUser.room) {
+          self.props.lobbyStore.leave(resultUser.room).then(() => {
+            self.props.lobbyStore.getRooms();
+          })
+        } else {
+          self.props.lobbyStore.getRooms();
+        }
+
       });
     }
   };

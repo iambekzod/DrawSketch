@@ -9,13 +9,6 @@ const lobbies = require('./rooms.js');
 
 // Constants ========================================================== Prevent
 // sensitive information from being dumped out
-var userProjection = {
-    salt: 0,
-    password: 0,
-    createdAt: 0,
-    updatedAt: 0,
-    __v: 0
-};
 
 var Room = (function () {
     return function room(request) {
@@ -138,9 +131,7 @@ router.get('/', auth.required, function (req, res, next) {
 });
 
 router.get('/:id/', auth.required, checkId, function (req, res, next) {
-    console.log("Request: " + req.params.id);
     var index = lobbies.findIndex(function (e) {
-        console.log("lobby: " + e.id);
         return (e.id == req.params.id);
     });
     if (index === -1) {
@@ -189,7 +180,7 @@ router.post('/', auth.required, sanitizeInput, function (req, res, next) {
 
 router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
     Accounts
-        .findById(req.payload.id, userProjection)
+        .findById(req.payload.id)
         .then(function (user) {
             if (!user) {
                 return res.sendStatus(401);
@@ -218,23 +209,15 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
                         }
                     });
             }
-            index = room
-                .players
-                .findIndex(function (e) {
-                    return (e.id == req.payload.id);
-                });
-            if (index !== -1) {
-                return res
-                    .status(409)
-                    .json({
-                        errors: {
-                            User: "already joined this lobby"
-                        }
-                    });
-            }
+            user = user.toAuthJSON();
+            if (user.room) return res.status(409)
+                              .json({
+                                  errors: {
+                                      User: "already joined this lobby"
+                                  }
+                              });
 
             if (room.locked) {
-              console.log(req.body);
                 if(!req.body.password){
                     return res.status(422).json({errors: {password: "can't be blank"}});
                 }
@@ -263,7 +246,7 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
 
 router.post('/leave/:id/', auth.required, checkId, function (req, res, next) {
     Accounts
-        .findById(req.payload.id, userProjection)
+        .findById(req.payload.id)
         .then(function (user) {
             if (!user) {
                 return res.sendStatus(401);

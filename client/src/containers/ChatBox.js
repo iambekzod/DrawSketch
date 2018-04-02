@@ -6,15 +6,17 @@ import Message from "./Message";
 
 class ChatBox extends Component {
 
-    handleGuessChange = e => 
+    handleGuessChange = e =>
     {
         this.props.messageStore.setGuess(e.target.value)
     };
-    
+
     handleSubmitForm = (e) => {
       e.preventDefault();
-      this.props.sendMessage(this.props.messageStore.values.guess);
-      this.props.messageStore.addGuess();
+      this.props.userStore.pullUser().then((user) => {
+        this.props.sendMessage(this.props.messageStore.values.guess);
+        this.props.messageStore.addGuess(user.username);
+      });
     };
 
     render() {
@@ -37,7 +39,7 @@ class ChatBox extends Component {
             </div>
             <div className="send-messages">
                 <Form onSubmit={this.handleSubmitForm}>
-                <Input type="text" 
+                <Input type="text"
                     id="message"
                     placeholder="Enter your guess"
                     value={values.guess}

@@ -34,14 +34,14 @@ class LobbyStore {
       setMaxPlayers: action((set) => this.values.maxPlayers = set),
       setRounds: action((set) => this.values.rounds = set),
       setTimeLimit: action((set) => this.values.timeLimit = set),
-      setPassword: action((set) => { 
+      setPassword: action((set) => {
         this.values.password = set;
         this.values.locked = (this.values.password !== "");
       }),
-      setJoinPassword: action((set) => { 
+      setJoinPassword: action((set) => {
         this.values.joinPassword = set;
       }),
-      setJoinId: action((set) => { 
+      setJoinId: action((set) => {
         this.values.joinId = set;
       }),
       getRooms: action(() => {
@@ -78,7 +78,7 @@ class LobbyStore {
             this.errors = err.response && err.response.body && err.response.body.errors;
             throw err;
           }))
-          .finally(action((room) => { 
+          .finally(action((room) => {
             this.reset();
             this.inProgress = false;
             return room;
@@ -88,9 +88,9 @@ class LobbyStore {
         this.inProgress = true;
         this.errors = undefined;
         return api.Lobby.joinRoom(this.values.joinId, this.values.joinPassword)
-          .then((room) => {
-            userStore.setRoom(room);
-          })
+          // .then((room) => {
+          //   userStore.setRoom(room);
+          // })
           .catch(action((err) => {
             this.errors = err.response && err.response.body && err.response.body.errors;
             throw err;
@@ -108,7 +108,7 @@ class LobbyStore {
             this.errors = err.response && err.response.body && err.response.body.errors;
             throw err;
           }))
-          .finally(action(() => { 
+          .finally(action(() => {
             this.inProgress = false;
             userStore.setRoom(null);
             return Promise.resolve();

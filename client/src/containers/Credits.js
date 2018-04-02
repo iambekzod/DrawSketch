@@ -19,14 +19,20 @@ class Credits extends Component {
               Deploying React App + Node Express together as <a href="https://daveceddia.com/create-react-app-express-production/">One App</a>
             </li>
             <li>
-              Structure a React App + MobX + API Calls to a Node Express Server <a href="https://github.com/gothinkster/react-mobx-realworld-example-app">Click Me</a>
+              Structure a React App + MobX <a href="https://github.com/gothinkster/react-mobx-realworld-example-app">Click Me</a>
             </li>
             <li>
               Setup a MongoDB connection to a mLabs server using&nbsp;
               <a href="https://scotch.io/tutorials/using-mongoosejs-in-node-js-and-mongodb-applications">MongooseJS</a>
             </li>
-            <li>Occasionaly&nbsp;
-                <a href="http://stackoverflow.com/">Stackoverflow</a>
+            <li>
+             Countdown timer from <a href="https://stackoverflow.com/questions/20618355/the-simplest-possible-javascript">Click Me</a>
+            </li>
+            <li>
+              Canvas taken from week2 lecture notes
+            </li>
+            <li>
+              Occasionaly <a href="http://stackoverflow.com/">Stackoverflow</a>
             </li>
         </ul>
         <h2>Icons</h2>

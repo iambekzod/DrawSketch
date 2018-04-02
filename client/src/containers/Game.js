@@ -5,6 +5,8 @@ import {Col, Row, Alert} from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
 import io from 'socket.io-client';
+import validator from "validator";
+
 
 import TimerExample from './timer'
 import LeftSideBar from './LeftSideBar';
@@ -32,7 +34,12 @@ class Game extends Component {
     }
 
     componentDidMount() {
-        console.log("THIS IS CALLED");
+      if (!validator.isUUID(this.props.match.params.id)) {
+        this.props.history.replace("/lobby");
+        return null;
+      }
+      var self = this;
+
         this
             .socket
             .on('connect', () => {
@@ -44,8 +51,8 @@ class Game extends Component {
                           .fetchGame()
                           .then((values) => {
                               if (values[1].players.find((e) => e.username === values[0].username).length === 0) {
-                                  alert("UNAUTHORIZED");
-                                  return;
+                                  self.props.history.replace("/lobby");
+                                  return null;
                               }
                               this.setState({rounds: values[1].roundsPlayed, begun: values[1].started, curPlayer: values[0], game: values[1]});
                               if (values[0].username === values[1].drawer.username) {
@@ -70,11 +77,8 @@ class Game extends Component {
                           })
                     })
                     .on("unauthorized", function (error, callback) {
-                        console.log("unauthenticated");
-                        if (error.data.type === "UnauthorizedError" || error.data.code === "invalid_token") {
-                            // redirect user to login page perhaps?
-                            callback();
-                        }
+                        self.props.history.replace("/lobby");
+                        return null;
                     });
             });
     }

@@ -24,10 +24,10 @@ class LobbyCreateModal extends Component {
       this.props.lobbyStore.setJoinId(room.id);
       this.props.lobbyStore.setJoinPassword(room.password);
       return this.props.lobbyStore.join();
-    }).then(() => {
+    }).then((room) => {
       this.props.userStore.pullUser().then((user) => {
         this.props.userListStore.addUser(user.username);
-        this.props.history.push("/game/" + this.props.userStore.room);
+        this.props.history.push("/game/" + room.id);
       });
     });
   };

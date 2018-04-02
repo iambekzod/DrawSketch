@@ -164,6 +164,7 @@ function endRound(gameIndex) {
             .sockets
             . in(gameServer.games[gameIndex].id)
             .emit('gameOver', lobbies[gameIndex]);
+            lobbies.splice(index, 1);
     }
     const index = pickPlayer(lobbies[gameIndex]);
     console.log("INDEX IS ", index);

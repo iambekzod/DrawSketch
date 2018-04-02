@@ -7,7 +7,7 @@ class UserStore {
       token: window.localStorage.getItem('jwt'),
       googleToken: window.localStorage.getItem('google-jwt'),
       inProgress: false,
-      room: window.localStorage.getItem('room'),
+      // room: window.localStorage.getItem('room'),
       pullUser: action(function() {
         this.inProgress = true;
         return api.Auth.current()
@@ -32,15 +32,15 @@ class UserStore {
             window.localStorage.removeItem("google-jwt");
         }
       }),
-      setRoom: action(function(room) {
-        if (room) {
-          this.room = room.id;
-          window.localStorage.setItem("room", room.id);
-        } else {
-          this.room = null;
-          window.localStorage.removeItem("room");
-        }
-      })
+      // setRoom: action(function(room) {
+      //   if (room) {
+      //     this.room = room.id;
+      //     window.localStorage.setItem("room", room.id);
+      //   } else {
+      //     this.room = null;
+      //     window.localStorage.removeItem("room");
+      //   }
+      // })
     })
   }
 }

@@ -1,6 +1,5 @@
 import { action, extendObservable } from 'mobx';
 import api from './api';
-import userStore from './userStore';
 
 class MessageStore {
   constructor() {
@@ -16,9 +15,9 @@ class MessageStore {
       reset: action((set) => {
         this.values.guess = '';
       }),
-      addGuess: action(() => {
-            this.messages.push({username: userStore.currentUser.username, message: this.values.guess, fromMe: true});
-            this.values.guess = '';
+      addGuess: action((username) => {
+        this.messages.push({username: username, message: this.values.guess, fromMe: true});
+        this.reset();
       }),
     })
   }

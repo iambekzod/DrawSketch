@@ -164,7 +164,7 @@ function endRound(gameIndex) {
             .sockets
             . in(gameServer.games[gameIndex].id)
             .emit('gameOver', lobbies[gameIndex]);
-            lobbies.splice(index, 1);
+            lobbies.splice(gameIndex, 1);
     }
     const index = pickPlayer(lobbies[gameIndex]);
     console.log("INDEX IS ", index);
@@ -176,8 +176,6 @@ function endRound(gameIndex) {
         .emit('roundEnd', lobbies[gameIndex]);
 }
 
-//  countdown timer from
-// https://stackoverflow.com/questions/20618355/the-simplest-possible-javascript
 // - countdown-timer //
 function startTimer(index, duration) {
     var timer = duration,

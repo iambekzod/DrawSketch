@@ -19,7 +19,7 @@
     "reactstrap": "^5.0.0-beta.2",
     "socket.io-client": "^2.0.4",
     "superagent": "^3.8.2",
-    "superagent-promise": "^1.1.0",
+    "superagent-promise": "^1.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

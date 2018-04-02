@@ -170,7 +170,7 @@ class Game extends Component {
         var roundAlert = null;
         var modal = null;
         if (this.state.over) {
-            modal = <ResultModal players={this.state.game.players} history={this.props.history} viewResultModal={true}/>
+            modal = <ResultModal players={this.state.game.players} history={this.props.history} viewResultModal={this.state.over}/>
         }
         if (this.state.begun) {
             console.log("PASSING IN NEW DATA");

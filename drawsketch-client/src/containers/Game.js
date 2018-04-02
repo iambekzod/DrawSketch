@@ -11,7 +11,7 @@ import LeftSideBar from './LeftSideBar';
 import {Drawer} from "./Drawer";
 import {Guesser} from './Guesser'
 import {I} from 'glamorous';
-import ResultModal from 'ResultModal'
+import ResultModal from './ResultModal'
 
 // inspired by source code from lecture 2 HTML5
 class Game extends React.Component {
@@ -165,7 +165,7 @@ class Game extends React.Component {
         var roundAlert = null;
         var modal = null;
         if (this.state.over) {
-            modal = <ResultModal players={this.state.game.players}/>
+            modal = <ResultModal players={this.state.game.players} history={this.props.history} viewResultModal={true}/>
         }
         if (this.state.begun) {
             console.log("PASSING IN NEW DATA");

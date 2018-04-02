@@ -4,11 +4,20 @@ import React, { Component } from 'react';
 import { Fade, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Label, Input, Form } from "reactstrap";
 import { observer, inject } from "mobx-react";
+import { Table } from 'reactstrap'
 
 class ResultModal extends Component {
 
-  componentDidMount() {
-    this.toggle = this.props.toggle.bind(this);
+  constructor(props) {
+    super(props);
+    this.toggle = this.toggle.bind(this);
+  }
+
+  toggle() {
+    this.setState({
+      viewResultModal: !this.props.viewResultModal
+    });
+    this.props.history.push("/lobby");
   }
 
   exitGame = (e) => {
@@ -17,11 +26,11 @@ class ResultModal extends Component {
     this.props.history.push("/lobby");
   };
 
-  getWinner = (users) => {
-    var winner = users[0];
-    for(let user in users) {
-      if user.points > winner.points{
-        winner = user;
+  getWinner = (players) => {
+    var winner = players[0];
+    for(let player in players) {
+      if (player.points > winner.points){
+        winner = player;
       }
     }
     return (
@@ -31,18 +40,18 @@ class ResultModal extends Component {
     )
   }
 
-  renderUser(user, i) {
-    const fromMe = user.isMe ? 'from-me' : '';
+  renderUser(player, i) {
+    const fromMe = player.isMe ? 'from-me' : '';
     return (
       <tr className={`${fromMe}`} key={i}>
-        <td>{user.username} : {user.points}</td>
+        <td>{player.username} : {player.points}</td>
       </tr>
     )
   }
 
   render() {
     const viewResultModal = this.props.viewResultModal;
-    const { users } = this.props.userListStore;
+    const players = this.props.players;
 
     return (
       <div>
@@ -53,7 +62,7 @@ class ResultModal extends Component {
           <ModalBody>
             <Fade in={true} tag="h5" className="mt-3">
               <h1>Winner:</h1>
-              {this.getWinner(users)}
+              {this.getWinner(players)}
             </Fade>
             <Table className="user-list" bordered hover>
               <thead>
@@ -62,7 +71,7 @@ class ResultModal extends Component {
                 </tr>
               </thead>
               <tbody>
-                {users.map(this.renderUser)}
+                {players.map(this.renderUser)}
               </tbody>
             </Table>
           </ModalBody>

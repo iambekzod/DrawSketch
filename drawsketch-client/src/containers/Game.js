@@ -1,15 +1,31 @@
 import React from 'react'
-import {inject, observer, Provider} from "mobx-react"
+import {
+    inject,
+    observer,
+    Provider
+} from "mobx-react"
 import "../style/form.css";
-import {Col, Row, Alert} from 'reactstrap';
+import {
+    Col,
+    Row,
+    Alert
+} from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
 import io from 'socket.io-client';
 
 import TimerExample from './timer'
 import LeftSideBar from './LeftSideBar';
-import {Drawer} from "./Drawer";
-import {Guesser} from './Guesser'
+import {
+    Drawer
+} from "./Drawer";
+import {
+    Guesser
+} from './Guesser'
+import {
+    I
+} from 'glamorous';
+import ResultModal from 'ResultModal'
 
 // inspired by source code from lecture 2 HTML5
 class Game extends React.Component {
@@ -38,7 +54,9 @@ class Game extends React.Component {
             .on('connect', () => {
                 this
                     .socket
-                    .emit('authenticate', {token: this.props.userStore.token}) //send the jwt
+                    .emit('authenticate', {
+                        token: this.props.userStore.token
+                    }) //send the jwt
                     .on('authenticated', () => {})
                     .on("unauthorized", function (error, callback) {
                         console.log("unauthenticated");
@@ -51,15 +69,24 @@ class Game extends React.Component {
         this
             .fetchGame()
             .then((values) => {
-                if (values[1].players.find((e) => e.username === values[0].username).length === 0) {
+                if (values[1].players.find((e) => e.username == values[0].username).length == 0) {
                     alert("UNAUTHORIZED");
                     return;
                 }
-                this.setState({rounds: values[1].roundsPlayed, begun: values[1].started, curPlayer: values[0], game: values[1]});
-                if (values[0].username === values[1].drawer.username) {
-                    this.setState({userType: "draw"});
+                this.setState({
+                    rounds: values[1].roundsPlayed,
+                    begun: values[1].started,
+                    curPlayer: values[0],
+                    game: values[1]
+                });
+                if (values[0].username == values[1].drawer.username) {
+                    this.setState({
+                        userType: "draw"
+                    });
                 } else {
-                    this.setState({userType: "guess"});
+                    this.setState({
+                        userType: "guess"
+                    });
                 }
                 this
                     .props
@@ -94,13 +121,13 @@ class Game extends React.Component {
         console.log("FETCHING");
         return (Promise.all([
             this
-                .props
-                .userStore
-                .pullUser(),
+            .props
+            .userStore
+            .pullUser(),
             this
-                .props
-                .lobbyStore
-                .getRoom(this.props.match.params.id)
+            .props
+            .lobbyStore
+            .getRoom(this.props.match.params.id)
         ]))
     }
 
@@ -108,7 +135,10 @@ class Game extends React.Component {
         this
             .fetchGame()
             .then((values) => {
-                this.setState({curPlayer: values[0], game: values[1]});
+                this.setState({
+                    curPlayer: values[0],
+                    game: values[1]
+                });
             })
     }
 
@@ -124,7 +154,10 @@ class Game extends React.Component {
         this
             .socket
             .on('gameOver', (game) => {
-                this.setState({over: true, game: game})
+                this.setState({
+                    over: true,
+                    game: game
+                })
             })
 
     }
@@ -137,7 +170,11 @@ class Game extends React.Component {
                     .props
                     .gameStore
                     .reset();
-                this.setState({game: game, begun: false, newRound: true});
+                this.setState({
+                    game: game,
+                    begun: false,
+                    newRound: true
+                });
                 const store = this.props.gameStore;
                 const gameState = {
                     xPos: store.getX,
@@ -151,7 +188,10 @@ class Game extends React.Component {
                 }
                 this
                     .socket
-                    .emit('gameState', JSON.stringify({id: this.state.game.id, game: gameState}));
+                    .emit('gameState', JSON.stringify({
+                        id: this.state.game.id,
+                        game: gameState
+                    }));
             })
     }
     render() {
@@ -160,18 +200,36 @@ class Game extends React.Component {
         */
         var timer = null
         var roundAlert = null;
+        var modal = null;
+        if (this.state.over) {
+            modal = < ResultModal players = {
+                this.state.game.players
+            }
+            />
+        }
         if (this.state.begun) {
             console.log("PASSING IN NEW DATA");
-            timer = <Row>
-                <Col>
-                    <TimerExample game={this.state.game} socket={this.socket} start={Date.now()}/>
-                </Col>
-            </Row>
+            timer = < Row >
+                <
+                Col >
+                <
+                TimerExample game = {
+                    this.state.game
+                }
+            socket = {
+                this.socket
+            }
+            start = {
+                Date.now()
+            }
+            /> <
+            /Col> <
+            /Row>
         }
         if (this.state.newRound) {
-            roundAlert = <Alert color="warning">
-                NEW ROUND STARTING SOON
-            </Alert>
+            roundAlert = < Alert color = "warning" >
+                NEW ROUND STARTING SOON <
+                /Alert>
             setTimeout(() => {
                 window
                     .location
@@ -180,32 +238,59 @@ class Game extends React.Component {
         }
         var userType = null;
         if (this.state.userType === 'draw') {
-            userType = <Drawer
-                game={this.state.game}
-                user={this.state.curPlayer}
-                socket={this.socket}/>
+            userType = < Drawer
+            game = {
+                this.state.game
+            }
+            user = {
+                this.state.curPlayer
+            }
+            socket = {
+                this.socket
+            }
+            />
         }
         if (this.state.userType === 'guess') {
-            userType = <Guesser
-                game={this.state.game}
-                user={this.state.curPlayer}
-                socket={this.socket}/>
+            userType = < Guesser
+            game = {
+                this.state.game
+            }
+            user = {
+                this.state.curPlayer
+            }
+            socket = {
+                this.socket
+            }
+            />
         }
-        return (
-            <div>
-                {roundAlert}
-                ROUND {this.state.rounds + ":  "}{timer}
-                <Provider store={this.props.gameStore}>
-                    <Row>
-                        <LeftSideBar/>
-                        <div
-                            style={{
-                            marginLeft: "40px"
-                        }}>{userType}
-                        </div>
-                    </Row>
-                </Provider>
-            </div>
+        return ( <
+            div > {
+                roundAlert
+            }
+            ROUND {
+                this.state.rounds + ":  "
+            } {
+                timer
+            } <
+            Provider store = {
+                this.props.gameStore
+            } >
+            <
+            Row >
+            <
+            LeftSideBar / >
+            <
+            div style = {
+                {
+                    marginLeft: "40px"
+                }
+            } > {
+                userType
+            } <
+            /div> <
+            /Row> <
+            /Provider> <
+            /div>
         )
     }
 }

@@ -12,6 +12,7 @@ import TimerExample from './timer'
 import LeftSideBar from './LeftSideBar';
 import {Drawer} from "./Drawer";
 import {Guesser} from './Guesser'
+import ResultModal from './ResultModal'
 
 // inspired by source code from lecture 2 HTML5
 class Game extends Component {
@@ -74,6 +75,7 @@ class Game extends Component {
                               this.roundStarted();
                               this.roundEnded();
                               this.newUser();
+                              this.gameOver();
                           })
                     })
                     .on("unauthorized", function (error, callback) {
@@ -166,6 +168,10 @@ class Game extends Component {
         */
         var timer = null
         var roundAlert = null;
+        var modal = null;
+        if (this.state.over) {
+            modal = <ResultModal players={this.state.game.players} history={this.props.history} viewResultModal={true}/>
+        }
         if (this.state.begun) {
             console.log("PASSING IN NEW DATA");
             timer = <Row>
@@ -200,6 +206,7 @@ class Game extends Component {
         return (
             <div>
                 {roundAlert}
+                {modal}
                 ROUND {this.state.rounds + ":  "}{timer}
                 <Provider store={this.props.gameStore}>
                     <Row>

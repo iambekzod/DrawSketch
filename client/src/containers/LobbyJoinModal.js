@@ -16,10 +16,10 @@ class LobbyJoinModal extends Component {
   joinLobby = (e) => {
     e.preventDefault();
     this.toggle();
-    this.props.lobbyStore.join().then(() => {
+    this.props.lobbyStore.join().then((room) => {
       this.props.userStore.pullUser().then((user) => {
         this.props.userListStore.addUser(user.username);
-        this.props.history.push("/game/" + this.props.userStore.room);
+        this.props.history.push("/game/" + room.id);
       });
     });
   };

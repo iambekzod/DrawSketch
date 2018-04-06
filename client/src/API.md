@@ -1,6 +1,4 @@
 ---
-layout: default
-
 # WOWBurst API Documentation
 
 ## WOWBurst API

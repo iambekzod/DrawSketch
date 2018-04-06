@@ -1,5 +1,6 @@
 import marked from "marked";
 import React, {Component} from 'react'
+import "../style/App.css";
 
 class Readme extends Component{
     constructor(props) {
@@ -26,7 +27,7 @@ class Readme extends Component{
         const { markdown } = this.state;
       
         return (
-          <section>
+          <section className="read-me">
             <article dangerouslySetInnerHTML={{__html: markdown}}></article>
           </section>
         )

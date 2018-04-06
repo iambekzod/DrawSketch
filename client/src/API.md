@@ -34,7 +34,7 @@ $ curl -X POST
   	   -k https://www.drawsketch.me/api/user/signin/google/
 ```
 
-- description: get the current user
+- description: get the current user using the jwt attached in header
 - request: `GET /api/user/`
 - response: 401
   - body: user doesn't exit
@@ -66,7 +66,7 @@ $ curl -X GET
         - token: (string) the jwt of the user
         - username: (string) the username to store for the user
 - response: 422
-    -body: username not alphanumeric, username already taken, email already taken, and fallback error responce  
+    -body: username not alphanumeric, username already taken, email already taken, and fallback error response  
 - response: 200
   - content-type: `application/json`
   - body: object
@@ -99,7 +99,7 @@ $ curl -X PUT
       - password: (string) the password for the user
       - confirmPassword: (string) repeat of the password
 - response: 422
-    - body: username is already taken, username is not alphanumeric, email is already taken, first name containsnon-letters, lastname contains non-letters, email not correct format, password does not equal to confirm password, and fallback error response
+    - body: username is already taken, username is not alphanumeric, email is already taken, first name contains non-letters, lastname contains non-letters, email not correct format, password does not equal to confirm password, and fallback error response
 - response: 200
     - content-type: `application/json`
     - body: object
@@ -143,7 +143,7 @@ $ curl -X POST
        -k https://www.drawsketch.me/api/user/signin
 ``` 
   
-- description: get the list of all the rooms
+- description: get the list of all the rooms, must be authenticated user
 - request: `GET /api/lobby`
 - response: 200
     - content-type: `application/json`
@@ -165,7 +165,7 @@ $ curl -X GET
        -k https://www.drawsketch.me/api/lobby/
 ``` 
   
-- description: get the room with the specified id
+- description: get the room with the specified id, must be authenticated
 - request: `GET /api/lobby/:id`
 - response: 200
   - content-type: `application/json`
@@ -194,7 +194,7 @@ $ curl -X GET
        -k https://www.drawsketch.me/api/lobby/J7r3sBOFn1mH076b
 ``` 
 
-- description: get the room with the specified id
+- description: create a room with the given settings
 - request: `POST /api/lobby/`
 - content-type: `application/json`
     - body: object
@@ -228,14 +228,14 @@ $ curl -X GET
 - response: 422
   - body: invalid room id
 
-  ``` 
+``` 
 $ curl -X POST 
        -H "Authorization: Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJp
        ZCI6IjVhYTcyYzk1MDkwMzk3MjA0ZDVkYTE2ZCIsInVzZXJuYW1lIjoiYXNkIiwiZX
        hwIjoxNTI2MDk4MDg2LCJpYXQiOjE1MjA5MTQwODZ9.eZXx6suP49sHkvNyA-spux8
        0Kj8S1hUsoL0QABOixBA"
        -H "Content-Type: application/json" 
-       -d '{"name":"player123", "maxPlayers": "10", "rounds": "4", "timeLimit": "0.30", 
+       -d '{"name":"join this lobby", "maxPlayers": "10", "rounds": "4", "timeLimit": "0.30", 
        "password": "", "locked": false, "joinId": "", "joinPassword": ""}' 
        -k https://www.drawsketch.me/api/lobby/
 ``` 

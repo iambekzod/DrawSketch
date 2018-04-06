@@ -1,7 +1,7 @@
 ---
-# WOWBurst API Documentation
+# DrawSketch API Documentation
 
-## WOWBurst API
+## DrawSketch API
 
 - description: sign into google
 - request: `POST api/user/signin/google`

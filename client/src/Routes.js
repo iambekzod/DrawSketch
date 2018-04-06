@@ -7,6 +7,7 @@ import Credits from "./containers/Credits";
 import Lobby from "./containers/Lobby";
 import Game from "./containers/Game";
 import Username from "./containers/Username";
+import Readme from "./containers/Readme";
 import NotFound from "./containers/NotFound";
 
 export default() => <Switch>
@@ -16,6 +17,7 @@ export default() => <Switch>
   <Route path="/signup" exact component={SignUp}/>
   <Route path="/lobby" exact component={Lobby}/>
   <Route path="/username" exact component={Username}/>
+  <Route path="/readme" exact component={Readme}/>
   <Route
     path='/game/:id'
     component=

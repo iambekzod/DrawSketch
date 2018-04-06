@@ -27,6 +27,9 @@ class App extends Component {
           <NavbarBrand className="header" href="/">DrawSketch</NavbarBrand>
             <Nav className="ml-auto">
               <NavItem>
+                <NavLink href="/readme">API documentation</NavLink>
+              </NavItem>
+              <NavItem>
                 <NavLink href="/credits">Credits</NavLink>
               </NavItem>
               {toggleSignInOut}

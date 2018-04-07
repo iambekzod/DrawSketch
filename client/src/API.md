@@ -37,7 +37,7 @@ $ curl -X POST
 - description: get the current user using the jwt attached in header
 - request: `GET /api/user/`
 - response: 401
-  - body: user doesn't exit
+  - body: user doesn't exist
 - response: 200
   - content-type: `application/json`
   - body: object

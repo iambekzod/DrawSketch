@@ -4,8 +4,6 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const Accounts = require('../models/accounts.js');
 
-const keys = require('./keys.js');
-
 passport.use(new LocalStrategy({
   usernameField: 'user[username]',
   passwordField: 'user[password]'

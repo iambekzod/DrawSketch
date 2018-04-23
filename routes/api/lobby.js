@@ -22,16 +22,16 @@ var Room = (function () {
         this.players = [];
         this.started = false;
         this.gameState = {
-            isPainting: false,
-            xPos: [],
-            yPos: [],
-            width: [],
-            dragging: [],
-            paintColor: [],
-            curWidth: 2,
-            curColor: "black"
-        },
-        this.timeElapsed = "";
+                isPainting: false,
+                xPos: [],
+                yPos: [],
+                width: [],
+                dragging: [],
+                paintColor: [],
+                curWidth: 2,
+                curColor: "black"
+            },
+            this.timeElapsed = "";
         this.roundsPlayed = 0;
     };
 }());
@@ -211,15 +211,19 @@ router.post('/join/:id/', auth.required, checkId, function (req, res, next) {
             }
             user = user.toAuthJSON();
             if (user.room) return res.status(409)
-                              .json({
-                                  errors: {
-                                      User: "has already joined one lobby"
-                                  }
-                              });
+                .json({
+                    errors: {
+                        User: "has already joined one lobby"
+                    }
+                });
 
             if (room.locked) {
-                if(!req.body.password){
-                    return res.status(422).json({errors: {password: "can't be blank"}});
+                if (!req.body.password) {
+                    return res.status(422).json({
+                        errors: {
+                            password: "can't be blank"
+                        }
+                    });
                 }
 
                 req.body.password = validator.escape(req.body.password);

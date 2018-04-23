@@ -30,9 +30,13 @@ var accountsSchema = new Schema({
   },
   googleId: String,
   wins: Number
-}, {timestamps: true});
+}, {
+  timestamps: true
+});
 
-accountsSchema.plugin(uniqueValidator, {message: 'expected {PATH} to be unique'});
+accountsSchema.plugin(uniqueValidator, {
+  message: 'expected {PATH} to be unique'
+});
 
 function generateHash(password, salt) {
   var hash = crypto.createHmac('sha512', salt);
@@ -72,7 +76,7 @@ accountsSchema.methods.toAuthJSON = function () {
     username: this.username,
     email: this.email,
     wins: this.wins,
-    room: lobbies.find(function(lobby) {
+    room: lobbies.find(function (lobby) {
       var found = lobby.players.find(function (user) {
         return user.username === self.username;
       });

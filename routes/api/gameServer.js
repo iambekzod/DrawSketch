@@ -2,6 +2,7 @@
 
 const socketIO = require('socket.io');
 const server = require('./lobby.js');
+
 function Begin(game) {
     //map socketid to player
     const players = []

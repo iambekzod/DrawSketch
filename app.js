@@ -15,7 +15,9 @@ const passport = require('passport');
 
 // Load Environment variables
 const dotEnv = require('dotenv');
-dotEnv.config({ path: path.resolve(__dirname, '-nogit.env') })
+dotEnv.config({
+    path: path.resolve(__dirname, '-nogit.env')
+})
 
 // Game Imports ===================================================
 const Accounts = require('./models/accounts.js');
@@ -29,14 +31,18 @@ mongoose.connect(process.env.MONGO_URL);
 // Server ===================================================
 const app = express();
 app.use(express.static(path.join(__dirname, 'client/build')));
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.use(bodyParser.json());
 app.use(helmet());
 
 if (app.get('env') == 'production') {
     app.use(morgan('combined', {
-        skip: function (req, res) { return res.statusCode < 400 }
-      }));
+        skip: function (req, res) {
+            return res.statusCode < 400
+        }
+    }));
 } else {
     app.use(morgan('dev'));
 }
@@ -58,8 +64,7 @@ server = http
             console.log(err);
         else
             console.log("HTTP server listening on port: %s", PORT);
-        }
-    );
+    });
 
 const io = socketIO(server);
 var gameServer = new GameServer();
@@ -67,7 +72,9 @@ var interval;
 io
     .sockets
     .on('connection', socketioJwt.authorize({
-        secret: process.env.JWT_SECRET, callback: false, timeout: 10000 // 15 seconds to send the authentication message
+        secret: process.env.JWT_SECRET,
+        callback: false,
+        timeout: 10000 // 15 seconds to send the authentication message
     }))
     .on('authenticated', function (socket) {
         //this socket is authenticated, we are good to handle more events from it.
@@ -85,7 +92,7 @@ io
             socket.join(room[1].id)
             io
                 .sockets
-                . in(room[1].id)
+                .in(room[1].id)
                 .emit('newUser', room[1]);
         })
         socket.on("gameState", (state) => {
@@ -96,7 +103,7 @@ io
             lobbies[index].gameState = state.game;
             io
                 .sockets
-                . in(state.id)
+                .in(state.id)
                 .emit('return', JSON.stringify(updated.state))
         })
         socket.on("beginRound", (game) => {
@@ -106,11 +113,11 @@ io
             interval = startTimer(found, lobbies[found].timeLimit);
             io
                 .sockets
-                . in(gameServer.games[found].id)
+                .in(gameServer.games[found].id)
                 .emit('getWord', gameServer.games[found].getWord())
             io
                 .sockets
-                . in(gameServer.games[found].id)
+                .in(gameServer.games[found].id)
                 .emit('startRound', JSON.stringify(game.state));
         })
         socket.on("guess", (guess) => {
@@ -125,12 +132,12 @@ io
                 lobbies[found].players[userIndex].wins++;
                 io
                     .sockets
-                    . in(gameServer.games[found].id)
+                    .in(gameServer.games[found].id)
                     .emit('right', gameServer.games[found])
             } else {
                 io
                     .sockets
-                    . in(gameServer.games[found].id)
+                    .in(gameServer.games[found].id)
                     .emit('wrong', gameServer.games[found])
             }
         })
@@ -139,7 +146,7 @@ io
             endRound(found);
         })
         socket.on('disconnect', function () {
-          socket.emit('disconnected');
+            socket.emit('disconnected');
         });
     });
 
@@ -159,9 +166,9 @@ function endRound(gameIndex) {
     if (lobbies[gameIndex].roundsPlayed == lobbies[gameIndex].rounds) {
         io
             .sockets
-            . in(gameServer.games[gameIndex].id)
+            .in(gameServer.games[gameIndex].id)
             .emit('gameOver', lobbies[gameIndex]);
-            lobbies.splice(gameIndex, 1);
+        lobbies.splice(gameIndex, 1);
         return;
     }
     const index = pickPlayer(lobbies[gameIndex]);
@@ -169,7 +176,7 @@ function endRound(gameIndex) {
     lobbies[gameIndex].drawer = lobbies[gameIndex].players[index];
     io
         .sockets
-        . in(gameServer.games[gameIndex].id)
+        .in(gameServer.games[gameIndex].id)
         .emit('roundEnd', lobbies[gameIndex]);
 }
 
@@ -182,18 +189,18 @@ function startTimer(index, duration) {
         minutes = parseInt(timer / 60, 10)
         seconds = parseInt(timer % 60, 10);
 
-        minutes = minutes < 10
-            ? "0" + minutes
-            : minutes;
-        seconds = seconds < 10
-            ? "0" + seconds
-            : seconds;
+        minutes = minutes < 10 ?
+            "0" + minutes :
+            minutes;
+        seconds = seconds < 10 ?
+            "0" + seconds :
+            seconds;
 
         const time = minutes + ":" + seconds;
         lobbies[index].timeElapsed = time;
         io
             .sockets
-            . in(gameServer.games[index].id)
+            .in(gameServer.games[index].id)
             .emit('tick', time);
 
         if (--timer < 0) {

@@ -2,9 +2,9 @@
 
 ## Members: Bekzod Tursunov, Weiqiang Zhang, Shuyi Qiu
 
-Public URL: https://drawsketch.me/
-Demo URL: https://www.youtube.com/watch?v=B-lIrZije-k
-API URL: https://drawsketch.me/readme
+* Public URL: https://drawsketch.me/
+* Demo URL: https://www.youtube.com/watch?v=B-lIrZije-k
+* API URL: https://drawsketch.me/readme
 
 # Description
 

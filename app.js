@@ -1,21 +1,29 @@
 /*jshint esversion: 6 */
 
 // Imports ===================================================
-const express = require('express');
-const mongoose = require('mongoose');
 const fs = require('fs');
-const bodyParser = require('body-parser');
+const path = require('path');
 const http = require('http');
+const mongoose = require('mongoose');
 const socketIO = require('socket.io');
 const socketioJwt = require('socketio-jwt2');
-const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const passport = require('passport');
 
+// Load Environment variables
 const dotEnv = require('dotenv');
+/* Create a file '-nogit.env' containing content:
+    MONGO_URL=XXX
+    JWT_SECRET=XXX
+    CLIENT_ID=XXX
+    CLIENT_SECRET=XXX
+*/
 dotEnv.config({ path: path.resolve(__dirname, '-nogit.env') })
 
+// Game Imports ===================================================
 const Accounts = require('./models/accounts.js');
 const GameServer = require('./routes/api/gameServer.js');
 const lobbies = require('./routes/api/rooms.js');

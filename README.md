@@ -34,3 +34,10 @@ A multi user drawing game where one person draws something, while the other play
 - Be able to incorporate the working backend with the frontend using a new framework like Angular/React
 - Have a clean UI/UX on the frontend
 - Be made to work cross platform, mobile and desktop
+
+# SetUp Information
+Create a file '-nogit.env' containing content for all keys:
+    MONGO_URL=XXX
+    JWT_SECRET=XXX
+    CLIENT_ID=XXX
+    CLIENT_SECRET=XXX

@@ -37,7 +37,7 @@ A multi user drawing game where one person draws something, while the other play
 
 # SetUp Information
 Create a file '-nogit.env' containing content for all keys:
-    MONGO_URL=XXX
-    JWT_SECRET=XXX
-    CLIENT_ID=XXX
-    CLIENT_SECRET=XXX
+* MONGO_URL=XXX
+* JWT_SECRET=XXX
+* CLIENT_ID=XXX
+* CLIENT_SECRET=XXX

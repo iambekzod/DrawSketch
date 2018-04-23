@@ -15,12 +15,6 @@ const passport = require('passport');
 
 // Load Environment variables
 const dotEnv = require('dotenv');
-/* Create a file '-nogit.env' containing content:
-    MONGO_URL=XXX
-    JWT_SECRET=XXX
-    CLIENT_ID=XXX
-    CLIENT_SECRET=XXX
-*/
 dotEnv.config({ path: path.resolve(__dirname, '-nogit.env') })
 
 // Game Imports ===================================================

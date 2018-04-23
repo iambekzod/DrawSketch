@@ -1,5 +1,4 @@
 var jwt = require('jsonwebtoken');
-var secret = require('../config/keys.js').jwtSecret;
 var crypto = require('crypto');
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
@@ -63,7 +62,7 @@ accountsSchema.methods.generateJWT = function () {
     id: this._id,
     username: this.username,
     exp: parseInt(exp.getTime() / 1000)
-  }, secret);
+  }, process.env.JWT_SECRET);
 };
 
 accountsSchema.methods.toAuthJSON = function () {

@@ -6,8 +6,7 @@ const { OAuth2Client } = require('google-auth-library');
 
 const Accounts = require('../../models/accounts.js');
 const auth = require('../auth');
-const keys = require('../../config/keys');
-const client = new OAuth2Client(keys.clientID);
+const client = new OAuth2Client(process.env.CLIENT_ID);
 
 var sanitizeUserPass = function(req, res, next) {
   if (!validator.isAlphanumeric(req.body.user.username)) return res.status(422).json({errors: {Username: "must contain only letters and numbers"}})
@@ -57,7 +56,7 @@ router.post('/signin/google', checkToken, function(req, res, next) {
   async function verify() {
     const ticket = await client.verifyIdToken({
         idToken: req.body.token,
-        audience: keys.clientID,
+        audience: process.env.CLIENT_ID,
     });
     const payload = ticket.getPayload();
     const userId = payload['sub'];
@@ -86,7 +85,7 @@ router.put('/update/username', checkToken, function(req, res, next) {
   async function verify() {
     const ticket = await client.verifyIdToken({
         idToken: req.body.token,
-        audience: keys.clientID,
+        audience: process.env.CLIENT_ID,
     });
     const payload = ticket.getPayload();
     const userId = payload['sub'];

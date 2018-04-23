@@ -11,17 +11,18 @@ const socketioJwt = require('socketio-jwt2');
 const path = require('path');
 const morgan = require('morgan');
 const helmet = require('helmet');
-
-const keys = require('./config/keys.js');
 const passport = require('passport');
+
+const dotEnv = require('dotenv');
+dotEnv.config({ path: path.resolve(__dirname, '-nogit.env') })
+
 const Accounts = require('./models/accounts.js');
 const GameServer = require('./routes/api/gameServer.js');
 const lobbies = require('./routes/api/rooms.js');
 
-require('./config/passport.js');
-
 // Database =================================================== Connection URL
-mongoose.connect(keys.mongoURL);
+require('./config/passport.js');
+mongoose.connect(process.env.MONGO_URL);
 
 // Server ===================================================
 const app = express();
@@ -64,7 +65,7 @@ var interval;
 io
     .sockets
     .on('connection', socketioJwt.authorize({
-        secret: keys.jwtSecret, callback: false, timeout: 10000 // 15 seconds to send the authentication message
+        secret: process.env.JWT_SECRET, callback: false, timeout: 10000 // 15 seconds to send the authentication message
     }))
     .on('authenticated', function (socket) {
         //this socket is authenticated, we are good to handle more events from it.

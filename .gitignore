@@ -3,6 +3,8 @@
 # ignore keys
 *-nogit*
 
+./package-lock.json
+
 # dependencies
 /node_modules
 client/node_modules
